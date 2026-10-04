@@ -2,7 +2,7 @@
 import pytest
 
 from bridge import db
-from bridge.rules.ranges import judge
+from bridge.rules.ranges import direction, judge
 
 DEF = {
     "groups": {
@@ -52,6 +52,12 @@ def test_poc1_01_undefined_scale_is_not_judged():
     assert judge("emotional_instability", 66, DEF) is None
 
 
+def test_poc1_01_direction_only_scale_is_not_judged():
+    """2-2: group 없이 direction만 있는 척도는 판정하지 않는다(None)."""
+    d = {**DEF, "scales": {**DEF["scales"], "sociability": {"direction": "lower_is_worse"}}}
+    assert judge("sociability", 30, d) is None
+
+
 def test_poc1_01_unknown_direction_raises():
     bad = {"groups": {"g": {"direction": "sideways"}}, "scales": {"x": {"group": "g"}}}
     with pytest.raises(ValueError):
@@ -65,11 +71,20 @@ def test_poc1_01_b2_all_loaded_samples_match_report(loaded_db):
     for row in conn.execute("SELECT result_id, assessment_code FROM assessment_results"):
         definition = db.get_definition(conn, row["assessment_code"])
         for score in db.get_payload(conn, row["result_id"])["scores"]:
-            if score["scale"] not in definition["scales"]:
-                continue  # 정의 없는 척도는 대조 제외 (2-2)
+            if "group" not in definition["scales"].get(score["scale"], {}):
+                continue  # 판정 기준(group) 없는 척도는 대조 제외 (2-2)
             checked += 1
             got = judge(score["scale"], score["t"], definition)
             if got != score["range"]:
                 mismatches.append((row["result_id"], score["id"], score["t"], score["range"], got))
     assert checked == 100 * 11
     assert mismatches == []
+
+
+def test_2_2_direction_from_group_or_scale_entry():
+    """2-2: direction은 group에서, group이 없으면 척도 항목에서 읽는다. 둘 다 없으면 None."""
+    d = {**DEF, "scales": {**DEF["scales"], "sociability": {"direction": "lower_is_worse"}}}
+    assert direction("attention", d) == "higher_is_worse"
+    assert direction("total_competence", d) == "lower_is_worse"
+    assert direction("sociability", d) == "lower_is_worse"
+    assert direction("unknown_scale", d) is None

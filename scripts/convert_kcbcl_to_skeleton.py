@@ -87,12 +87,15 @@ def assessment_type_definition(meta):
     """assessment_types 시드 1행. definition 형식은 specs/poc.md 2-2를 따른다.
 
     - scales 키 = payload scores[].scale 키 = 원천 데이터 키.
-    - PoC 시드에는 종합척도·증후군 척도 기준만 넣는다(2-2). 특수척도·사회능력 기준은
+    - PoC 시드에는 종합척도·증후군 척도 기준(group)만 넣는다(2-2). 특수척도·사회능력 기준은
       참고 보고서에 없는 가정값이라 넣지 않는다(해당 scores의 range는 원보고서 라벨 그대로 둠).
+    - 판정 기준 없는 척도는 group 없이 direction만 둔다(백분위 문장 방향용, PoC1-02).
     """
     syn = meta["scales"]["syndromes"]
     scales = {k: {"group": "composite"} for k in COMPOSITE_ORDER}
     scales.update({s["key"]: {"group": "syndrome"} for s in syn})
+    scales.update({k: {"direction": "higher_is_worse"} for k in SPECIAL})
+    scales.update({k: {"direction": "lower_is_worse"} for k in SOCIAL})
     return {
         "code": ASSESSMENT_CODE,
         "name": "K-CBCL 한국 아동·청소년 행동평가척도 (보호자 보고형, 만 4–17세)",

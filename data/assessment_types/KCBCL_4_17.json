@@ -55,6 +55,21 @@
       },
       "aggressive": {
         "group": "syndrome"
+      },
+      "emotional_instability": {
+        "direction": "higher_is_worse"
+      },
+      "sex_problems": {
+        "direction": "higher_is_worse"
+      },
+      "sociability": {
+        "direction": "lower_is_worse"
+      },
+      "school_performance": {
+        "direction": "lower_is_worse"
+      },
+      "total_competence": {
+        "direction": "lower_is_worse"
       }
     }
   }

@@ -70,10 +70,11 @@ def test_iter_content_sentences_skips_pattern_files(content_copy):
 
 
 def test_poc1_04_cards_cover_all_defined_scale_ranges(definitions):
-    """정의(2-2)의 모든 척도 × 범위 3개에 카드가 정확히 1장씩 있다."""
+    """정의(2-2)에서 판정 기준(group)이 있는 모든 척도 × 범위 3개에 카드가 정확히 1장씩 있다."""
     cards = content.load_scale_cards(definitions=definitions)
     got = sorted((c["assessment"], c["scale"], c["range"]) for c in cards)
-    want = sorted((code, scale, r) for code, d in definitions.items() for scale in d["scales"] for r in RANGES)
+    want = sorted((code, scale, r) for code, d in definitions.items()
+                  for scale, sd in d["scales"].items() if "group" in sd for r in RANGES)
     assert got == want
 
 
@@ -108,6 +109,13 @@ def test_cards_reject_duplicate_id(content_copy):
 
 def test_cards_reject_unknown_scale(content_copy, definitions):
     _edit(content_copy, "scale_cards.json", lambda cs: [{**cs[0], "scale": "no_such_scale"}])
+    with pytest.raises(ContentError):
+        content.load_scale_cards(content_copy, definitions=definitions)
+
+
+def test_cards_reject_scale_without_group(content_copy, definitions):
+    """판정하지 않는 척도(group 없음)의 카드는 연결될 수 없으므로 오류."""
+    _edit(content_copy, "scale_cards.json", lambda cs: [{**cs[0], "scale": "total_competence"}])
     with pytest.raises(ContentError):
         content.load_scale_cards(content_copy, definitions=definitions)
 

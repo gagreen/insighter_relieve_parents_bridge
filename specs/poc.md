@@ -72,7 +72,8 @@ PoC가 끝났다는 것은 아래 6개가 모두 측정되어 리포트에 기�
 - `scales`에는 실제 척도 키 전체를 넣는다(위는 일부). 척도 키는 변환 작업의 `scale` 값과 맞춘다.
 - `lower_is_worse`(사회능력)는 판정 로직이 지원하되, PoC 시드에서는 사회능력 기준을 넣지 않는다(샘플 기준 값이 가정이므로).
   - `lower_is_worse` 그룹의 기준 키는 `borderline_max`, `clinical_max`다(T ≤ `clinical_max` → clinical, T ≤ `borderline_max` → borderline).
-- `scales`에 없는 척도(KCBCL 시드의 특수척도·사회능력)는 판정하지 않는다. 판정 결과는 '정의 없음'이고 B-2 대조에서 제외한다(2026-10-03 결정). 화면 표시는 PoC1-04의 '카드 없음' 처리를 따른다.
+- 판정 기준이 없는 척도(KCBCL 시드의 특수척도·사회능력)는 `group` 없이 `direction`만 둔다. 예: `"total_competence": {"direction": "lower_is_worse"}`. `direction`은 백분위 문장(PoC1-02)의 방향에만 쓴다(2026-10-04 결정).
+- `group`이 없는 척도(또는 `scales`에 없는 척도)는 판정하지 않는다. 판정 결과는 '정의 없음'이고 B-2 대조에서 제외한다(2026-10-03 결정). 화면 표시는 PoC1-04의 '카드 없음' 처리를 따른다.
 
 ### 2-3. 기준 샘플
 
@@ -81,7 +82,7 @@ PoC가 끝났다는 것은 아래 6개가 모두 측정되어 리포트에 기�
 - **기준 샘플: `data/kcbcl_results/035.json`** (`R-KCBCL_4_17-035`, 남아 만 9세 6개월, 2026-10-03 확정)
   - 종합척도: 내재화 56 normal · 외현화 64 clinical · 총 문제행동 69 clinical
   - 증후군: 사회적 미성숙 80 clinical · 주의집중 문제 66 borderline(백분위 95) · 공격성 66 borderline · 나머지 5개 normal(비행 50T, 백분위 null)
-  - 미실시: 성문제. 정의(2-2) 밖 실시 척도: 정서불안정 66, 사회성 42 · 학업수행 43 · 총 사회능력 40
+  - 미실시: 성문제. 판정 기준(group) 없는 실시 척도: 정서불안정 66, 사회성 42 · 학업수행 43 · 총 사회능력 40
   - 보호자 의견 3건(`VII.1` 사회적 미성숙, `VII.2` 주의집중 문제, `VII.3` 정서불안정)
   - 선정 이유: PoC2-05 예시(주의집중 문제 T=66, 관찰 권고 범위) 재현, 정상·준임상·임상·백분위 null·미실시를 한 건에 포함, 보호자 의견에 위험 표현 없음(B-5가 질문으로만 결정됨)
 
@@ -131,9 +132,9 @@ When 증후군 척도 T가 59, 60, 69, 70이면
 Then 각각 normal, borderline, borderline, clinical 로 판정한다
 
 Given 적재된 샘플 전체
-When 정의(2-2)의 scales에 있는 scores 항목을 판정하면
+When 정의(2-2)의 scales에서 group이 있는 scores 항목을 판정하면
 Then 판정 결과가 payload의 range와 모두 같다 (다르면 테스트 실패 + 해당 id 출력)
- And scales에 없는 항목은 판정하지 않고 대조에서 제외한다
+ And group이 없는 항목은 판정하지 않고 대조에서 제외한다
 
 Given 증후군 척도 하한 50T
 When 판정하면

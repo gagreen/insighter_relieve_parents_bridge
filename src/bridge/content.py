@@ -87,8 +87,8 @@ def load_scale_cards(content_dir: Path | None = None, definitions: dict[str, dic
         if definitions is not None:
             if c["assessment"] not in definitions:
                 raise ContentError(f"{where}: 정의 없는 검사 {c['assessment']!r}")
-            if c["scale"] not in definitions[c["assessment"]]["scales"]:
-                raise ContentError(f"{where}: 정의 없는 척도 {c['scale']!r}")
+            if "group" not in definitions[c["assessment"]]["scales"].get(c["scale"], {}):
+                raise ContentError(f"{where}: 판정 기준(group) 없는 척도 {c['scale']!r}")
         for text in card_sentences(c):
             _check_placeholders(text, allowed, where)
     _check_unique([c["id"] for c in cards], "카드 id")

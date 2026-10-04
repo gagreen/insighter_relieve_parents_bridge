@@ -8,16 +8,27 @@ CLINICAL = "clinical"
 NOT_ADMINISTERED = "not_administered"
 
 
+def direction(scale: str, definition: dict) -> str | None:
+    """척도의 방향. group이 있으면 group의 direction, 없으면 척도 항목의 direction (2-2)."""
+    scale_def = definition["scales"].get(scale)
+    if scale_def is None:
+        return None
+    if "group" in scale_def:
+        return definition["groups"][scale_def["group"]]["direction"]
+    return scale_def.get("direction")
+
+
 def judge(scale: str, t: int | None, definition: dict) -> str | None:
     """T점수의 범위를 판정한다.
 
     - t가 None이면 정의 유무와 관계없이 not_administered (8-2 미실시).
-    - scale이 definition["scales"]에 없으면 판정하지 않고 None (2-2, B-2 대조 제외).
+    - scale이 definition["scales"]에 없거나 group(판정 기준)이 없으면 판정하지 않고 None
+      (2-2, B-2 대조 제외). group 없는 항목의 direction은 백분위 문장에만 쓴다.
     """
     if t is None:
         return NOT_ADMINISTERED
     scale_def = definition["scales"].get(scale)
-    if scale_def is None:
+    if scale_def is None or "group" not in scale_def:
         return None
     group = definition["groups"][scale_def["group"]]
     direction = group["direction"]

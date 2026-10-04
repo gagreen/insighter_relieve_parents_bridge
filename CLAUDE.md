@@ -158,7 +158,7 @@
 - 사회능력 척도는 **점수가 낮을수록** 문제다. `definition`에 판정 방향(`direction: higher_is_worse | lower_is_worse`)을 둔다.
 - 증후군 척도 T점수 하한은 50이다(백분위 50 이하는 50T, 백분위 null 가능).
 - 미실시·적용 연령 아님 항목은 점수 `null` + `range: not_administered`로 두고, 화면에서 숨기지 말고 '미실시'로 표시한다.
-- KCBCL 시드 정의(`data/assessment_types/KCBCL_4_17.json`)에는 종합척도 3개 + 증후군 척도 8개만 있다. 특수척도(`emotional_instability`, `sex_problems`)와 사회능력(`sociability`, `school_performance`, `total_competence`)은 기준이 가정값이라 정의에 넣지 않았고, 이 항목의 `range`는 원보고서 라벨 그대로이며, 규칙 엔진은 판정하지 않고 B-2 대조에서 제외한다(2026-10-03 결정).
+- KCBCL 시드 정의(`data/assessment_types/KCBCL_4_17.json`)에서 판정 기준(`group`)은 종합척도 3개 + 증후군 척도 8개에만 있다. 특수척도(`emotional_instability`, `sex_problems`)와 사회능력(`sociability`, `school_performance`, `total_competence`)은 기준이 가정값이라 `group` 없이 `direction`만 두었고(백분위 문장 방향용, 2026-10-04), 이 항목의 `range`는 원보고서 라벨 그대로이며, 규칙 엔진은 판정하지 않고 B-2 대조에서 제외한다(2026-10-03 결정).
 
 ### 8-3. 테이블 (SQLite, 표준 라이브러리 `sqlite3`)
 
