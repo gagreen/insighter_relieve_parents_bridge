@@ -280,7 +280,9 @@ Then 분류 LLM을 호출해 JSON {intent, confidence} 를 받고
  And confidence가 임계값 미만이거나 JSON이 깨지면 route = safe 로 보낸다
 ```
 
-- 임계값: 미정(`config`, 평가셋 1차 실행 후 결정).
+- 임계값: 임시 0.7(가정, `config.INTENT_CONFIDENCE_THRESHOLD`). 평가셋 1차 실행 후 결정.
+- 분류 LLM 입력은 마스킹된 질문만(보고서 없음, G-09). JSON이 깨지거나, intent가 의도 코드(2-5) 밖이거나, confidence가 0~1 밖이면 route = safe.
+- LLM이 crisis로 분류하면 신뢰도와 무관하게 route = crisis (PoC2-03 두 번째 수용 기준과 겹칠 때 안전 쪽 해석, 2026-10-04 — 사용자 확인 필요).
 - diagnosis 우선(2026-10-04 결정): 진단 신호가 있는 질문을 LLM 분류에 맡기지 않는 보수적 처리. "ADHD가 뭐예요?"처럼 설명형과 겹쳐도 안전 응답 + 노트 저장으로 보낸다.
 - 의도 키워드는 모든 검사가 공유하므로 특정 검사의 척도 이름을 넣지 않는다(G-12). 질문 속 척도는 payload `scores[].name`으로 찾는다.
 
@@ -317,6 +319,10 @@ Given answerable = false
 When 응답을 처리하면
 Then "보고서에 해당 내용이 없다"는 안내를 내보내고 질문을 노트에 저장한다
 ```
+
+- 근거 묶음(`bridge.evidence`, 2026-10-04): 점수(결과 view model의 값 — 규칙 판정 범위 이름, 정의의 기준선), 보고서 서술(findings 원문), 이 아동에게 연결된 카드, 용어사전. 항목마다 `id`. 같은 입력이면 같은 텍스트(캐시 프리픽스 유지).
+- 프롬프트는 검사 종류와 무관하게 쓴다. 척도 이름·기준값은 근거로만 들어간다(G-02, G-12).
+- '지금 할 수 있는 일'은 상담 준비 행동(관찰 기록, 상담 질문 메모)만. 양육 방법은 쓰지 않는다(`CLAUDE.md` 6·7장).
 
 ### PoC2-08 출력 검증 [G-06] → B-4, B-6
 
@@ -374,8 +380,9 @@ Then 텍스트에 ① 보호자 질문(유형별, 관련 보고서 항목 id·�
 
 ### PoC2-13 기록
 
-- 모든 질문: `qa_turns` 1행. 모든 LLM 호출: `llm_calls` 1행(stage, model, prompt_version, 토큰, cached_tokens, latency_ms, cost_usd).
-- `cost_usd`는 `config` 단가로 계산한다.
+- 모든 질문: `qa_turns` 1행. 모든 LLM 호출: `llm_calls` 1행(stage, model, prompt_version, 입력 토큰, cached_tokens(캐시 읽기), cache_write_tokens, 출력 토큰, stop_reason, latency_ms, cost_usd).
+- `cost_usd`는 `config` 단가로 계산한다: 입력 × 단가 + 캐시 쓰기 × 단가 × 1.25 + 캐시 읽기 × 단가 × 0.1 + 출력 × 출력 단가.
+- API 오류 재시도는 SDK 재시도(`max_retries` = P-05 횟수)로 하고, 최종 실패한 호출은 `llm_calls`에 남기지 않는다(토큰·비용 없음).
 
 ---
 
@@ -432,6 +439,7 @@ Then 텍스트에 ① 보호자 질문(유형별, 관련 보고서 항목 id·�
 ## 9. 미결
 
 - [x] 기준 샘플 선정(2-3): `035.json`
-- [ ] 분류 신뢰도 임계값(PoC2-04)
+- [ ] 분류 신뢰도 임계값(PoC2-04): 임시 0.7
 - [x] 백분위 문장 표현(PoC1-02): `상위 약 {rank_from_top}%` (2026-10-04)
 - [ ] 양육 조언형을 평가셋에 별도 유형으로 넣을지(현재 기획안 구성은 4유형)
+- [ ] 응답 품질(2026-10-04 Haiku 스모크 2건): 보고서 권고 수준을 넘는 표현("또래 대비 상당히 높은 수준"), `note_question`이 질문 뜻을 바꿈(뜻 질문 → 양육 질문)·null 출력. 3일차 평가 1차 결과와 함께 프롬프트 v2·금칙 표현 보강을 검토한다. (근거에 없는 숫자 생성은 PoC2-08 숫자 대조로 처리)

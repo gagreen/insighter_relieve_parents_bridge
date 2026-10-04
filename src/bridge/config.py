@@ -33,6 +33,16 @@ PRICES_PER_MTOK = {
 CACHE_WRITE_MULTIPLIER = 1.25
 CACHE_READ_MULTIPLIER = 0.1
 
+# 모델별 effort (CLAUDE.md 9장, 2026-10-04 결정). Haiku 4.5는 effort를 받지 않는다(보내면 400).
+# Sonnet 5.5는 adaptive thinking(기본값) + effort low.
+MODEL_EFFORT = {SONNET: "low"}
+# 단계별 최대 출력 토큰. Sonnet은 thinking 토큰도 여기에 포함된다.
+MAX_TOKENS = {"intent": 1024, "answer": 4096, "organize": 4096}
+
+# ── 프롬프트 (CLAUDE.md 7장) ──────────────────────────
+# 현재 쓰는 버전. 기존 버전 파일은 고치지 않고 새 버전 파일을 만든 뒤 여기만 바꾼다.
+PROMPT_VERSIONS = {"intent": "intent_v1", "answer": "answer_v1"}
+
 # ── 정책 상수 (CLAUDE.md 6장) ─────────────────────────
 # P-01 입력 길이. 가정: 기획안 2-5
 MAX_INPUT_CHARS = 1000
@@ -40,5 +50,15 @@ MAX_INPUT_CHARS = 1000
 AUTO_REGEN_LIMIT = 1
 # P-05 API 오류 재시도 횟수 (PoC 축소). 가정: 기획안 2-5
 API_RETRY_LIMIT = 1
-# 의도 분류 신뢰도 임계값. 미정: 평가셋 1차 실행 후 결정 (specs/poc.md PoC2-04)
-INTENT_CONFIDENCE_THRESHOLD: float | None = None
+# 의도 분류 신뢰도 임계값. 가정: 평가셋 1차 실행 전 임시값 (specs/poc.md PoC2-04, 2026-10-04)
+INTENT_CONFIDENCE_THRESHOLD = 0.7
+
+# 의도 → 처리 경로 (specs/poc.md 2-5). 신뢰도 미달·분류 실패는 safe.
+ROUTE_BY_INTENT = {
+    "explain": "answer",
+    "diagnosis": "safe",
+    "parenting": "safe",  # 가정: 기획안 2-7 (양육 방법 추천을 처방으로 보고 제외)
+    "crisis": "crisis",
+    "out_of_scope": "redirect",
+}
+UNCLASSIFIED_ROUTE = "safe"

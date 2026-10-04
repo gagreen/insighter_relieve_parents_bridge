@@ -70,9 +70,11 @@ CREATE TABLE IF NOT EXISTS llm_calls (
     stage          TEXT NOT NULL CHECK (stage IN ('intent', 'answer', 'organize')),
     model          TEXT NOT NULL,
     prompt_version TEXT NOT NULL,
-    input_tokens   INTEGER,
-    cached_tokens  INTEGER,
+    input_tokens   INTEGER,                  -- 캐시를 거치지 않은 입력
+    cached_tokens  INTEGER,                  -- 캐시 읽기
+    cache_write_tokens INTEGER,              -- 캐시 쓰기 (2026-10-04 추가)
     output_tokens  INTEGER,
+    stop_reason    TEXT,                     -- end_turn / max_tokens / refusal ... (2026-10-04 추가)
     latency_ms     INTEGER,
     cost_usd       REAL,
     created_at     TEXT NOT NULL DEFAULT (datetime('now'))
@@ -87,8 +89,17 @@ def connect(path: Path | str | None = None) -> sqlite3.Connection:
     return conn
 
 
+# 나중에 추가한 컬럼. CREATE TABLE IF NOT EXISTS는 기존 테이블에 컬럼을 더하지 않으므로 확인한다.
+ADDED_COLUMNS = {"llm_calls": ("cache_write_tokens", "stop_reason")}
+
+
 def create_schema(conn: sqlite3.Connection) -> None:
     conn.executescript(SCHEMA)
+    for table, columns in ADDED_COLUMNS.items():
+        existing = {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
+        if missing := [c for c in columns if c not in existing]:
+            raise RuntimeError(f"DB 스키마가 오래되었습니다({table}에 {missing} 없음). "
+                               "DB 파일을 지우고 `python -m bridge.db init`을 다시 실행하세요.")
 
 
 def load_samples(

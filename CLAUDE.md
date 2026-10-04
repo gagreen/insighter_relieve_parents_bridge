@@ -85,7 +85,7 @@
 | 양육 조언형           | 안전 응답 + 노트 저장 (가정: 기획안 2-7에서 양육 방법 추천을 처방으로 보고 제외) | 아니오   |
 | 위기                  | 대화 중단, 위기 안내 템플릿, 알림 로그                                           | 아니오   |
 | 범위 밖(예약·결제 등) | 고객센터·예약 안내 문구                                                          | 아니오   |
-| 분류 신뢰도 미달      | 안전 응답 + 노트 저장 (임계값: 미정)                                             | 아니오   |
+| 분류 신뢰도 미달      | 안전 응답 + 노트 저장 (임계값: 임시 0.7, 가정 — 평가셋 1차 실행 후 결정)          | 아니오   |
 
 정책 상수(P-xx, 모두 기획안의 가정값 — `config`에서 관리). **PoC는 기준선(4장 성공 기준) 증명에 필요한 것만 구현한다.**
 
@@ -102,7 +102,7 @@
 1. 근거(보고서 JSON, 척도 설명 카드, 용어사전)에 있는 내용만 말한다. 사용한 근거 id를 `evidence_ids`로 반드시 출력한다.
 2. 5장 규칙을 지킨다.
 3. 숫자는 근거의 값을 그대로 인용한다.
-4. 답 순서: 보고서 사실 → 기준선 대비 위치 → 상담으로 연결 → 지금 할 수 있는 일.
+4. 답 순서: 보고서 사실 → 기준선 대비 위치 → 상담으로 연결 → 지금 할 수 있는 일. '지금 할 수 있는 일'은 상담 준비 행동(평소 관찰 기록, 상담 질문 메모)만 쓴다. 양육 방법은 6장에 따라 제외한다(2026-10-04).
 5. 출력은 JSON `{answerable, answer, evidence_ids, note_question}`이며 코드가 형식을 검증한다.
 
 - 프롬프트는 `prompts/`에 버전 번호를 붙인 파일로 관리한다(예: `answer_v1.md`). 기존 버전 파일은 고치지 않고 새 버전을 만든다.
@@ -169,7 +169,7 @@
 | subjects           | child_id, name, sex, birth_date, school_level, grade                                                                                                      | 식별 정보(결과 파일의 `subject`). **마스킹 모듈만 읽는다**(G-09, 2026-10-04 결정)  |
 | qa_turns           | turn_id, child_id, question_masked, intent, intent_confidence, answer, evidence_refs(JSON), guard_result(pass/regen/fallback), crisis_flag, saved_to_note | 대화 기록                                                                          |
 | note_items         | item_id, child_id, source_turn_id, text, type, related_refs(JSON), parent_edited, parent_approved                                                         | 질문 노트, 브리프 조립                                                             |
-| llm_calls          | call_id, turn_id, stage(intent/answer/organize), model, prompt_version, input_tokens, cached_tokens, output_tokens, latency_ms, cost_usd                  | 비용·지연 측정, 모델 비교                                                          |
+| llm_calls          | call_id, turn_id, stage(intent/answer/organize), model, prompt_version, input_tokens, cached_tokens(캐시 읽기), cache_write_tokens, output_tokens, stop_reason, latency_ms, cost_usd (2026-10-04 컬럼 추가) | 비용·지연 측정, 모델 비교                                                          |
 | ~~eval_results~~   | —                                                                                                                                                         | **PoC 제외.** 평가 결과는 `eval/reports/`의 리포트 파일(문항별 결과 포함)로 남긴다 |
 
 - 별도 설치·서버 없이 DB 파일 하나로 동작해야 한다(평가자가 API 키만 넣고 실행).
@@ -196,9 +196,12 @@
 - Python 3.11, Anthropic Python SDK, Streamlit(데모 화면), CLI(평가 실행), pytest.
 - 모델 호출은 `llm.py` 한 곳으로 모은다. 다른 모듈은 SDK를 직접 import하지 않는다. 프롬프트 캐싱을 쓴다.
 - 기본 모델 `claude-haiku-4-5-20251001`, 비교용 `claude-sonnet-5-5`.
+- 요청 옵션(2026-10-04 결정): 응답은 구조화 출력(`output_config.format`, JSON Schema)으로 받고 코드 검증도 따로 한다. Haiku 4.5는 thinking·effort 없이(effort를 보내면 400), Sonnet 5.5는 기본 adaptive thinking + `effort: low`. `temperature`는 보내지 않는다. 거절 시 다른 모델로 대신 응답하는 `fallbacks`는 모델 비교를 오염시키므로 쓰지 않고, 거절은 `stop_reason`으로 기록한다.
+- 캐시 최소 프리픽스: Haiku 4.5 4,096토큰, Sonnet 5.5 512토큰. 짧으면 오류 없이 캐시되지 않는다. 의도 분류 프롬프트는 짧아 캐시되지 않는다.
+- API 오류 재시도(P-05)는 SDK `max_retries`로 한다(직접 구현하지 않음).
 - 단가(기획안 6장, Anthropic 가격표 2026-10-02 조회 기준): Haiku 4.5 입력 $1 / 출력 $5, Sonnet 5.5 입력 $2 / 출력 $10 (100만 토큰당). 캐시 쓰기 1.25배, 캐시 읽기 0.1배. 단가는 `config`에 두고 `cost_usd` 계산에 쓴다.
 - 환경 변수: `ANTHROPIC_API_KEY`(필수), `LLM_MODEL`(선택, 기본 Haiku 4.5). `.env.example`만 커밋한다.
-- 의존성: anthropic, streamlit, jsonschema(payload 스키마 검증, 2026-10-03 승인), pytest. 추가는 사용자에게 먼저 묻는다. 표준 라이브러리로 되는 일에 패키지를 추가하지 않는다.
+- 의존성: anthropic(>=1.11, 구조화 출력), streamlit, jsonschema(payload 스키마 검증, 2026-10-03 승인), pytest. 추가는 사용자에게 먼저 묻는다. 표준 라이브러리로 되는 일에 패키지를 추가하지 않는다.
 
 ## 10. 리포지토리 구조 (2026-10-03 확정)
 
@@ -211,12 +214,13 @@ specs/            # 기능 명세 (상의 후 결정)
 src/bridge/
   config.py       # 정책 상수(P-xx), 단가, 모델 ID
   content.py      # content/ 로드·형식 검증, 사전 검사 대상 문장 추출 (2026-10-04 추가)
+  evidence.py     # 근거 묶음: 응답 프롬프트 근거 + 출력 검증의 id·숫자 기준 (2026-10-04 추가)
   llm.py          # 모델 호출 단일 진입점, 토큰·비용 기록
   db.py           # 스키마 생성, 적재
   ingest/         # 원천 데이터 → 공통 뼈대 변환 + JSON Schema 검증
   rules/          # 입력 검증, 범위 판정, 마스킹, 위기 키워드, 의도 키워드
   guard/          # 출력 검증(진단명 사전, 금칙 표현, 숫자 대조)
-  pipeline.py     # 질문 1건 처리(6장)
+  pipeline.py     # 질문 1건 처리(6장). 의도 분류 2차·응답 생성 단계 함수 포함
   results.py      # M1 조립
   notes.py        # 질문 노트, 질문 정리
   brief.py        # M3 브리프 텍스트
@@ -293,7 +297,7 @@ python -m eval.run --model claude-haiku-4-5-20251001
 - [x] 정의에 없는 척도(특수척도·사회능력)의 B-2 처리 → **대조에서 제외**(2026-10-03, `specs/poc.md` 2-2): `specs/poc.md` PoC1-01은 "모든 scores 항목"을 대조하지만 2-2 시드에는 이 척도 기준이 없음 → 대조 대상에서 제외할지, 가정 기준을 정의에 넣을지 결정
 - [x] 데모·평가 기준 샘플 1건 선정: `data/kcbcl_results/035.json` (`specs/poc.md` 2-3)
 - [x] 리포지토리 구조 확정(10장) → 명령어(13장) 갱신
-- [ ] 분류 신뢰도 임계값
+- [ ] 분류 신뢰도 임계값 (임시 0.7, 평가셋 1차 실행 후 결정)
 - [ ] 양육 조언형 처리 확정(현재 가정: 안전 응답 + 노트)
 - [ ] 샘플 보고서 JSON의 공개 커밋 여부
 - [ ] 기획안 4-5의 `logs/llm_calls.jsonl` 표기를 SQLite `llm_calls` 테이블로 맞출지 확인

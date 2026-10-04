@@ -12,7 +12,7 @@ TABLE_COLUMNS = {
                  "evidence_refs", "guard_result", "crisis_flag", "saved_to_note"},
     "note_items": {"item_id", "child_id", "source_turn_id", "text", "type", "related_refs",
                    "parent_edited", "parent_approved"},
-    "llm_calls": {"call_id", "turn_id", "stage", "model", "prompt_version", "input_tokens", "cached_tokens",
+    "llm_calls": {"call_id", "turn_id", "stage", "model", "prompt_version", "input_tokens", "cached_tokens", "cache_write_tokens", "stop_reason",
                   "output_tokens", "latency_ms", "cost_usd"},
 }
 
