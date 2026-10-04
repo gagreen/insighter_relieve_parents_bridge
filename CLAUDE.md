@@ -158,7 +158,7 @@
 - 사회능력 척도는 **점수가 낮을수록** 문제다. `definition`에 판정 방향(`direction: higher_is_worse | lower_is_worse`)을 둔다.
 - 증후군 척도 T점수 하한은 50이다(백분위 50 이하는 50T, 백분위 null 가능).
 - 미실시·적용 연령 아님 항목은 점수 `null` + `range: not_administered`로 두고, 화면에서 숨기지 말고 '미실시'로 표시한다.
-- KCBCL 시드 정의(`data/assessment_types/KCBCL_4_17.json`)에는 종합척도 3개 + 증후군 척도 8개만 있다. 특수척도(`emotional_instability`, `sex_problems`)와 사회능력(`sociability`, `school_performance`, `total_competence`)은 기준이 가정값이라 정의에 넣지 않았고, 이 항목의 `range`는 원보고서 라벨 그대로다(B-2에서의 처리는 16장 미결).
+- KCBCL 시드 정의(`data/assessment_types/KCBCL_4_17.json`)에는 종합척도 3개 + 증후군 척도 8개만 있다. 특수척도(`emotional_instability`, `sex_problems`)와 사회능력(`sociability`, `school_performance`, `total_competence`)은 기준이 가정값이라 정의에 넣지 않았고, 이 항목의 `range`는 원보고서 라벨 그대로이며, 규칙 엔진은 판정하지 않고 B-2 대조에서 제외한다(2026-10-03 결정).
 
 ### 8-3. 테이블 (SQLite, 표준 라이브러리 `sqlite3`)
 
@@ -166,6 +166,7 @@
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | assessment_types   | code, name, respondent, schema_version, definition(JSON)                                                                                                  | 검사 정의·판정 기준                                                                |
 | assessment_results | result_id, child_id(가명), assessment_code, administered_at, schema_version, payload(JSON)                                                                | 검사 결과, 숫자 검증 기준                                                          |
+| subjects           | child_id, name, sex, birth_date, school_level, grade                                                                                                      | 식별 정보(결과 파일의 `subject`). **마스킹 모듈만 읽는다**(G-09, 2026-10-04 결정)  |
 | qa_turns           | turn_id, child_id, question_masked, intent, intent_confidence, answer, evidence_refs(JSON), guard_result(pass/regen/fallback), crisis_flag, saved_to_note | 대화 기록                                                                          |
 | note_items         | item_id, child_id, source_turn_id, text, type, related_refs(JSON), parent_edited, parent_approved                                                         | 질문 노트, 브리프 조립                                                             |
 | llm_calls          | call_id, turn_id, stage(intent/answer/organize), model, prompt_version, input_tokens, cached_tokens, output_tokens, latency_ms, cost_usd                  | 비용·지연 측정, 모델 비교                                                          |
@@ -176,15 +177,15 @@
 
 ### 8-4. 샘플 데이터 (`data/`, 상세: `data/README.md`)
 
-| 경로 | 내용 | 생성 |
-| --- | --- | --- |
-| `data/kcbcl_samples_100.json` | 원천 데이터 100건(공통 뼈대 아님). **수정하지 않는다.** | `scripts/generate_kcbcl_samples.py` (seed 20261002) |
-| `data/kcbcl_results/001.json` ~ `100.json` | 검사 결과 1건 = 파일 1개. 8-1 공통 뼈대 | `scripts/convert_kcbcl_to_skeleton.py` |
-| `data/assessment_types/KCBCL_4_17.json` | `assessment_types` 시드 1행(`specs/poc.md` 2-2 형식) | 위 변환 스크립트 |
-| `schemas/kcbcl_4_17.schema.json` | payload JSON Schema(저장 전 검증) | 수작업 |
+| 경로                                       | 내용                                                    | 생성                                                |
+| ------------------------------------------ | ------------------------------------------------------- | --------------------------------------------------- |
+| `data/kcbcl_samples_100.json`              | 원천 데이터 100건(공통 뼈대 아님). **수정하지 않는다.** | `scripts/generate_kcbcl_samples.py` (seed 20261002) |
+| `data/kcbcl_results/001.json` ~ `100.json` | 검사 결과 1건 = 파일 1개. 8-1 공통 뼈대                 | `scripts/convert_kcbcl_to_skeleton.py`              |
+| `data/assessment_types/KCBCL_4_17.json`    | `assessment_types` 시드 1행(`specs/poc.md` 2-2 형식)    | 위 변환 스크립트                                    |
+| `schemas/kcbcl_4_17.schema.json`           | payload JSON Schema(저장 전 검증)                       | 수작업                                              |
 
 - 결과 파일 1건 = `assessment_results` 컬럼(`result_id`, `child_id`, `assessment_code`, `administered_at`, `schema_version`) + `subject` + `payload` + `sample_meta`.
-  - `subject`(이름·생년월일·학년)는 가상이지만 식별 정보로 취급한다. payload 밖에 있으며 프롬프트·화면 요약에 넣지 않는다(G-09).
+  - `subject`(이름·생년월일·학년)는 가상이지만 식별 정보로 취급한다. payload 밖에 있으며 `subjects` 테이블에만 적재한다. 마스킹(이름 대조)에만 쓰고 프롬프트·화면 요약에 넣지 않는다(G-09).
   - `sample_meta`는 테스트용 기대값(심각도, 프로파일 유형 등)이다. DB 적재·AI 근거에 쓰지 않는다.
 - **데모·평가 기준 샘플: `data/kcbcl_results/035.json`** (선정 근거: `specs/poc.md` 2-3). 평가셋 질문은 이 샘플의 점수를 전제로 쓴다.
 - **T점수는 실제 규준이 아닌 시뮬레이션 규준**이다(README 한계에 적는다).
@@ -268,8 +269,8 @@ pip install -r requirements.txt               # bridge 패키지(editable) + ant
 cp .env.example .env
 pytest
 python scripts/convert_kcbcl_to_skeleton.py   # 원천 → data/kcbcl_results/ (이미 생성됨, 원천을 바꿀 때만)
+python -m bridge.db init            # 스키마 생성 + 샘플 적재 (기본 ./bridge.db, 다시 실행해도 중복 없음)
 # 아래는 구현 후 사용 (예정)
-python -m bridge.db init            # 스키마 생성 + 샘플 적재
 streamlit run app/main.py           # 데모
 python -m eval.run --model claude-haiku-4-5-20251001
 ```
@@ -288,7 +289,7 @@ python -m eval.run --model claude-haiku-4-5-20251001
 
 - [x] SDD 문서 구성: `specs/poc.md` 1개 + `content/`·`eval/` 데이터 파일 (기준선까지만 개발)
 - [x] `kcbcl_samples_100.json` → 공통 뼈대 변환 (`data/kcbcl_results/`, 8-4)
-- [ ] 정의에 없는 척도(특수척도·사회능력)의 B-2 처리: `specs/poc.md` PoC1-01은 "모든 scores 항목"을 대조하지만 2-2 시드에는 이 척도 기준이 없음 → 대조 대상에서 제외할지, 가정 기준을 정의에 넣을지 결정
+- [x] 정의에 없는 척도(특수척도·사회능력)의 B-2 처리 → **대조에서 제외**(2026-10-03, `specs/poc.md` 2-2): `specs/poc.md` PoC1-01은 "모든 scores 항목"을 대조하지만 2-2 시드에는 이 척도 기준이 없음 → 대조 대상에서 제외할지, 가정 기준을 정의에 넣을지 결정
 - [x] 데모·평가 기준 샘플 1건 선정: `data/kcbcl_results/035.json` (`specs/poc.md` 2-3)
 - [x] 리포지토리 구조 확정(10장) → 명령어(13장) 갱신
 - [ ] 분류 신뢰도 임계값

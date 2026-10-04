@@ -11,6 +11,7 @@
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env               # ANTHROPIC_API_KEY 입력
+python -m bridge.db init           # SQLite 스키마 생성 + 샘플 적재
 pytest
 ```
 

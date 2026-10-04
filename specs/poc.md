@@ -34,7 +34,7 @@ PoC가 끝났다는 것은 아래 6개가 모두 측정되어 리포트에 기�
 - PoC가 사용하는 최소 필드:
   - `scores[]`: `id`, `scale`, `name`, `t`, `percentile`(null 허용), `range`
   - `findings[]`: `id`, `section`, `scale`(null 허용), `text`
-- 식별 정보(이름, 생년월일, 학교 등)는 payload에 있을 수 있지만 프롬프트·화면 요약에 넣지 않는다(G-09).
+- 식별 정보(이름, 생년월일, 학년 등)는 payload 밖 `subjects` 테이블에 따로 둔다(2-4). `subjects`는 마스킹(PoC2-02)만 읽고, 프롬프트·화면 요약에 넣지 않는다(G-09).
 
 ### 2-2. 판정 기준 정의 (`assessment_types.definition`)
 
@@ -71,6 +71,8 @@ PoC가 끝났다는 것은 아래 6개가 모두 측정되어 리포트에 기�
 
 - `scales`에는 실제 척도 키 전체를 넣는다(위는 일부). 척도 키는 변환 작업의 `scale` 값과 맞춘다.
 - `lower_is_worse`(사회능력)는 판정 로직이 지원하되, PoC 시드에서는 사회능력 기준을 넣지 않는다(샘플 기준 값이 가정이므로).
+  - `lower_is_worse` 그룹의 기준 키는 `borderline_max`, `clinical_max`다(T ≤ `clinical_max` → clinical, T ≤ `borderline_max` → borderline).
+- `scales`에 없는 척도(KCBCL 시드의 특수척도·사회능력)는 판정하지 않는다. 판정 결과는 '정의 없음'이고 B-2 대조에서 제외한다(2026-10-03 결정). 화면 표시는 PoC1-04의 '카드 없음' 처리를 따른다.
 
 ### 2-3. 기준 샘플
 
@@ -83,7 +85,26 @@ PoC가 끝났다는 것은 아래 6개가 모두 측정되어 리포트에 기�
   - 보호자 의견 3건(`VII.1` 사회적 미성숙, `VII.2` 주의집중 문제, `VII.3` 정서불안정)
   - 선정 이유: PoC2-05 예시(주의집중 문제 T=66, 관찰 권고 범위) 재현, 정상·준임상·임상·백분위 null·미실시를 한 건에 포함, 보호자 의견에 위험 표현 없음(B-5가 질문으로만 결정됨)
 
-### 2-4. 의도 코드
+### 2-4. 적재 [`CLAUDE.md` 8-1, 8-3]
+
+```
+Given 빈 DB 파일
+When `python -m bridge.db init` 을 실행하면
+Then 8-3의 테이블 6개(assessment_types, assessment_results, subjects, qa_turns, note_items, llm_calls)가 생기고
+ And data/assessment_types/ 의 정의와 data/kcbcl_results/ 의 결과가 적재된다
+ And 결과의 subject(식별 정보)는 subjects 테이블에만 적재하고, 다른 테이블·payload에는 넣지 않는다
+ And sample_meta는 적재하지 않는다
+
+Given 검사별 JSON Schema(schemas/<검사 코드 소문자>.schema.json)를 통과하지 못하는 payload
+When 적재하면
+Then 그 결과는 저장하지 않고 result_id와 오류를 보고한다
+
+Given 이미 적재된 DB
+When init 을 다시 실행하면
+Then 같은 결과가 중복 저장되지 않는다
+```
+
+### 2-5. 의도 코드
 
 | 코드           | 의미                  | 처리 경로(route)               |
 | -------------- | --------------------- | ------------------------------ |
@@ -110,8 +131,17 @@ When 증후군 척도 T가 59, 60, 69, 70이면
 Then 각각 normal, borderline, borderline, clinical 로 판정한다
 
 Given 적재된 샘플 전체
-When 모든 scores 항목을 판정하면
+When 정의(2-2)의 scales에 있는 scores 항목을 판정하면
 Then 판정 결과가 payload의 range와 모두 같다 (다르면 테스트 실패 + 해당 id 출력)
+ And scales에 없는 항목은 판정하지 않고 대조에서 제외한다
+
+Given 증후군 척도 하한 50T
+When 판정하면
+Then normal 이다
+
+Given direction = lower_is_worse 인 그룹 정의
+When T가 clinical_max, borderline_max, borderline_max+1 이면
+Then 각각 clinical, borderline, normal 로 판정한다
 
 Given t가 null인 항목
 When 판정하면
@@ -198,7 +228,8 @@ When "재원이가 ○○초등학교에서 010-1234-5678로 연락이 왔어요
 Then 외부로 나가는 텍스트와 저장되는 question_masked 는 이름·학교명·전화번호가 [이름]·[학교]·[연락처]로 바뀐 문장이다
 ```
 
-- 대상: 아동 이름(payload 식별 필드 기준), 전화번호, 이메일, 학교명(초·중·고등학교 패턴).
+- 대상: 아동 이름(`subjects.name` 기준, 성을 뺀 이름·조사 붙은 형태 포함), 전화번호, 이메일, 학교명(초·중·고등학교 패턴).
+- 이름 출처 결정(2026-10-04): 식별 정보 테이블 분리(`subjects`). 검토한 대안: 원본 결과 파일에서 직접 읽기, 호출자가 이름 전달.
 - 위 예시 값은 가상이다.
 
 ### PoC2-03 위기 감지 [G-05] → B-5
