@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS qa_turns (
     question_masked   TEXT NOT NULL,
     intent            TEXT,
     intent_confidence REAL,
+    route             TEXT,                   -- crisis/safe/redirect/answer/api_error (2026-10-04 추가)
     answer            TEXT,
     evidence_refs     TEXT,                   -- JSON 배열
     guard_result      TEXT CHECK (guard_result IN ('pass', 'regen', 'fallback')),
@@ -90,7 +91,7 @@ def connect(path: Path | str | None = None) -> sqlite3.Connection:
 
 
 # 나중에 추가한 컬럼. CREATE TABLE IF NOT EXISTS는 기존 테이블에 컬럼을 더하지 않으므로 확인한다.
-ADDED_COLUMNS = {"llm_calls": ("cache_write_tokens", "stop_reason")}
+ADDED_COLUMNS = {"llm_calls": ("cache_write_tokens", "stop_reason"), "qa_turns": ("route",)}
 
 
 def create_schema(conn: sqlite3.Connection) -> None:
@@ -161,6 +162,15 @@ def get_payload(conn: sqlite3.Connection, result_id: str) -> dict:
     if row is None:
         raise KeyError(f"검사 결과 없음: {result_id}")
     return json.loads(row["payload"])
+
+
+def get_result(conn: sqlite3.Connection, result_id: str) -> dict:
+    """검사 결과 1건(식별 정보 없음): result_id, child_id(가명), assessment_code, payload."""
+    row = conn.execute("SELECT result_id, child_id, assessment_code, payload FROM assessment_results"
+                       " WHERE result_id = ?", (result_id,)).fetchone()
+    if row is None:
+        raise KeyError(f"검사 결과 없음: {result_id}")
+    return {**dict(row), "payload": json.loads(row["payload"])}
 
 
 def get_subject(conn: sqlite3.Connection, child_id: str) -> dict:

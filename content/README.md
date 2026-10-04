@@ -17,6 +17,7 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 | `phrases.json` | 백분위 문장, 고정 문구, 범위 밖·입력 오류·API 오류 안내 | PoC1-02, 07 / PoC2-01, 06, 10 |
 | `glossary.json` | 용어사전 | 용어 툴팁, 응답 근거 |
 | `safe_responses.json` | 안전 응답 템플릿 | PoC2-05, 08 |
+| `scale_terms.json` | 질문 속 표현 → 척도 연결 (안전 응답의 척도 찾기) | PoC2-05 |
 | `crisis.json` | 위기 키워드, 위기 안내, 공공 상담 채널 | PoC2-03 |
 | `intent_keywords.json` | 의도 분류 1차 키워드 | PoC2-04 |
 | `guard_terms.json` | 진단명 사전, 금칙 표현 | PoC1-08, PoC2-08 |
@@ -116,18 +117,32 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 ```json
 [
   {
-    "id": "safe.diagnosis",
+    "id": "safe.diagnosis.scale",
     "intents": ["diagnosis"],
     "requires_scale": true,
     "text": "(보고서 사실: {scale_name} T={t}, {range_label}) + (진단·치료는 상담에서 다룸) + (질문을 노트에 저장했다는 안내)"
   },
-  {"id": "safe.parenting",      "intents": ["parenting"],      "requires_scale": false, "text": "(…)"},
-  {"id": "safe.low_confidence", "intents": ["low_confidence"], "requires_scale": false, "text": "(…)"},
-  {"id": "safe.guard_fallback", "intents": ["guard_fallback"], "requires_scale": false, "text": "(…)"}
+  {"id": "safe.diagnosis", "intents": ["diagnosis"], "requires_scale": false, "text": "(…)"}
 ]
 ```
 
-- `requires_scale: true`인 템플릿은 질문에서 척도를 찾지 못하면 `requires_scale: false` 템플릿으로 대체한다.
+- 종류(`intents` 값): `diagnosis`, `parenting`, `low_confidence`, `guard_fallback`. 종류마다 일반 템플릿(`requires_scale: false`)이 정확히 1개, 척도 템플릿(`requires_scale: true`)이 0~1개.
+- 척도 템플릿은 `{scale_name}`, `{t}`, `{range_label}`만, 일반 템플릿은 자리표시자를 쓰지 않는다.
+- 질문에서 찾은 첫 척도에 T점수와 범위 이름이 모두 있을 때만 척도 템플릿을 쓴다. 아니면 일반 템플릿(`specs/poc.md` PoC2-05).
+
+## scale_terms.json
+
+```json
+[
+  {"id": "terms.KCBCL_4_17.attention", "assessment": "KCBCL_4_17", "scale": "attention",
+   "terms": ["(질문에 나올 수 있는 표현)"], "status": "draft"}
+]
+```
+
+- 척도 이름(payload `scores[].name`)은 자동으로 찾으므로 여기에는 그 밖의 표현만 둔다. 이름 일치가 표현 일치보다 우선한다.
+- (assessment, scale) 조합과 같은 검사 안의 표현은 유일해야 한다. `scale`은 판정 기준 정의의 `scales` 키.
+- 진단명 → 척도 연결은 '어느 보고서 사실을 보여 줄지'를 고르는 데만 쓰고 화면에 연결 관계를 출력하지 않는다(G-01). 상담사 검수 전 초안(`status: draft`).
+- 패턴 데이터라 사전 검사(PoC1-08) 대상이 아니다.
 
 ## crisis.json
 
@@ -145,7 +160,7 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 
 - `type`: `literal | regex`. `category`: `child_safety | caregiver_distress`.
 - 원문과 공백을 지운 문장 양쪽에서 찾는다. 관용어("힘들어 죽겠어요")와 공격성 행동("친구를 때려요")은 잡지 않는다(`specs/poc.md` PoC2-03).
-- `channels`는 공식 출처 확인 전에는 비워 둔다.
+- `channels`는 공식 출처 확인 전에는 비워 둔다. 위기 안내는 `message` 뒤에 `- 이름: 연락처` 줄로 채널을 붙인다.
 
 ## intent_keywords.json
 

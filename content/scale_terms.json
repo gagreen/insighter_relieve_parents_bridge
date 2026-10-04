@@ -1,0 +1,161 @@
+[
+  {
+    "id": "terms.KCBCL_4_17.internalizing",
+    "assessment": "KCBCL_4_17",
+    "scale": "internalizing",
+    "terms": [
+      "내재화"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.externalizing",
+    "assessment": "KCBCL_4_17",
+    "scale": "externalizing",
+    "terms": [
+      "외현화"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.total",
+    "assessment": "KCBCL_4_17",
+    "scale": "total",
+    "terms": [
+      "총 문제행동",
+      "전체 문제행동"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.withdrawn",
+    "assessment": "KCBCL_4_17",
+    "scale": "withdrawn",
+    "terms": [
+      "위축",
+      "소극적"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.somatic",
+    "assessment": "KCBCL_4_17",
+    "scale": "somatic",
+    "terms": [
+      "신체 증상",
+      "신체증상",
+      "두통",
+      "복통"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.anxdep",
+    "assessment": "KCBCL_4_17",
+    "scale": "anxdep",
+    "terms": [
+      "불안",
+      "우울"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.socimm",
+    "assessment": "KCBCL_4_17",
+    "scale": "socimm",
+    "terms": [
+      "미성숙",
+      "또래 관계",
+      "또래관계"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.thought",
+    "assessment": "KCBCL_4_17",
+    "scale": "thought",
+    "terms": [
+      "사고 문제",
+      "사고문제"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.attention",
+    "assessment": "KCBCL_4_17",
+    "scale": "attention",
+    "terms": [
+      "ADHD",
+      "ADD",
+      "주의력",
+      "과잉행동",
+      "집중",
+      "산만"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.delinquent",
+    "assessment": "KCBCL_4_17",
+    "scale": "delinquent",
+    "terms": [
+      "비행",
+      "규칙 위반",
+      "거짓말"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.aggressive",
+    "assessment": "KCBCL_4_17",
+    "scale": "aggressive",
+    "terms": [
+      "공격",
+      "폭력",
+      "때리",
+      "때려"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.emotional_instability",
+    "assessment": "KCBCL_4_17",
+    "scale": "emotional_instability",
+    "terms": [
+      "감정 기복",
+      "감정기복",
+      "정서 불안"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.sociability",
+    "assessment": "KCBCL_4_17",
+    "scale": "sociability",
+    "terms": [
+      "사회성",
+      "친구 관계",
+      "친구관계"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.school_performance",
+    "assessment": "KCBCL_4_17",
+    "scale": "school_performance",
+    "terms": [
+      "학업",
+      "성적"
+    ],
+    "status": "draft"
+  },
+  {
+    "id": "terms.KCBCL_4_17.total_competence",
+    "assessment": "KCBCL_4_17",
+    "scale": "total_competence",
+    "terms": [
+      "사회능력"
+    ],
+    "status": "draft"
+  }
+]

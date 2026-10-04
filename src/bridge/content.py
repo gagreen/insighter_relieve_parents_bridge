@@ -50,15 +50,23 @@ PHRASE_PLACEHOLDERS = {
     "not_administered": set(),
     "input_empty": set(),
     "input_too_long": {"max_chars"},
+    "out_of_scope": set(),
+    "no_evidence": set(),
+    "api_error": set(),
 }
 M1_PHRASE_KEYS = ("fixed_notice_results", "percentile_known", "percentile_known_lower",
                   "direction_note_lower", "percentile_unknown", "not_administered")
-QA_PHRASE_KEYS = ("input_empty", "input_too_long")  # PoC-2 문구는 구현하면서 추가한다
+QA_PHRASE_KEYS = ("input_empty", "input_too_long", "out_of_scope", "no_evidence", "api_error")
 
 CRISIS_REQUIRED = ("keywords", "message", "channels")
 CRISIS_CATEGORIES = ("child_safety", "caregiver_distress")
 # 위기는 crisis.json에 따로 둔다(위기 검사가 먼저 실행됨). diagnosis 우선 규칙은 bridge.rules.intents.
 INTENT_KEYWORD_KEYS = ("diagnosis", "parenting", "out_of_scope", "explain")
+
+# 안전 응답 종류 (specs/poc.md PoC2-05). 종류마다 일반 템플릿 1개 + 척도 템플릿 0~1개.
+SAFE_KINDS = ("diagnosis", "parenting", "low_confidence", "guard_fallback")
+SAFE_SCALE_PLACEHOLDERS = {"scale_name", "t", "range_label"}
+TERM_STATUSES = ("draft", "reviewed")
 
 _PLACEHOLDER = re.compile(r"\{(\w+)\}")
 
@@ -183,6 +191,40 @@ def load_intent_keywords(content_dir: Path | None = None) -> dict[str, list[dict
     for intent, items in keywords.items():
         _check_patterns(items, f"intent.{intent}")
     return keywords
+
+
+def load_safe_responses(content_dir: Path | None = None) -> list[dict]:
+    templates = load_json("safe_responses.json", content_dir)
+    _check_unique([t["id"] for t in templates], "안전 응답 id")
+    for t in templates:
+        if unknown := set(t["intents"]) - set(SAFE_KINDS):
+            raise ContentError(f"{t['id']}: 알 수 없는 종류 {sorted(unknown)}")
+        _check_placeholders(t["text"], SAFE_SCALE_PLACEHOLDERS if t["requires_scale"] else set(), t["id"])
+    for kind in SAFE_KINDS:
+        general = [t["id"] for t in templates if kind in t["intents"] and not t["requires_scale"]]
+        scale = [t["id"] for t in templates if kind in t["intents"] and t["requires_scale"]]
+        if len(general) != 1 or len(scale) > 1:
+            raise ContentError(f"안전 응답 {kind}: 일반 템플릿 1개, 척도 템플릿 0~1개여야 함 (일반 {general}, 척도 {scale})")
+    return templates
+
+
+def load_scale_terms(content_dir: Path | None = None, definitions: dict[str, dict] | None = None) -> list[dict]:
+    """definitions({검사 코드: 정의})를 주면 assessment·scale이 정의에 있는지도 확인한다."""
+    entries = load_json("scale_terms.json", content_dir)
+    _check_unique([e["id"] for e in entries], "척도 표현 id")
+    _check_unique([(e["assessment"], e["scale"]) for e in entries], "척도 표현 (assessment, scale)")
+    _check_unique([(e["assessment"], term) for e in entries for term in e["terms"]], "척도 표현")
+    for e in entries:
+        if not e["terms"]:
+            raise ContentError(f"{e['id']}: 표현이 비어 있음")
+        if e["status"] not in TERM_STATUSES:
+            raise ContentError(f"{e['id']}: 알 수 없는 status {e['status']!r}")
+        if definitions is not None:
+            if e["assessment"] not in definitions:
+                raise ContentError(f"{e['id']}: 정의 없는 검사 {e['assessment']!r}")
+            if e["scale"] not in definitions[e["assessment"]]["scales"]:
+                raise ContentError(f"{e['id']}: 정의에 없는 척도 {e['scale']!r}")
+    return entries
 
 
 def iter_content_sentences(content_dir: Path | None = None) -> Iterator[tuple[str, str, str]]:

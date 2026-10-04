@@ -8,7 +8,7 @@ TABLE_COLUMNS = {
     "assessment_types": {"code", "name", "respondent", "schema_version", "definition"},
     "assessment_results": {"result_id", "child_id", "assessment_code", "administered_at", "schema_version", "payload"},
     "subjects": {"child_id", "name", "sex", "birth_date", "school_level", "grade"},
-    "qa_turns": {"turn_id", "child_id", "question_masked", "intent", "intent_confidence", "answer",
+    "qa_turns": {"turn_id", "child_id", "question_masked", "intent", "intent_confidence", "route", "answer",
                  "evidence_refs", "guard_result", "crisis_flag", "saved_to_note"},
     "note_items": {"item_id", "child_id", "source_turn_id", "text", "type", "related_refs",
                    "parent_edited", "parent_approved"},

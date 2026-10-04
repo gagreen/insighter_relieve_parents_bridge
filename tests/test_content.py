@@ -231,3 +231,54 @@ def test_m1_phrases_do_not_require_qa_keys(content_copy):
 
 def test_poc1_08_scan_includes_crisis_message():
     assert ("crisis.json", "message[0]") in {(f, w) for f, w, _ in content.iter_content_sentences()}
+
+
+# ── 안전 응답·척도 표현 (PoC2-05) ────────────────────
+
+
+def test_safe_responses_cover_each_kind():
+    templates = content.load_safe_responses()
+    for kind in content.SAFE_KINDS:
+        general = [t for t in templates if kind in t["intents"] and not t["requires_scale"]]
+        scale = [t for t in templates if kind in t["intents"] and t["requires_scale"]]
+        assert len(general) == 1 and len(scale) <= 1, kind
+
+
+@pytest.mark.parametrize("fn", [
+    lambda ts: [t for t in ts if t["id"] != "safe.parenting"],                                   # 일반 템플릿 누락
+    lambda ts: ts + [{**ts[0], "id": "safe.extra"}],                                             # 척도 템플릿 2개
+    lambda ts: [{**t, "text": t["text"] + "{t}"} if t["id"] == "safe.diagnosis" else t for t in ts],  # 일반 템플릿에 숫자 자리
+    lambda ts: [{**t, "text": t["text"] + "{percentile}"} if t["requires_scale"] else t for t in ts],  # 허용 밖 자리표시자
+    lambda ts: [{**t, "intents": ["smalltalk"]} if t["id"] == "safe.diagnosis" else t for t in ts],     # 모르는 종류
+], ids=["missing_general", "two_scale", "general_placeholder", "scale_placeholder", "unknown_kind"])
+def test_safe_responses_reject_bad_format(content_copy, fn):
+    _edit(content_copy, "safe_responses.json", fn)
+    with pytest.raises(ContentError):
+        content.load_safe_responses(content_copy)
+
+
+def test_scale_terms_match_definition(definitions):
+    assert content.load_scale_terms(definitions=definitions)
+
+
+@pytest.mark.parametrize("fn", [
+    lambda ts: ts + [{**ts[0], "id": "terms.dup"}],                                          # (assessment, scale) 중복
+    lambda ts: [{**ts[0], "terms": ts[0]["terms"] + [ts[1]["terms"][0]]}] + ts[1:],           # 표현 중복
+    lambda ts: ts + [{**ts[0], "id": "terms.x", "scale": "no_such_scale", "terms": ["새 표현"]}],
+], ids=["dup_scale", "dup_term", "unknown_scale"])
+def test_scale_terms_reject_bad_format(content_copy, definitions, fn):
+    _edit(content_copy, "scale_terms.json", fn)
+    with pytest.raises(ContentError):
+        content.load_scale_terms(content_copy, definitions=definitions)
+
+
+def test_qa_phrases_present():
+    assert content.load_phrases(required=content.QA_PHRASE_KEYS)
+
+
+def test_crisis_channels_are_sourced():
+    """spec 7장: 공공 상담 채널은 공식 출처와 확인일을 함께 적는다."""
+    channels = content.load_crisis()["channels"]
+    assert channels
+    for ch in channels:
+        assert ch["source_url"].startswith("https://") and re.fullmatch(r"\d{4}-\d{2}-\d{2}", ch["checked_at"])

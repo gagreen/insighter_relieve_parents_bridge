@@ -104,5 +104,24 @@
     }
   ],
   "message": "말씀해 주신 내용은 아이나 보호자의 안전과 관련될 수 있어 질문 도우미 대화를 여기서 멈춥니다. 지금 위급한 상황이라면 바로 긴급 신고를 하거나 공공 위기 상담 채널에 연락해 주세요. 남겨 주신 내용은 상담 전에 상담사가 볼 수 있도록 위기 표시로 남겨 둡니다.",
-  "channels": []
+  "channels": [
+    {
+      "name": "자살예방상담전화",
+      "contact": "109 (24시간)",
+      "source_url": "https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1479607&tag=&nPage=1",
+      "checked_at": "2026-10-04"
+    },
+    {
+      "name": "청소년상담 1388",
+      "contact": "국번 없이 1388 (휴대폰은 지역번호 + 1388)",
+      "source_url": "https://www.bokjiro.go.kr/ssis-tbu/cms/pc/news/promotion/1305297_1118.html",
+      "checked_at": "2026-10-04"
+    },
+    {
+      "name": "아동학대 신고·긴급 신고",
+      "contact": "112",
+      "source_url": "https://www.bokjiro.go.kr/ssis-tbu/cms/pc/news/promotion/1188971_1118.html",
+      "checked_at": "2026-10-04"
+    }
+  ]
 }
