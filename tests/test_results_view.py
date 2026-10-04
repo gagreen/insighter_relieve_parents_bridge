@@ -140,8 +140,13 @@ def test_poc1_05_not_administered_shown_with_report_text():
     assert item["range_label"] == "미실시"
     assert item["status_text"] == PHRASES["not_administered"]
     assert item["percentile_text"] is None
+    # 보고서 원문 안내 문장은 같은 섹션(Ⅳ)에 점수 바로 뒤로 나온다 (PoC1-09, 2026-10-05)
+    blocks = next(s for s in BASE_VIEW["sections"] if s["key"] == "IV")["blocks"]
+    ids = [b["id"] for b in blocks]
+    assert ids.index("IV.sex_problems.note") > ids.index("IV.sex_problems")
+    note = next(b for b in blocks if b["id"] == "IV.sex_problems.note")
     originals = {f["id"]: f["text"] for f in BASE["payload"]["findings"]}
-    assert item["explanation"]["texts"] == [originals["IV.sex_problems.note"]]
+    assert note["text"] == originals["IV.sex_problems.note"]
 
 
 def test_poc1_05_no_items_hidden_all_samples():
@@ -178,7 +183,7 @@ def test_poc1_06_scale_without_group_has_no_thresholds():
     item = _item("emotional_instability")
     assert item["thresholds"] is None
     assert item["range"] is None and item["range_label"] is None
-    assert item["explanation"]["kind"] == "report_text"
+    assert item["explanation"]["kind"] == "report_ref"
 
 
 # ── PoC1-07, G-09 ────────────────────────────────────

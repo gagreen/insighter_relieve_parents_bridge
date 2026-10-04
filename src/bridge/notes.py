@@ -17,7 +17,9 @@ from bridge.llm import LLMError, LLMResult
 BRIEF_TYPES = ("diagnosis", "parenting", "understanding", "other")
 # 정리 실패 시 노트 유형 → 브리프 유형
 NOTE_TYPE_TO_BRIEF = {"diagnosis": "diagnosis", "parenting": "parenting",
-                      "no_evidence": "understanding", "guard_fallback": "understanding"}
+                      "no_evidence": "understanding", "guard_fallback": "understanding",
+                      "report_phrase": "understanding"}
+REPORT_PHRASE_ROUTE = "note"   # 결과 화면의 상담 질문 저장 (PoC1-11)
 NOTES_TAG = "saved_questions"
 
 ORGANIZE_SCHEMA = {
@@ -50,6 +52,23 @@ def save_note(conn: sqlite3.Connection, child_id: str, turn_id: int, text: str, 
             (child_id, turn_id, text, type_, json.dumps(related_refs, ensure_ascii=False)),
         )
     return cur.lastrowid
+
+
+def save_report_phrase(conn: sqlite3.Connection, child_id: str, finding_id: str, term: dict,
+                       phrases: dict[str, str]) -> int:
+    """PoC1-11: 해석 표현을 상담 질문으로 저장한다. LLM 없이 템플릿으로 문장을 만든다.
+
+    노트 목록·브리프의 세션 범위가 source_turn_id로 정해지므로 qa_turns에도 1행을 남긴다(route = note).
+    {term}은 용어사전의 표현(보고서 원문 낱말)이라 식별 정보가 없다(G-09).
+    """
+    text = phrases["report_phrase_note"].format(term=term["term"])
+    refs = [finding_id, term["id"]]
+    with conn:
+        cur = conn.execute(
+            "INSERT INTO qa_turns (child_id, question_masked, route, evidence_refs, saved_to_note) VALUES (?, ?, ?, ?, 1)",
+            (child_id, text, REPORT_PHRASE_ROUTE, json.dumps(refs, ensure_ascii=False)),
+        )
+    return save_note(conn, child_id, cur.lastrowid, text, "report_phrase", refs)
 
 
 def list_notes(conn: sqlite3.Connection, child_id: str, since_turn_id: int | None = None) -> list[dict]:

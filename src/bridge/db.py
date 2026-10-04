@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS qa_turns (
     question_masked   TEXT NOT NULL,
     intent            TEXT,
     intent_confidence REAL,
-    route             TEXT,                   -- crisis/safe/redirect/answer/api_error (2026-10-04 추가)
+    route             TEXT,                   -- crisis/safe/redirect/answer/api_error (2026-10-04 추가) / note (PoC1-11)
     answer            TEXT,
     evidence_refs     TEXT,                   -- JSON 배열
     guard_result      TEXT CHECK (guard_result IN ('pass', 'regen', 'fallback')),

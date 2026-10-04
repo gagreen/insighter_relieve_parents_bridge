@@ -3,10 +3,12 @@
 미리 만든 문장을 조립만 한다(G-04). LLM을 호출하지 않는다. 검사 종류별 분기 없음(G-12).
 """
 from bridge.content import CARD_SENTENCE_FIELDS
+from bridge.rules.glossary_match import annotate
 from bridge.rules.ranges import BORDERLINE, CLINICAL, NOT_ADMINISTERED, direction, judge
 
 DRAFT_LABEL = "초안(검수 전)"      # G-04, G-11
 REVIEWED_LABEL = "검수된 설명"     # G-11
+OTHER_SECTION = {"key": "_other", "title": "기타"}   # 정의에 없는 접두어 (PoC1-09)
 
 
 def judge_scores(scores: list[dict], definition: dict) -> list[dict]:
@@ -40,14 +42,19 @@ def render_card(card: dict, score: dict, definition: dict) -> dict:
 
 def link_card(score: dict, judged_range: str | None, cards: list[dict],
               findings: list[dict], definition: dict, assessment: str) -> dict:
-    """PoC1-04: (scale, range) 카드 1장을 붙인다. 없으면 같은 scale의 보고서 원문을 그대로 쓴다."""
+    """PoC1-04: (scale, range) 카드 1장을 붙인다. 없으면 같은 scale의 원문이 있는 섹션을 안내한다.
+
+    원문 자체는 섹션 배치(PoC1-09)에 한 번만 나오므로 여기서 다시 싣지 않는다(2026-10-05).
+    """
     card = next((c for c in cards if c["assessment"] == assessment
                  and c["scale"] == score["scale"] and c["range"] == judged_range), None)
     if card is not None:
         label = DRAFT_LABEL if card["status"] == "draft" else REVIEWED_LABEL
         return {"kind": "card", "card": render_card(card, score, definition), "label": label}
     matched = [f for f in findings if f.get("scale") == score["scale"]]
-    return {"kind": "report_text", "finding_ids": [f["id"] for f in matched], "texts": [f["text"] for f in matched]}
+    titles = [section_of(f["id"], definition)["title"] for f in matched]
+    return {"kind": "report_ref", "finding_ids": [f["id"] for f in matched],
+            "section_titles": [t for t in dict.fromkeys(titles) if t]}
 
 
 def thresholds(scale: str, definition: dict) -> list[dict] | None:
@@ -83,10 +90,66 @@ def percentile_text(score: dict, scale_direction: str | None, phrases: dict,
     return phrases["percentile_known_lower"].format(percentile=p), None
 
 
-def build_view(payload: dict, definition: dict, cards: list[dict], templates: list[dict], phrases: dict) -> dict:
+def section_key(item_id: str) -> str:
+    """항목 id의 접두어(첫 '.' 앞, CLAUDE.md 8-1)."""
+    return item_id.split(".", 1)[0]
+
+
+def section_of(item_id: str, definition: dict) -> dict:
+    """정의 report_sections에서 항목의 섹션. 정의에 섹션이 없으면 제목 없는 섹션, 없는 접두어면 '기타'."""
+    sections = definition.get("report_sections")
+    if not sections:
+        return {"key": "_all", "title": None}
+    return next((s for s in sections if s["key"] == section_key(item_id)), OTHER_SECTION)
+
+
+def _finding_block(f: dict, items_by_scale: dict[str, dict], score_section: dict[str, str],
+                   definition: dict, glossary: list[dict] | None) -> dict:
+    """문장 블록. 다른 섹션에 점수가 있는 scale이면 제목(이름 · T · 범위 이름)을 view 항목에서 채운다(G-03)."""
+    heading = None
+    item = items_by_scale.get(f.get("scale"))
+    if item is not None and score_section[item["id"]] != section_of(f["id"], definition)["key"]:
+        heading = {"item_id": item["id"], "name": item["name"], "t": item["t"], "range_label": item["range_label"]}
+    segments = annotate(f["text"], glossary) if glossary else [{"text": f["text"], "term_id": None}]
+    return {"kind": "finding", "id": f["id"], "type": f.get("type"), "scale": f.get("scale"),
+            "text": f["text"], "heading": heading, "segments": segments}
+
+
+def build_sections(items: list[dict], findings: list[dict], definition: dict,
+                   glossary: list[dict] | None = None) -> list[dict]:
+    """PoC1-09: 정의 report_sections 순서로 점수 → 문장을 배치한다. 모든 항목이 정확히 한 번 나온다.
+
+    섹션 소속은 id 접두어. 섹션 안 순서는 payload 순서이고, subgroups가 있으면 소제목 + 정의 순서의 척도.
+    """
+    order = [*(definition.get("report_sections") or [{"key": "_all", "title": None}]), OTHER_SECTION]
+    score_section = {i["id"]: section_of(i["id"], definition)["key"] for i in items}
+    items_by_scale = {i["scale"]: i for i in items}
+    sections = []
+    for sec in order:
+        sec_items = [i for i in items if score_section[i["id"]] == sec["key"]]
+        sec_findings = [f for f in findings if section_of(f["id"], definition)["key"] == sec["key"]]
+        if not sec_items and not sec_findings:
+            continue
+        blocks = []
+        placed = set()
+        for group in sec.get("subgroups", []):
+            members = [i for scale in group["scales"] for i in sec_items if i["scale"] == scale]
+            if members:
+                blocks.append({"kind": "subgroup", "title": group["title"]})
+                blocks += [{"kind": "score", "id": i["id"]} for i in members]
+                placed.update(i["id"] for i in members)
+        blocks += [{"kind": "score", "id": i["id"]} for i in sec_items if i["id"] not in placed]
+        blocks += [_finding_block(f, items_by_scale, score_section, definition, glossary) for f in sec_findings]
+        sections.append({"key": sec["key"], "title": sec["title"], "blocks": blocks})
+    return sections
+
+
+def build_view(payload: dict, definition: dict, cards: list[dict], templates: list[dict], phrases: dict,
+               glossary: list[dict] | None = None) -> dict:
     """결과 화면 데이터. 숫자는 payload에서 복사만 한다(G-03). 항목을 숨기지 않는다(PoC1-05).
 
     payload만 받으므로 식별 정보(subjects)는 들어올 수 없다(G-09).
+    glossary를 주면 문장 블록에 낱말 풀이 구간(PoC1-10)을 붙인다.
     """
     judged = judge_scores(payload["scores"], definition)
     items = []
@@ -107,4 +170,5 @@ def build_view(payload: dict, definition: dict, cards: list[dict], templates: li
             "thresholds": thresholds(s["scale"], definition),
             "explanation": link_card(s, j["range"], cards, payload["findings"], definition, payload["assessment"]),
         })
-    return {"notice": phrases["fixed_notice_results"], "summary": summarize(judged, templates), "items": items}
+    return {"notice": phrases["fixed_notice_results"], "summary": summarize(judged, templates), "items": items,
+            "sections": build_sections(items, payload["findings"], definition, glossary)}

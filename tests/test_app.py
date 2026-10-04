@@ -39,6 +39,26 @@ def test_5_results_tab(app):
     assert "미실시" in text and "초안(검수 전)" in text                # G-04, G-11
 
 
+def test_poc1_09_results_tab_in_report_order(app):
+    """섹션 제목이 보고서 순서대로, 점수와 원문이 한 화면에 함께 나온다. 맨 아래 원문 모음은 없다."""
+    text = _texts(app)
+    titles = [s["title"] for s in DEF["report_sections"]]
+    positions = [text.index(f"### {t}") for t in titles]
+    assert positions == sorted(positions)
+    assert "원본 보고서 문장 보기" not in [e.label for e in app.expander]
+
+
+def test_poc1_10_glossary_and_poc1_11_save(app):
+    """낱말 풀이 목록과 해석 표현의 상담 질문 저장 → 질문 노트에 들어간다 (LLM 없음)."""
+    assert any(e.label.startswith("낱말 풀이") and "초안(검수 전)" in e.label for e in app.expander)
+    button = next(b for b in app.button if b.key.startswith("save:"))
+    button.click().run()
+    assert not app.exception, app.exception
+    text = _texts(app)
+    assert "상담 질문으로 저장했습니다" in text
+    assert "질문 노트 (1)" in text and "표현이 무슨 뜻인지 궁금합니다" in text
+
+
 def test_5_safe_response_and_note(app):
     app.chat_input[0].set_value("ADHD인가요?").run()
     assert not app.exception, app.exception

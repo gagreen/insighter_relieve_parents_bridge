@@ -72,6 +72,69 @@
       "total_competence": {
         "direction": "lower_is_worse"
       }
-    }
+    },
+    "report_sections": [
+      {
+        "key": "H",
+        "title": "기본 정보"
+      },
+      {
+        "key": "I",
+        "title": "Ⅰ. 사회능력 척도"
+      },
+      {
+        "key": "II",
+        "title": "Ⅱ. 문제행동 종합 지표"
+      },
+      {
+        "key": "III",
+        "title": "Ⅲ. 증후군 척도 프로파일",
+        "subgroups": [
+          {
+            "title": "내재화 증후군",
+            "scales": [
+              "withdrawn",
+              "somatic",
+              "anxdep"
+            ]
+          },
+          {
+            "title": "혼합 증후군",
+            "scales": [
+              "socimm",
+              "thought",
+              "attention"
+            ]
+          },
+          {
+            "title": "외현화 증후군",
+            "scales": [
+              "delinquent",
+              "aggressive"
+            ]
+          }
+        ]
+      },
+      {
+        "key": "IV",
+        "title": "Ⅳ. 특수 척도"
+      },
+      {
+        "key": "V",
+        "title": "Ⅴ. 주요 관찰 소견"
+      },
+      {
+        "key": "VI",
+        "title": "Ⅵ. 종합 해석"
+      },
+      {
+        "key": "VII",
+        "title": "Ⅶ. 보호자 참고 의견"
+      },
+      {
+        "key": "C",
+        "title": "해석 시 유의사항"
+      }
+    ]
   }
 }

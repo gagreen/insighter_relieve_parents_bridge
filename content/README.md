@@ -16,7 +16,7 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 | `scale_cards.json` | 척도 설명 카드 (척도 × 범위 1장) | PoC1-04, 응답 근거 |
 | `summary_templates.json` | 한 줄 요약 템플릿 | PoC1-03 |
 | `phrases.json` | 백분위 문장, 고정 문구, 범위 밖·입력 오류·API 오류 안내 | PoC1-02, 07 / PoC2-01, 06, 10 |
-| `glossary.json` | 용어사전 | 용어 툴팁, 응답 근거 |
+| `glossary.json` | 용어사전 (표기·검사 용어·해석 표현) | 보고서 원문 낱말 풀이(PoC1-10), 응답 근거 |
 | `safe_responses.json` | 안전 응답 템플릿 | PoC2-05, 08 |
 | `scale_terms.json` | 질문 속 표현 → 척도 연결 (안전 응답의 척도 찾기) | PoC2-05 |
 | `crisis.json` | 위기 키워드, 위기 안내, 공공 상담 채널 | PoC2-03 |
@@ -94,6 +94,9 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
   "percentile_unknown": "(백분위 null = 하한 50T: 가장 낮은 점수, 평균과 비슷하거나 낮음, 백분위 따로 계산 안 함)",
   "not_administered": "(미실시 표시 문장)",
   "fixed_notice_qa": "(질문 도우미 고정 안내)",
+  "interpretive_note": "(해석 표현 풀이 뒤에 붙는 상담 안내)",
+  "report_phrase_note": "(보고서의 '{term}' 표현 … 상담 질문 노트 문장)",
+  "report_phrase_saved": "(상담 질문 저장 확인)",
   "out_of_scope": "(고객센터·예약 안내)",
   "input_empty": "(빈 입력 안내)",
   "input_too_long": "(… {max_chars}자 … 나눠 질문 안내)",
@@ -103,16 +106,24 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 ```
 
 - 백분위 문장은 척도의 `direction`(정의의 group 또는 척도 항목, `specs/poc.md` 2-2)으로 고른다: `higher_is_worse` → `percentile_known`, `lower_is_worse` → `percentile_known_lower` + `direction_note_lower`, direction 없음 → 문장 없이 숫자만.
-- 키별 허용 자리표시자는 `bridge.content.PHRASE_PLACEHOLDERS`. M1 키(위 6개, `M1_PHRASE_KEYS`)는 결과 화면의 필수 키다. 2일차 키는 PoC-2 구현 때 추가하고 `QA_PHRASE_KEYS`에 적는다.
+- 키별 허용 자리표시자는 `bridge.content.PHRASE_PLACEHOLDERS`. M1 키(`M1_PHRASE_KEYS`: 백분위·미실시·고정 문구 6개 + 낱말 풀이·상담 질문 저장 3개)는 결과 화면의 필수 키다. 2일차 키는 PoC-2 구현 때 추가하고 `QA_PHRASE_KEYS`에 적는다.
 - `input_too_long`은 `{max_chars}`만 쓴다(문장에 숫자를 직접 쓰지 않는다).
 
 ## glossary.json
 
 ```json
 [
-  {"id": "term.t_score", "term": "T점수", "aliases": ["T 점수", "티점수"], "plain": "(쉬운 설명)"}
+  {"id": "term.t_score", "kind": "term", "term": "T점수", "aliases": ["T 점수", "티점수"], "plain": "(쉬운 설명)", "status": "draft"},
+  {"id": "term.notation_t", "kind": "notation", "term": "T=", "aliases": [], "patterns": ["T\\s*=\\s*\\d+"], "plain": "(읽는 법)", "status": "draft"},
+  {"id": "term.worsening", "kind": "interpretive", "term": "악화 가능성", "aliases": [], "plain": "(낱말 뜻만)", "status": "draft"}
 ]
 ```
+
+- 풀이(`plain`)는 객관적인 뜻만 쓴다. 긍정·부정 평가, 완화 문구("~라는 뜻은 아닙니다"), 이 아이에게 해당한다는 단정을 쓰지 않는다(G-01, `tests/test_glossary_match.py`가 일부 표현을 검사).
+- `kind`(PoC1-10): `notation` 표기(숫자 읽는 법만) / `term` 검사 용어 / `interpretive` 해석 표현. 해석 표현은 아이에 대한 판단 없이 낱말 뜻만 쓰고, 화면에서 `phrases.interpretive_note`와 [상담 질문으로 저장]이 붙는다(G-01).
+- 찾기: `term`·`aliases`는 글자 그대로, `patterns`(선택)는 정규식. 보고서 원문에서 가져온 찾기 표현이라 사전 검사 대상이 아니고 `plain`만 검사한다. 원문 표현에 금칙어가 있으면(`악화`) 풀이에서는 다른 말로 설명한다.
+- 겹치면 긴 표현이 먼저 걸린다. 증후군 척도 이름 안에 걸리는 짧은 표현은 넣지 않는다(예: '미성숙' 대신 '미성숙한 행동', `tests/test_glossary_match.py`).
+- `term`·`aliases`는 파일 전체에서 유일해야 한다. `status`는 `draft | reviewed`(PoC는 모두 draft).
 
 ## safe_responses.json
 

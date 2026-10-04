@@ -44,6 +44,7 @@ def _start_session() -> None:
     st.session_state.messages = []
     st.session_state.stopped = False
     st.session_state.brief = None
+    st.session_state.saved_phrases = set()
     conn.close()
 
 
@@ -68,40 +69,89 @@ def _chips(ctx: pipeline.Context, ids: list[str]) -> str:
     return " | ".join(item_label(ctx.pack.items[i]) if i in ctx.pack.items else i for i in ids)
 
 
+def _save_phrase(finding_id: str, term_id: str) -> None:
+    """PoC1-11: 해석 표현을 상담 질문으로 저장 (LLM 없음)."""
+    ctx = st.session_state.ctx
+    term = next(g for g in ctx.glossary if g["id"] == term_id)
+    conn = _conn()
+    try:
+        notes.save_report_phrase(conn, ctx.child_id, finding_id, term, ctx.phrases)
+    finally:
+        conn.close()
+    st.session_state.saved_phrases.add((finding_id, term_id))
+
+
+def _score_block(item: dict, ctx: pipeline.Context) -> None:
+    with st.container(border=True):
+        st.subheader(item["name"])
+        if item["status"] == "not_administered":
+            st.markdown("**미실시**")
+            st.caption(item["status_text"])
+        else:
+            range_text = item["range_label"] or "구간 판정 기준 없음"
+            st.markdown(f"T점수 **{item['t']}** · {range_text}")
+            for text in (item["percentile_text"], item["direction_note"]):
+                if text:
+                    st.caption(text)
+        st.markdown(baseline_svg(item, ctx.definition["range_labels"]), unsafe_allow_html=True)
+        explanation = item["explanation"]
+        with st.expander("설명 보기"):
+            if explanation["kind"] == "card":
+                card = explanation["card"]
+                st.caption(explanation["label"])
+                st.markdown(card["what_it_asks"])
+                st.markdown("\n".join(f"- {e}" for e in card["behavior_examples"]))
+                st.markdown(card["position_text"])
+                st.markdown(card["report_recommendation"])
+            elif explanation["section_titles"]:
+                st.caption(f"설명 카드가 없는 항목입니다. 보고서 원문은 {', '.join(explanation['section_titles'])}에 있습니다.")
+            else:
+                st.caption("설명 카드가 없는 항목입니다.")
+
+
+def _finding_block(block: dict, ctx: pipeline.Context) -> None:
+    """PoC1-09·10: 보고서 원문 그대로 + 풀이가 붙은 낱말 굵게 + 낱말 풀이 목록."""
+    if heading := block["heading"]:
+        parts = [f"**{heading['name']}**"]
+        if heading["t"] is not None:
+            parts.append(f"T {heading['t']}")
+        if heading["range_label"]:
+            parts.append(heading["range_label"])
+        st.markdown(" · ".join(parts))
+    text = "".join(f"**{s['text']}**" if s["term_id"] else s["text"] for s in block["segments"])
+    st.markdown(text.replace("\n", "  \n"))
+    terms = {g["id"]: g for g in ctx.glossary}
+    linked = [(s["text"], terms[s["term_id"]]) for s in block["segments"] if s["term_id"]]
+    if not linked:
+        return
+    with st.expander(f"낱말 풀이 ({len(linked)}) · 초안(검수 전)"):
+        for word, term in linked:
+            st.markdown(f"**{word}** — {term['plain']}")
+            if term["kind"] == "interpretive":
+                st.caption(ctx.phrases["interpretive_note"])
+                if (block["id"], term["id"]) in st.session_state.saved_phrases:
+                    st.caption(ctx.phrases["report_phrase_saved"])
+                else:
+                    st.button("상담 질문으로 저장", key=f"save:{block['id']}:{term['id']}",
+                              on_click=_save_phrase, args=(block["id"], term["id"]))
+
+
 def results_tab(ctx: pipeline.Context) -> None:
     view = ctx.view
     st.info(view["notice"])
     st.markdown(f"**한 줄 요약** — {view['summary']['text']}")
     st.caption("초안(검수 전) · 미리 만든 문장을 조립했습니다.")
-    for item in view["items"]:
-        with st.container(border=True):
-            st.subheader(item["name"])
-            if item["status"] == "not_administered":
-                st.markdown("**미실시**")
-                st.caption(item["status_text"])
+    items = {i["id"]: i for i in view["items"]}
+    for section in view["sections"]:
+        if section["title"]:
+            st.markdown(f"### {section['title']}")
+        for block in section["blocks"]:
+            if block["kind"] == "subgroup":
+                st.markdown(f"**{block['title']}**")
+            elif block["kind"] == "score":
+                _score_block(items[block["id"]], ctx)
             else:
-                range_text = item["range_label"] or "구간 판정 기준 없음"
-                st.markdown(f"T점수 **{item['t']}** · {range_text}")
-                for text in (item["percentile_text"], item["direction_note"]):
-                    if text:
-                        st.caption(text)
-            st.markdown(baseline_svg(item, ctx.definition["range_labels"]), unsafe_allow_html=True)
-            explanation = item["explanation"]
-            with st.expander("설명 보기"):
-                if explanation["kind"] == "card":
-                    card = explanation["card"]
-                    st.caption(explanation["label"])
-                    st.markdown(card["what_it_asks"])
-                    st.markdown("\n".join(f"- {e}" for e in card["behavior_examples"]))
-                    st.markdown(card["position_text"])
-                    st.markdown(card["report_recommendation"])
-                else:
-                    st.caption("보고서 원문")
-                    for text in explanation["texts"] or ["(관련 문장 없음)"]:
-                        st.markdown(text)
-    with st.expander("원본 보고서 문장 보기"):
-        for f in ctx.payload["findings"]:
-            st.markdown(f"`{f['id']}` {f['text']}")
+                _finding_block(block, ctx)
 
 
 def qa_tab(ctx: pipeline.Context) -> None:

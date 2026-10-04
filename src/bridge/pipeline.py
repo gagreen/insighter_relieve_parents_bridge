@@ -139,6 +139,7 @@ class Context:
     scale_terms: list[dict]    # 이 검사의 항목만
     terms: list[GuardTerm]
     crisis: dict
+    glossary: list[dict]       # 낱말 풀이(PoC1-10)·근거 묶음
 
 
 def load_context(conn: sqlite3.Connection, result_id: str) -> Context:
@@ -146,14 +147,15 @@ def load_context(conn: sqlite3.Connection, result_id: str) -> Context:
     payload = result["payload"]
     definition = db.get_definition(conn, result["assessment_code"])
     phrases = content.load_phrases(required=content.M1_PHRASE_KEYS + content.QA_PHRASE_KEYS)
+    glossary = content.load_glossary()
     view = results.build_view(payload, definition, content.load_scale_cards(),
-                              content.load_summary_templates(), phrases)
+                              content.load_summary_templates(), phrases, glossary)
     return Context(
         result_id=result_id, child_id=result["child_id"], payload=payload, definition=definition, view=view,
-        pack=evidence.build_evidence(view, payload, content.load_glossary()),
+        pack=evidence.build_evidence(view, payload, glossary),
         phrases=phrases, safe_responses=content.load_safe_responses(),
         scale_terms=[t for t in content.load_scale_terms() if t["assessment"] == payload["assessment"]],
-        terms=load_guard_terms(), crisis=content.load_crisis(),
+        terms=load_guard_terms(), crisis=content.load_crisis(), glossary=glossary,
     )
 
 

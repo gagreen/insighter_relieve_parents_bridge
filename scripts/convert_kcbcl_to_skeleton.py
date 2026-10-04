@@ -40,6 +40,9 @@ SECTION = {
     "C": "해석 시 유의사항",
 }
 
+# 화면 섹션 제목의 번호 (원보고서 표기, specs/poc.md 2-2 report_sections)
+SECTION_NUMERAL = {"I": "Ⅰ", "II": "Ⅱ", "III": "Ⅲ", "IV": "Ⅳ", "V": "Ⅴ", "VI": "Ⅵ", "VII": "Ⅶ"}
+
 # 원본 key_findings·guardian_comments의 특수척도 키 -> scores의 scale 키로 통일
 SCALE_ALIAS = {"emoinst": "emotional_instability", "sexprob": "sex_problems"}
 
@@ -110,8 +113,22 @@ def assessment_type_definition(meta):
                 "syndrome": {"direction": "higher_is_worse", "borderline_min": 60, "clinical_min": 70, "t_floor": 50},
             },
             "scales": scales,
+            "report_sections": report_sections(syn),
         },
     }
+
+
+def report_sections(syn):
+    """원보고서 섹션 순서·제목. Ⅲ은 증후군 영역(domain)별 소제목으로 묶는다(PoC1-09, 2026-10-05)."""
+    sections = []
+    for key, title in SECTION.items():
+        sec = {"key": key, "title": f"{SECTION_NUMERAL[key]}. {title}" if key in SECTION_NUMERAL else title}
+        if key == "III":
+            domains = list(dict.fromkeys(x["domain"] for x in syn))
+            sec["subgroups"] = [{"title": f"{d} 증후군", "scales": [x["key"] for x in syn if x["domain"] == d]}
+                                for d in domains]
+        sections.append(sec)
+    return sections
 
 
 def score(id_, scale, name, t, pct, range_ko, extra):

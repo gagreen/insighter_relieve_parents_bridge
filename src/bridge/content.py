@@ -34,7 +34,8 @@ ALLOWED_PLACEHOLDERS = {
 SENTENCE_FIELDS: dict[str, tuple[str, tuple[str, ...] | None]] = {
     "scale_cards.json": ("items", CARD_SENTENCE_FIELDS),
     "summary_templates.json": ("items", ("text",)),
-    "glossary.json": ("items", ("term", "plain")),
+    # term·aliases·patterns는 보고서 원문에서 가져온 찾기 패턴이라 검사하지 않는다(PoC1-10, 2026-10-05)
+    "glossary.json": ("items", ("plain",)),
     "safe_responses.json": ("items", ("text",)),
     "phrases.json": ("values", None),
     "crisis.json": ("keys", ("message",)),
@@ -54,9 +55,13 @@ PHRASE_PLACEHOLDERS = {
     "no_evidence": set(),
     "api_error": set(),
     "fixed_notice_qa": set(),
+    "interpretive_note": set(),
+    "report_phrase_note": {"term"},
+    "report_phrase_saved": set(),
 }
 M1_PHRASE_KEYS = ("fixed_notice_results", "percentile_known", "percentile_known_lower",
-                  "direction_note_lower", "percentile_unknown", "not_administered")
+                  "direction_note_lower", "percentile_unknown", "not_administered",
+                  "interpretive_note", "report_phrase_note", "report_phrase_saved")  # 마지막 3개: PoC1-10·11
 QA_PHRASE_KEYS = ("input_empty", "input_too_long", "out_of_scope", "no_evidence", "api_error", "fixed_notice_qa")
 
 CRISIS_REQUIRED = ("keywords", "message", "channels")
@@ -68,6 +73,9 @@ INTENT_KEYWORD_KEYS = ("diagnosis", "parenting", "out_of_scope", "explain")
 SAFE_KINDS = ("diagnosis", "parenting", "low_confidence", "guard_fallback")
 SAFE_SCALE_PLACEHOLDERS = {"scale_name", "t", "range_label"}
 TERM_STATUSES = ("draft", "reviewed")
+# 용어 종류 (PoC1-10): 표기 / 검사 용어 / 해석 표현(뜻만 설명 + 상담 안내 + 상담 질문 저장)
+GLOSSARY_KINDS = ("notation", "term", "interpretive")
+GLOSSARY_REQUIRED = ("id", "kind", "term", "aliases", "plain", "status")
 
 _PLACEHOLDER = re.compile(r"\{(\w+)\}")
 
@@ -152,7 +160,19 @@ def load_glossary(content_dir: Path | None = None) -> list[dict]:
     _check_unique([e["id"] for e in entries], "용어 id")
     _check_unique([w for e in entries for w in [e["term"], *e["aliases"]]], "용어·별칭")
     for e in entries:
-        _check_placeholders(e["plain"], ALLOWED_PLACEHOLDERS["glossary.json"], e["id"])
+        where = e.get("id", "?")
+        if missing := [k for k in GLOSSARY_REQUIRED if k not in e]:
+            raise ContentError(f"{where}: 필수 필드 누락 {missing}")
+        if e["kind"] not in GLOSSARY_KINDS:
+            raise ContentError(f"{where}: 알 수 없는 kind {e['kind']!r}")
+        if e["status"] not in TERM_STATUSES:
+            raise ContentError(f"{where}: 알 수 없는 status {e['status']!r}")
+        for pattern in e.get("patterns", []):
+            try:
+                re.compile(pattern)
+            except re.error as err:
+                raise ContentError(f"{where}: 잘못된 정규식 {pattern!r} ({err})") from err
+        _check_placeholders(e["plain"], ALLOWED_PLACEHOLDERS["glossary.json"], where)
     return entries
 
 

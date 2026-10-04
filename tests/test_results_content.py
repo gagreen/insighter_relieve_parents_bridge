@@ -90,19 +90,20 @@ def test_poc1_04_reviewed_card_gets_reviewed_label():
     assert linked["label"] == "검수된 설명"
 
 
-def test_poc1_04_no_card_falls_back_to_report_text():
-    """PoC1-04: 카드가 없는 조합(정의 없는 정서불안정)은 같은 scale의 보고서 원문을 그대로 보여준다."""
+def test_poc1_04_no_card_points_to_report_sections():
+    """PoC1-04 (2026-10-05): 카드가 없는 조합(정의 없는 정서불안정)은 원문을 다시 싣지 않고 원문이 있는 섹션을 안내한다."""
     linked = _link("emotional_instability")
-    assert linked["kind"] == "report_text"
-    assert "V.emotional_instability" in linked["finding_ids"]
-    originals = {f["id"]: f["text"] for f in BASE_PAYLOAD["findings"]}
-    assert linked["texts"] == [originals[i] for i in linked["finding_ids"]]
+    assert linked["kind"] == "report_ref"
+    assert linked["finding_ids"] == ["IV.emotional_instability.note", "V.emotional_instability", "VII.3"]
+    assert linked["section_titles"] == ["Ⅳ. 특수 척도", "Ⅴ. 주요 관찰 소견", "Ⅶ. 보호자 참고 의견"]
+    assert "texts" not in linked
 
 
-def test_poc1_04_not_administered_falls_back_to_report_text():
+def test_poc1_04_not_administered_points_to_report_sections():
     linked = _link("sex_problems")
-    assert linked["kind"] == "report_text"
+    assert linked["kind"] == "report_ref"
     assert linked["finding_ids"] == ["IV.sex_problems.note"]
+    assert linked["section_titles"] == ["Ⅳ. 특수 척도"]
 
 
 def test_poc1_04_render_card_fills_name_and_label_only():
