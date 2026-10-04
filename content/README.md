@@ -1,0 +1,157 @@
+# content/ — 콘텐츠·정책 데이터 형식
+
+PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정의다. 내용은 구현 1~2일차에 채운다.
+작성 규칙은 `specs/poc.md` 7장, 관련 규칙은 `CLAUDE.md` G-01·G-03·G-04·G-06.
+
+- 인코딩 UTF-8, JSON.
+- 모든 항목에 고유 `id`. 응답의 `evidence_ids`와 근거 칩이 이 id를 가리킨다.
+- 숫자는 문장에 직접 쓰지 않고 자리표시자로 둔다. 코드가 payload에서 채운다.
+- 아래 예시 값은 형식 설명용이며 실제 콘텐츠가 아니다.
+
+## 파일 목록
+
+| 파일 | 용도 | 사용처 |
+| --- | --- | --- |
+| `scale_cards.json` | 척도 설명 카드 (척도 × 범위 1장) | PoC1-04, 응답 근거 |
+| `summary_templates.json` | 한 줄 요약 템플릿 | PoC1-03 |
+| `phrases.json` | 백분위 문장, 고정 문구, 범위 밖·입력 오류·API 오류 안내 | PoC1-02, 07 / PoC2-01, 06, 10 |
+| `glossary.json` | 용어사전 | 용어 툴팁, 응답 근거 |
+| `safe_responses.json` | 안전 응답 템플릿 | PoC2-05, 08 |
+| `crisis.json` | 위기 키워드, 위기 안내, 공공 상담 채널 | PoC2-03 |
+| `intent_keywords.json` | 의도 분류 1차 키워드 | PoC2-04 |
+| `guard_terms.json` | 진단명 사전, 금칙 표현 | PoC1-08, PoC2-08 |
+
+## 자리표시자
+
+| 이름 | 값 | 출처 |
+| --- | --- | --- |
+| `{scale_name}` | 척도 이름 | payload `scores[].name` |
+| `{t}` | T점수 | payload `scores[].t` |
+| `{percentile}` / `{rank_from_top}` | 백분위 / 100 − 백분위(반올림) | payload `scores[].percentile` |
+| `{range_label}` | 범위 이름 | 판정 결과 + 정의 `range_labels` |
+| `{scale_list}` | 척도 이름 나열 ("A, B") | 판정 결과 |
+
+정의에 없는 자리표시자를 쓰면 콘텐츠 로드 시 오류로 처리한다.
+
+## scale_cards.json
+
+```json
+[
+  {
+    "id": "card.CBCL.attention.borderline",
+    "assessment": "CBCL_6_18",
+    "scale": "attention",
+    "range": "borderline",
+    "title": "주의집중 문제",
+    "what_it_asks": "(이 척도가 묻는 행동을 쉬운 말로)",
+    "behavior_examples": ["(행동 예시)", "(행동 예시)"],
+    "position_text": "{scale_name}은 {range_label}에 있습니다.",
+    "report_recommendation": "(보고서 권고 수준을 넘지 않는 문장)",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  }
+]
+```
+
+- `status`: `draft | reviewed`. PoC에서는 모두 `draft`.
+- (assessment, scale, range) 조합은 유일해야 한다.
+
+## summary_templates.json
+
+```json
+[
+  {"id": "sum.none",       "when": {"has_clinical": false, "has_borderline": false}, "text": "(모든 영역이 또래 평균 범위일 때)"},
+  {"id": "sum.borderline", "when": {"has_clinical": false, "has_borderline": true},  "text": "(… {scale_list} …)"},
+  {"id": "sum.clinical",   "when": {"has_clinical": true,  "has_borderline": false}, "text": "(… {scale_list} …)"},
+  {"id": "sum.both",       "when": {"has_clinical": true,  "has_borderline": true},  "text": "(…)"}
+]
+```
+
+- 네 조건이 빠짐없이, 겹치지 않게 있어야 한다.
+
+## phrases.json
+
+```json
+{
+  "percentile_known": "또래 100명 중 약 {rank_from_top}번째로 높은 점수입니다.",
+  "percentile_unknown": "(백분위가 없을 때 — 평균 이하 문장)",
+  "fixed_notice_results": "선별 검사이며 진단이 아닙니다.",
+  "fixed_notice_qa": "(질문 도우미 고정 안내)",
+  "not_administered": "(미실시 표시 문장)",
+  "out_of_scope": "(고객센터·예약 안내)",
+  "input_empty": "(빈 입력 안내)",
+  "input_too_long": "(1,000자 초과 안내)",
+  "no_evidence": "(보고서에 해당 내용이 없다는 안내 + 노트 저장 안내)",
+  "api_error": "(일시 오류 안내 + 노트 저장 안내)"
+}
+```
+
+## glossary.json
+
+```json
+[
+  {"id": "term.t_score", "term": "T점수", "aliases": ["T 점수", "티점수"], "plain": "(쉬운 설명)"}
+]
+```
+
+## safe_responses.json
+
+```json
+[
+  {
+    "id": "safe.diagnosis",
+    "intents": ["diagnosis"],
+    "requires_scale": true,
+    "text": "(보고서 사실: {scale_name} T={t}, {range_label}) + (진단·치료는 상담에서 다룸) + (질문을 노트에 저장했다는 안내)"
+  },
+  {"id": "safe.parenting",      "intents": ["parenting"],      "requires_scale": false, "text": "(…)"},
+  {"id": "safe.low_confidence", "intents": ["low_confidence"], "requires_scale": false, "text": "(…)"},
+  {"id": "safe.guard_fallback", "intents": ["guard_fallback"], "requires_scale": false, "text": "(…)"}
+]
+```
+
+- `requires_scale: true`인 템플릿은 질문에서 척도를 찾지 못하면 `requires_scale: false` 템플릿으로 대체한다.
+
+## crisis.json
+
+```json
+{
+  "keywords": [
+    {"id": "crisis.kw.001", "pattern": "(표현)", "type": "literal", "category": "child_safety"}
+  ],
+  "message": "(위기 안내 문장)",
+  "channels": [
+    {"name": "(기관·채널명)", "contact": "(연락처)", "source_url": "(공식 출처)", "checked_at": "YYYY-MM-DD"}
+  ]
+}
+```
+
+- `type`: `literal | regex`. `category`: `child_safety | caregiver_distress`.
+- `channels`는 공식 출처 확인 전에는 비워 둔다.
+
+## intent_keywords.json
+
+```json
+{
+  "diagnosis":    [{"pattern": "(표현)", "type": "literal"}],
+  "parenting":    [],
+  "out_of_scope": [],
+  "explain":      []
+}
+```
+
+- 두 개 이상의 의도에 걸리거나 아무 것에도 걸리지 않으면 LLM 2차 분류로 넘긴다(PoC2-04).
+- 위기 키워드는 여기가 아니라 `crisis.json`에 둔다(위기 검사가 먼저 실행됨).
+
+## guard_terms.json
+
+```json
+[
+  {"id": "guard.dx.001", "pattern": "(진단명)",    "type": "literal", "category": "diagnosis_name"},
+  {"id": "guard.fb.001", "pattern": "(금칙 표현)", "type": "regex",   "category": "prognosis"}
+]
+```
+
+- `category`: `diagnosis_name | diagnosis_possibility | treatment | medication | institution | prognosis | reassurance | threat`.
+- 콘텐츠 전체와 모든 AI 응답에 같은 목록을 적용한다.

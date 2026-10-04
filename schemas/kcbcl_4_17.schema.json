@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KCBCL_4_17 payload v1",
+  "type": "object",
+  "required": ["assessment", "schema_version", "scores", "findings", "files"],
+  "additionalProperties": false,
+  "properties": {
+    "assessment": {"const": "KCBCL_4_17"},
+    "schema_version": {"const": 1},
+    "scores": {"type": "array", "minItems": 16, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "scale", "name", "t", "percentile", "range", "extra"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^(I|II|III|IV)\\.[a-z_]+$"},
+        "scale": {"type": "string"}, "name": {"type": "string"},
+        "t": {"type": ["integer", "null"], "minimum": 20, "maximum": 100},
+        "percentile": {"type": ["integer", "null"], "minimum": 1, "maximum": 99},
+        "range": {"enum": ["normal", "borderline", "clinical", "not_administered"]},
+        "extra": {"type": "object"}
+      }}},
+    "findings": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "type", "section", "scale", "text", "extra"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^(H|I|II|III|IV|V|VI|VII|C)\\.[A-Za-z0-9_.]+$"},
+        "type": {"enum": ["info", "note", "narrative", "observation", "recommendation", "guardian_comment", "caution"]},
+        "section": {"type": "string"}, "scale": {"type": ["string", "null"]},
+        "text": {"type": "string", "minLength": 1}, "extra": {"type": "object"}
+      }}},
+    "files": {"type": "array", "items": {"type": "object", "required": ["id", "kind", "uri"]}}
+  }
+}

@@ -1,0 +1,514 @@
+{
+  "result_id": "R-KCBCL_4_17-040",
+  "child_id": "C-040",
+  "assessment_code": "KCBCL_4_17",
+  "administered_at": "2026-04-16",
+  "schema_version": 1,
+  "subject": {
+    "child_id": "C-040",
+    "name": "고현우",
+    "sex": "남",
+    "birth_date": "2016-07-10",
+    "school_level": "elementary",
+    "grade": "초등학교 4학년"
+  },
+  "payload": {
+    "assessment": "KCBCL_4_17",
+    "schema_version": 1,
+    "scores": [
+      {
+        "id": "I.sociability",
+        "scale": "sociability",
+        "name": "사회성",
+        "t": null,
+        "percentile": null,
+        "range": "not_administered",
+        "extra": {
+          "group": "social_competence",
+          "name_en": "Sociability",
+          "direction": "lower_is_worse",
+          "reason": "미실시"
+        }
+      },
+      {
+        "id": "I.school_performance",
+        "scale": "school_performance",
+        "name": "학업수행",
+        "t": null,
+        "percentile": null,
+        "range": "not_administered",
+        "extra": {
+          "group": "social_competence",
+          "name_en": "School Performance",
+          "direction": "lower_is_worse",
+          "reason": "미실시"
+        }
+      },
+      {
+        "id": "I.total_competence",
+        "scale": "total_competence",
+        "name": "총 사회능력",
+        "t": null,
+        "percentile": null,
+        "range": "not_administered",
+        "extra": {
+          "group": "social_competence",
+          "name_en": "Total Competence",
+          "direction": "lower_is_worse",
+          "reason": "미실시"
+        }
+      },
+      {
+        "id": "II.internalizing",
+        "scale": "internalizing",
+        "name": "내재화 문제",
+        "t": 58,
+        "percentile": 79,
+        "range": "normal",
+        "extra": {
+          "group": "composite",
+          "name_en": "Internalizing",
+          "raw": 9,
+          "percentile_text": "79",
+          "components": [
+            "withdrawn",
+            "somatic",
+            "anxdep"
+          ]
+        }
+      },
+      {
+        "id": "II.externalizing",
+        "scale": "externalizing",
+        "name": "외현화 문제",
+        "t": 51,
+        "percentile": 54,
+        "range": "normal",
+        "extra": {
+          "group": "composite",
+          "name_en": "Externalizing",
+          "raw": 8,
+          "percentile_text": "54",
+          "components": [
+            "delinquent",
+            "aggressive"
+          ]
+        }
+      },
+      {
+        "id": "II.total",
+        "scale": "total",
+        "name": "총 문제행동",
+        "t": 58,
+        "percentile": 79,
+        "range": "normal",
+        "extra": {
+          "group": "composite",
+          "name_en": "Total Problems",
+          "raw": 35,
+          "percentile_text": "79",
+          "components": null
+        }
+      },
+      {
+        "id": "III.withdrawn",
+        "scale": "withdrawn",
+        "name": "위축",
+        "t": 58,
+        "percentile": 79,
+        "range": "normal",
+        "extra": {
+          "group": "syndrome",
+          "name_en": "Withdrawn",
+          "domain": "내재화",
+          "items": 9,
+          "raw": 3,
+          "max_raw": 18,
+          "percentile_text": "79"
+        }
+      },
+      {
+        "id": "III.somatic",
+        "scale": "somatic",
+        "name": "신체증상",
+        "t": 65,
+        "percentile": 93,
+        "range": "borderline",
+        "extra": {
+          "group": "syndrome",
+          "name_en": "Somatic Complaints",
+          "domain": "내재화",
+          "items": 9,
+          "raw": 3,
+          "max_raw": 18,
+          "percentile_text": "93"
+        }
+      },
+      {
+        "id": "III.anxdep",
+        "scale": "anxdep",
+        "name": "우울/불안",
+        "t": 52,
+        "percentile": 58,
+        "range": "normal",
+        "extra": {
+          "group": "syndrome",
+          "name_en": "Depressed/Anxious",
+          "domain": "내재화",
+          "items": 14,
+          "raw": 3,
+          "max_raw": 28,
+          "percentile_text": "58"
+        }
+      },
+      {
+        "id": "III.socimm",
+        "scale": "socimm",
+        "name": "사회적 미성숙",
+        "t": 62,
+        "percentile": 88,
+        "range": "borderline",
+        "extra": {
+          "group": "syndrome",
+          "name_en": "Social Immaturity",
+          "domain": "혼합",
+          "items": 8,
+          "raw": 4,
+          "max_raw": 16,
+          "percentile_text": "88"
+        }
+      },
+      {
+        "id": "III.thought",
+        "scale": "thought",
+        "name": "사고의 문제",
+        "t": 57,
+        "percentile": 76,
+        "range": "normal",
+        "extra": {
+          "group": "syndrome",
+          "name_en": "Thought Problems",
+          "domain": "혼합",
+          "items": 7,
+          "raw": 1,
+          "max_raw": 14,
+          "percentile_text": "76"
+        }
+      },
+      {
+        "id": "III.attention",
+        "scale": "attention",
+        "name": "주의집중 문제",
+        "t": 61,
+        "percentile": 86,
+        "range": "borderline",
+        "extra": {
+          "group": "syndrome",
+          "name_en": "Attention Problems",
+          "domain": "혼합",
+          "items": 11,
+          "raw": 7,
+          "max_raw": 22,
+          "percentile_text": "86"
+        }
+      },
+      {
+        "id": "III.delinquent",
+        "scale": "delinquent",
+        "name": "비행",
+        "t": 50,
+        "percentile": null,
+        "range": "normal",
+        "extra": {
+          "group": "syndrome",
+          "name_en": "Delinquent",
+          "domain": "외현화",
+          "items": 13,
+          "raw": 1,
+          "max_raw": 26,
+          "percentile_text": "≤50"
+        }
+      },
+      {
+        "id": "III.aggressive",
+        "scale": "aggressive",
+        "name": "공격성",
+        "t": 51,
+        "percentile": 54,
+        "range": "normal",
+        "extra": {
+          "group": "syndrome",
+          "name_en": "Aggressive",
+          "domain": "외현화",
+          "items": 20,
+          "raw": 7,
+          "max_raw": 40,
+          "percentile_text": "54"
+        }
+      },
+      {
+        "id": "IV.emotional_instability",
+        "scale": "emotional_instability",
+        "name": "정서불안정",
+        "t": 62,
+        "percentile": 88,
+        "range": "borderline",
+        "extra": {
+          "group": "special",
+          "name_en": "Emotional Instability",
+          "items": 10,
+          "eligible": true,
+          "age_range": "6–11세",
+          "raw": 6,
+          "percentile_text": "88"
+        }
+      },
+      {
+        "id": "IV.sex_problems",
+        "scale": "sex_problems",
+        "name": "성문제",
+        "t": null,
+        "percentile": null,
+        "range": "not_administered",
+        "extra": {
+          "group": "special",
+          "name_en": "Sex Problems",
+          "items": 6,
+          "eligible": true,
+          "age_range": "4–11세",
+          "reason": "미실시"
+        }
+      }
+    ],
+    "findings": [
+      {
+        "id": "I.note",
+        "type": "note",
+        "section": "사회능력 척도",
+        "scale": null,
+        "text": "미실시 · 본 보고서에는 사회성 척도, 학업수행 척도, 총 사회능력 점수가 포함되지 않았습니다. 필요 시 추후 보완 실시를 권장합니다.",
+        "extra": {}
+      },
+      {
+        "id": "II.summary",
+        "type": "narrative",
+        "section": "문제행동 종합 지표",
+        "scale": null,
+        "text": "내재화, 외현화, 총 문제행동이 모두 정상 범위로 연령 평균 수준입니다.",
+        "extra": {}
+      },
+      {
+        "id": "IV.emotional_instability.note",
+        "type": "note",
+        "section": "특수 척도",
+        "scale": "emotional_instability",
+        "text": "정서불안정 척도(6–11세, 한국판 고유): 잘 운다·분노발작·감정 급변 등 10문항. 실시.",
+        "extra": {}
+      },
+      {
+        "id": "IV.sex_problems.note",
+        "type": "note",
+        "section": "특수 척도",
+        "scale": "sex_problems",
+        "text": "성문제 척도(4–11세): 해당 연령군에 해당하나 임상적 필요에 따라 선택적으로 적용하며 본 검사에서는 미실시.",
+        "extra": {}
+      },
+      {
+        "id": "H.sex_age",
+        "type": "info",
+        "section": "기본 정보",
+        "scale": null,
+        "text": "남아 / 만 9세 9개월",
+        "extra": {
+          "sex": "남",
+          "age_years": 9,
+          "age_months": 9
+        }
+      },
+      {
+        "id": "H.norm_group",
+        "type": "info",
+        "section": "기본 정보",
+        "scale": null,
+        "text": "남자 4–11세",
+        "extra": {}
+      },
+      {
+        "id": "H.informant",
+        "type": "info",
+        "section": "기본 정보",
+        "scale": null,
+        "text": "어머니",
+        "extra": {}
+      },
+      {
+        "id": "V.somatic",
+        "type": "observation",
+        "section": "주요 관찰 소견",
+        "scale": "somatic",
+        "text": "K-CBCL 임상 기준(70T) 이하이나 약 93%tile에 해당, 또래 대비 상당히 상승된 양상\n뚜렷한 신체적 원인 없이 두통·복통·피로감 등을 호소하는 빈도가 다소 높음\n보호자 보고(등교 전 신체 호소)와 일치하는 양상",
+        "extra": {
+          "title": "신체증상 · T = 65",
+          "badge": "개별척도 준임상 (60–69T)",
+          "t": 65
+        }
+      },
+      {
+        "id": "V.socimm",
+        "type": "observation",
+        "section": "주요 관찰 소견",
+        "scale": "socimm",
+        "text": "또래 관계 형성·유지에서의 어려움 가능성\n연령에 비해 미성숙한 행동, 의존적 양상 등이 상대적으로 상승",
+        "extra": {
+          "title": "사회적 미성숙 · T = 62",
+          "badge": "개별척도 준임상 (60–69T)",
+          "t": 62
+        }
+      },
+      {
+        "id": "V.attention",
+        "type": "observation",
+        "section": "주요 관찰 소견",
+        "scale": "attention",
+        "text": "학습 상황 및 규칙이 있는 활동에서 주의 깊은 관찰 요망\n과제 지속의 어려움, 산만함, 충동적 행동 등이 또래 대비 상승된 양상",
+        "extra": {
+          "title": "주의집중 문제 · T = 61",
+          "badge": "개별척도 준임상 (60–69T)",
+          "t": 61
+        }
+      },
+      {
+        "id": "V.emotional_instability",
+        "type": "observation",
+        "section": "주요 관찰 소견",
+        "scale": "emotional_instability",
+        "text": "잘 울거나 감정이 급변하는 등 정서 조절 관련 행동이 또래 대비 상승\n보호자 보고(감정 기복)와 일치하는 양상",
+        "extra": {
+          "title": "정서불안정(특수척도) · T = 62",
+          "badge": "특수척도 준임상",
+          "t": 62
+        }
+      },
+      {
+        "id": "VI.p1",
+        "type": "narrative",
+        "section": "종합 해석",
+        "scale": null,
+        "text": "본 아동은 K-CBCL 규준상 총 문제행동(T=58), 내재화 문제(T=58) 및 외현화 문제(T=51)가 모두 정상 범위에 속하여 전반적인 행동·정서 상태는 또래 평균 범위에 있습니다.",
+        "extra": {}
+      },
+      {
+        "id": "VI.p2",
+        "type": "narrative",
+        "section": "종합 해석",
+        "scale": null,
+        "text": "개별 증후군 척도에서는 K-CBCL 임상 기준인 70T를 초과한 척도는 없으나, 신체증상(T=65, 약 93%tile), 사회적 미성숙(T=62), 주의집중 문제(T=61) 등 3개 영역에서 준임상 수준(60–69T)의 상승이 관찰됩니다. 사회적 미성숙이 주의집중 문제와 함께 나타나 또래 관계에서의 어려움이 누적될 가능성이 있습니다. 특히 신체증상 영역의 상승은 보호자의 \"등교 전 신체 호소\" 보고와 일치합니다. 한국판 특수척도인 정서불안정 척도는 T=62로 준임상 범위에 해당하여 감정 조절에 대한 관찰이 필요합니다.",
+        "extra": {}
+      },
+      {
+        "id": "VI.p3",
+        "type": "narrative",
+        "section": "종합 해석",
+        "scale": null,
+        "text": "현재 수준은 즉각적 임상 개입의 절대적 필요성을 시사하지는 않으나, 선별 기준을 넘는 영역이 확인되어 해당 영역에 대한 관찰이 필요합니다. 환경적 요구 변화나 발달적 전이 시점에서 상태가 달라질 수 있으므로 상태 변화를 확인하기 위한 주기적 재평가(3–6개월)가 권장되며, 상담을 통해 가정·기관에서의 구체적 행동 양상을 함께 확인하는 것이 도움이 됩니다.",
+        "extra": {}
+      },
+      {
+        "id": "VI.rec1",
+        "type": "recommendation",
+        "section": "종합 해석",
+        "scale": null,
+        "text": "상담을 통한 행동 양상 확인",
+        "extra": {}
+      },
+      {
+        "id": "VI.rec2",
+        "type": "recommendation",
+        "section": "종합 해석",
+        "scale": null,
+        "text": "3–6개월 후 재평가",
+        "extra": {}
+      },
+      {
+        "id": "VI.rec3",
+        "type": "recommendation",
+        "section": "종합 해석",
+        "scale": null,
+        "text": "교사용 TRF 병행 고려",
+        "extra": {}
+      },
+      {
+        "id": "VII.1",
+        "type": "guardian_comment",
+        "section": "보호자 참고 의견",
+        "scale": "somatic",
+        "text": "월요일 아침만 되면 머리가 아프다, 배가 아프다고 해요.",
+        "extra": {
+          "tag": "등교 전 신체 호소"
+        }
+      },
+      {
+        "id": "VII.2",
+        "type": "guardian_comment",
+        "section": "보호자 참고 의견",
+        "scale": "emotional_instability",
+        "text": "기분이 갑자기 좋았다가 나빠졌다가 해서 맞추기가 힘들어요.",
+        "extra": {
+          "tag": "감정 기복"
+        }
+      },
+      {
+        "id": "C.1",
+        "type": "caution",
+        "section": "해석 시 유의사항",
+        "scale": null,
+        "text": "K-CBCL은 주 양육자 보고에 기반한 선별 도구로, 단일 검사 결과만으로 진단을 확정할 수 없습니다.",
+        "extra": {}
+      },
+      {
+        "id": "C.2",
+        "type": "caution",
+        "section": "해석 시 유의사항",
+        "scale": null,
+        "text": "보고자의 관찰 맥락·주관이 반영될 수 있으며, 상황별 차이가 클 수 있습니다. 교사용 TRF 또는 자기보고형 YSR의 병행 실시가 권장됩니다.",
+        "extra": {}
+      },
+      {
+        "id": "C.3",
+        "type": "caution",
+        "section": "해석 시 유의사항",
+        "scale": null,
+        "text": "K-CBCL 표준 임상 기준은 종합척도 63T, 개별 증후군 척도 70T입니다. 60T 이상 준임상 범위는 추가 검사 및 관찰의 근거가 됩니다.",
+        "extra": {}
+      },
+      {
+        "id": "C.4",
+        "type": "caution",
+        "section": "해석 시 유의사항",
+        "scale": null,
+        "text": "임상 장면에서는 70T(98%tile) 기준이 권장되며, 선별 목적에서는 60T(85%tile)까지 확장하여 해석할 수 있습니다.",
+        "extra": {}
+      }
+    ],
+    "files": []
+  },
+  "sample_meta": {
+    "synthetic": true,
+    "source_id": "KCBCL-SAMPLE-040",
+    "severity_tier": "준임상",
+    "profile_type": "신체증상 우세형",
+    "referral_reason": "등교 전 신체 호소, 감정 기복",
+    "expected_flags": {
+      "overall_level": "준임상(관찰 요망)",
+      "elevated_composites": [],
+      "borderline_syndromes": [
+        "somatic",
+        "socimm",
+        "attention"
+      ],
+      "clinical_syndromes": [],
+      "highest_syndrome": "somatic",
+      "risk_expression_in_comments": false
+    }
+  }
+}

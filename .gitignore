@@ -1,0 +1,21 @@
+# 비밀·로컬 상태 (CLAUDE.md 11장)
+.env
+*.db
+*.db-journal
+
+# 과제 자료: 지원자 외 공유 금지 (CLAUDE.md 10·11장)
+docs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+build/
+dist/
+
+# OS / 편집기
+.DS_Store
+.vscode/
+.idea/

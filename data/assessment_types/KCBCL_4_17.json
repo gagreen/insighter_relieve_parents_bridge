@@ -1,0 +1,61 @@
+{
+  "code": "KCBCL_4_17",
+  "name": "K-CBCL 한국 아동·청소년 행동평가척도 (보호자 보고형, 만 4–17세)",
+  "respondent": "부모",
+  "schema_version": 1,
+  "definition": {
+    "range_labels": {
+      "normal": "또래 평균 범위",
+      "borderline": "관찰 권고 범위",
+      "clinical": "전문 상담 권고 범위",
+      "not_administered": "미실시"
+    },
+    "groups": {
+      "composite": {
+        "direction": "higher_is_worse",
+        "borderline_min": 60,
+        "clinical_min": 63
+      },
+      "syndrome": {
+        "direction": "higher_is_worse",
+        "borderline_min": 60,
+        "clinical_min": 70
+      }
+    },
+    "scales": {
+      "internalizing": {
+        "group": "composite"
+      },
+      "externalizing": {
+        "group": "composite"
+      },
+      "total": {
+        "group": "composite"
+      },
+      "withdrawn": {
+        "group": "syndrome"
+      },
+      "somatic": {
+        "group": "syndrome"
+      },
+      "anxdep": {
+        "group": "syndrome"
+      },
+      "socimm": {
+        "group": "syndrome"
+      },
+      "thought": {
+        "group": "syndrome"
+      },
+      "attention": {
+        "group": "syndrome"
+      },
+      "delinquent": {
+        "group": "syndrome"
+      },
+      "aggressive": {
+        "group": "syndrome"
+      }
+    }
+  }
+}

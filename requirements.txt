@@ -1,0 +1,2 @@
+# 의존성 원본은 pyproject.toml. 아래 한 줄로 패키지(bridge)와 개발 의존성을 함께 설치한다.
+-e .[dev]
