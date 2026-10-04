@@ -210,6 +210,7 @@ pyproject.toml    # 패키지(bridge, src 레이아웃)·의존성·pytest 설�
 specs/            # 기능 명세 (상의 후 결정)
 src/bridge/
   config.py       # 정책 상수(P-xx), 단가, 모델 ID
+  content.py      # content/ 로드·형식 검증, 사전 검사 대상 문장 추출 (2026-10-04 추가)
   llm.py          # 모델 호출 단일 진입점, 토큰·비용 기록
   db.py           # 스키마 생성, 적재
   ingest/         # 원천 데이터 → 공통 뼈대 변환 + JSON Schema 검증

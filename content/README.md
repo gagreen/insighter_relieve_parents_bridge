@@ -29,23 +29,31 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 | `{t}` | T점수 | payload `scores[].t` |
 | `{percentile}` / `{rank_from_top}` | 백분위 / 100 − 백분위(반올림) | payload `scores[].percentile` |
 | `{range_label}` | 범위 이름 | 판정 결과 + 정의 `range_labels` |
-| `{scale_list}` | 척도 이름 나열 ("A, B") | 판정 결과 |
+| `{clinical_list}` / `{borderline_list}` | 판정 결과가 clinical / borderline인 척도 이름 나열 ("A, B", payload 순서) | 판정 결과 + payload `scores[].name` |
 
-정의에 없는 자리표시자를 쓰면 콘텐츠 로드 시 오류로 처리한다.
+정의에 없는 자리표시자를 쓰면 콘텐츠 로드 시 오류로 처리한다(`bridge.content`). 파일별 허용 범위:
+
+- `scale_cards.json`: `{scale_name}`, `{range_label}`만. 카드에는 숫자 자리표시자를 쓰지 않는다(숫자는 결과 view model에서만 채움, G-03).
+- `summary_templates.json`: `{clinical_list}`, `{borderline_list}`만. 조건상 비어 있는 목록은 쓸 수 없다(예: `has_clinical: false` 템플릿의 `{clinical_list}`).
+- `glossary.json`: 자리표시자 없음.
+
+## 사전 검사 (PoC1-08)
+
+`bridge.content.SENTENCE_FIELDS`에 적힌 문장 필드 전체를 `guard_terms.json`으로 검사하고, 자리표시자를 뺀 문장에 숫자가 없는지 확인한다(`tests/test_content.py`). 패턴 파일(`guard_terms.json`, `intent_keywords.json`, `crisis.json`의 `keywords`)과 연락처는 문장이 아니므로 제외한다. 새 콘텐츠 파일에 문장 필드가 있으면 `SENTENCE_FIELDS`에 추가한다.
 
 ## scale_cards.json
 
 ```json
 [
   {
-    "id": "card.CBCL.attention.borderline",
-    "assessment": "CBCL_6_18",
+    "id": "card.KCBCL_4_17.attention.borderline",
+    "assessment": "KCBCL_4_17",
     "scale": "attention",
     "range": "borderline",
     "title": "주의집중 문제",
     "what_it_asks": "(이 척도가 묻는 행동을 쉬운 말로)",
     "behavior_examples": ["(행동 예시)", "(행동 예시)"],
-    "position_text": "{scale_name}은 {range_label}에 있습니다.",
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
     "report_recommendation": "(보고서 권고 수준을 넘지 않는 문장)",
     "status": "draft",
     "version": 1,
@@ -55,16 +63,17 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 ```
 
 - `status`: `draft | reviewed`. PoC에서는 모두 `draft`.
-- (assessment, scale, range) 조합은 유일해야 한다.
+- (assessment, scale, range) 조합은 유일해야 한다. `range`는 `normal | borderline | clinical`. 정의에 없는 척도·미실시 항목은 카드 없이 보고서 원문을 보여준다(PoC1-04).
+- 권고 수준: normal 카드에는 '권고'를 쓰지 않고, borderline 카드에는 '전문'·'정밀'을 쓰지 않는다(테스트로 확인).
 
 ## summary_templates.json
 
 ```json
 [
   {"id": "sum.none",       "when": {"has_clinical": false, "has_borderline": false}, "text": "(모든 영역이 또래 평균 범위일 때)"},
-  {"id": "sum.borderline", "when": {"has_clinical": false, "has_borderline": true},  "text": "(… {scale_list} …)"},
-  {"id": "sum.clinical",   "when": {"has_clinical": true,  "has_borderline": false}, "text": "(… {scale_list} …)"},
-  {"id": "sum.both",       "when": {"has_clinical": true,  "has_borderline": true},  "text": "(…)"}
+  {"id": "sum.borderline", "when": {"has_clinical": false, "has_borderline": true},  "text": "(… {borderline_list} …)"},
+  {"id": "sum.clinical",   "when": {"has_clinical": true,  "has_borderline": false}, "text": "(… {clinical_list} …)"},
+  {"id": "sum.both",       "when": {"has_clinical": true,  "has_borderline": true},  "text": "(… {clinical_list} … {borderline_list} …)"}
 ]
 ```
 
@@ -74,7 +83,7 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 
 ```json
 {
-  "percentile_known": "또래 100명 중 약 {rank_from_top}번째로 높은 점수입니다.",
+  "percentile_known": "상위 약 {rank_from_top}%에 해당하는 점수입니다.",
   "percentile_unknown": "(백분위가 없을 때 — 평균 이하 문장)",
   "fixed_notice_results": "선별 검사이며 진단이 아닙니다.",
   "fixed_notice_qa": "(질문 도우미 고정 안내)",
@@ -155,3 +164,5 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 
 - `category`: `diagnosis_name | diagnosis_possibility | treatment | medication | institution | prognosis | reassurance | threat`.
 - 콘텐츠 전체와 모든 AI 응답에 같은 목록을 적용한다.
+- 원칙: 진단명·치료법·약 이름·기관 이름과 권고·판단 형태("치료가 필요", "가능성이 높", "좋아질", "괜찮", "심각")를 막는다. '진단'·'치료'라는 단어 자체는 경계 안내("진단이 아닙니다", "진단·치료에 관한 판단은 상담에서 다룹니다")에 필요하므로 막지 않는다. '장애'는 단어 전체를 막는다.
+- literal은 대소문자를 무시하고, 원문과 공백을 지운 문장 양쪽에서 찾는다.
