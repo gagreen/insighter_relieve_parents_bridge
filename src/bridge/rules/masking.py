@@ -6,8 +6,9 @@
 import re
 import sqlite3
 from dataclasses import dataclass
+from functools import lru_cache
 
-from bridge import db
+from bridge import content, db
 
 NAME_TOKEN = "[이름]"
 SCHOOL_TOKEN = "[학교]"
@@ -28,23 +29,43 @@ class MaskResult:
     counts: dict[str, int]  # {"name", "school", "phone", "email"}: 바꾼 횟수
 
 
-def _name_patterns(child_name: str) -> list[re.Pattern]:
-    names = [child_name]
-    if len(child_name) >= _MIN_NAME_LEN_FOR_GIVEN:
-        names.append(child_name[1:])
+def _name_pattern(name: str) -> re.Pattern:
     # 앞에 한글이 붙은 경우는 다른 낱말의 일부로 본다. 뒤의 조사·호격("이가", "아")은 남긴다.
-    return [re.compile(rf"(?<![가-힣]){re.escape(n)}") for n in names]
+    return re.compile(rf"(?<![가-힣]){re.escape(name)}")
 
 
-def mask(text: str, child_name: str) -> MaskResult:
+@lru_cache(maxsize=1)
+def _default_exceptions() -> tuple[dict, ...]:
+    return tuple(content.load_name_word_exceptions())
+
+
+def _keep_spans(text: str, given: str, exceptions) -> list[tuple[int, int]]:
+    """성을 뺀 이름이 일반 낱말과 같을 때, 낱말 용법 패턴에 걸린 범위 (PoC2-02, 2026-10-05)."""
+    entry = next((e for e in exceptions if e["word"] == given), None)
+    if entry is None:
+        return []
+    return [m.span() for p in entry["keep_patterns"] for m in re.finditer(p, text)]
+
+
+def mask(text: str, child_name: str, exceptions: list[dict] | None = None) -> MaskResult:
+    """전체 이름은 항상 가린다. 성을 뺀 이름은 낱말 용법이 분명한 자리만 남기고 가린다."""
+    exceptions = _default_exceptions() if exceptions is None else exceptions
     counts = {}
     text, counts["email"] = _EMAIL.subn(CONTACT_TOKEN, text)
     text, counts["phone"] = _PHONE.subn(CONTACT_TOKEN, text)
     text, counts["school"] = _SCHOOL.subn(SCHOOL_TOKEN, text)
-    counts["name"] = 0
-    for pattern in _name_patterns(child_name):
-        text, n = pattern.subn(NAME_TOKEN, text)
-        counts["name"] += n
+    text, counts["name"] = _name_pattern(child_name).subn(NAME_TOKEN, text)
+    if len(child_name) >= _MIN_NAME_LEN_FOR_GIVEN:
+        given = child_name[1:]
+        keep = _keep_spans(text, given, exceptions)
+        out, last = [], 0
+        for m in _name_pattern(given).finditer(text):
+            if any(s <= m.start() and m.end() <= e for s, e in keep):
+                continue
+            out += [text[last:m.start()], NAME_TOKEN]
+            last = m.end()
+            counts["name"] += 1
+        text = "".join(out) + text[last:]
     return MaskResult(text, {k: counts[k] for k in ("name", "school", "phone", "email")})
 
 

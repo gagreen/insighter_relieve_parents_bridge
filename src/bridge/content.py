@@ -228,6 +228,22 @@ def load_scale_terms(content_dir: Path | None = None, definitions: dict[str, dic
     return entries
 
 
+def load_name_word_exceptions(content_dir: Path | None = None) -> list[dict]:
+    """이름과 겹치는 일반 낱말의 용법 패턴 (마스킹 예외, PoC2-02)."""
+    entries = load_json("name_word_exceptions.json", content_dir)
+    _check_unique([e["id"] for e in entries], "낱말 예외 id")
+    _check_unique([e["word"] for e in entries], "낱말 예외 word")
+    for e in entries:
+        if not e["keep_patterns"]:
+            raise ContentError(f"{e['id']}: keep_patterns가 비어 있음")
+        for pattern in e["keep_patterns"]:
+            try:
+                re.compile(pattern)
+            except re.error as err:
+                raise ContentError(f"{e['id']}: 잘못된 정규식 {pattern!r} ({err})") from err
+    return entries
+
+
 def iter_content_sentences(content_dir: Path | None = None) -> Iterator[tuple[str, str, str]]:
     """(파일명, 위치, 문장)을 돌려준다. 아직 없는 파일은 건너뛴다."""
     base = content_dir or config.CONTENT_DIR

@@ -21,6 +21,7 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 | `crisis.json` | 위기 키워드, 위기 안내, 공공 상담 채널 | PoC2-03 |
 | `intent_keywords.json` | 의도 분류 1차 키워드 | PoC2-04 |
 | `guard_terms.json` | 진단명 사전, 금칙 표현 | PoC1-08, PoC2-08 |
+| `name_word_exceptions.json` | 이름과 겹치는 일반 낱말의 용법 패턴 (마스킹 예외) | PoC2-02 |
 
 ## 자리표시자
 
@@ -178,6 +179,17 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 - `guard_terms.json`의 `diagnosis_name` 항목은 모두 diagnosis 키워드로도 잡혀야 한다(테스트로 확인). 진단명을 사전에 추가하면 여기에도 추가한다.
 - 모든 검사가 공유하는 파일이므로 특정 검사의 척도 이름을 넣지 않는다(G-12).
 - 위기 키워드는 여기가 아니라 `crisis.json`에 둔다(위기 검사가 먼저 실행됨).
+
+## name_word_exceptions.json
+
+```json
+[
+  {"id": "nw.insa", "word": "인사", "keep_patterns": ["인사(를|도|는|만)?\\s*(하|해|했)", "인사말"], "status": "draft"}
+]
+```
+
+- 아동의 성을 뺀 이름이 `word`와 같을 때만 쓴다. `keep_patterns`(정규식)에 걸린 범위 안의 이름은 가리지 않고, 나머지는 가린다. 전체 이름은 항상 가린다(`specs/poc.md` PoC2-02).
+- `id`·`word`는 유일하고, 패턴은 컴파일되어야 한다. 패턴 데이터라 사전 검사(PoC1-08) 대상이 아니다.
 
 ## guard_terms.json
 

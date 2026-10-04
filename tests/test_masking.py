@@ -79,3 +79,36 @@ def test_g09_only_masking_reads_subjects():
     readers = {p.relative_to(src).as_posix() for p in src.rglob("*.py") if pattern.search(p.read_text(encoding="utf-8"))}
     assert readers <= {"db.py", "rules/masking.py"}
     assert "rules/masking.py" in readers
+
+
+# ── 낱말 용법 예외 (PoC2-02, 2026-10-05) ────────────
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("선생님께 인사를 안 해요", "선생님께 인사를 안 해요"),                      # 낱말 용법 → 그대로
+    ("인사가 산만해요", "[이름]가 산만해요"),                                    # 증거 없음 → 가림
+    ("인사가 친구한테 인사를 안 해요", "[이름]가 친구한테 인사를 안 해요"),       # spec 예시
+    ("최인사 보호자예요. 인사말을 가르쳐요", "[이름] 보호자예요. 인사말을 가르쳐요"),
+    ("최인사가 인사도 잘 해요", "[이름]가 인사도 잘 해요"),                       # 전체 이름은 항상 가림
+])
+def test_poc2_02_name_that_is_a_common_word(text, expected):
+    assert mask(text, "최인사").text == expected
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("지우개를 자꾸 잃어버려요", "지우개를 자꾸 잃어버려요"),
+    ("글씨를 지우고 다시 써요", "글씨를 지우고 다시 써요"),
+    ("지우가 숙제를 안 해요", "[이름]가 숙제를 안 해요"),
+])
+def test_poc2_02_other_word_names(text, expected):
+    assert mask(text, "김지우").text == expected
+
+
+def test_poc2_02_exceptions_apply_only_to_matching_name():
+    """예외 사전의 낱말이어도 아동 이름이 아니면 상관없다(이름 아닌 낱말은 원래 가리지 않음)."""
+    assert mask("인사를 안 해요", NAME).text == "인사를 안 해요"
+
+
+def test_poc2_02_custom_exceptions():
+    exc = [{"id": "nw.x", "word": "하늘", "keep_patterns": ["하늘(이|을)?\\s*(맑|파랗)"], "status": "draft"}]
+    assert mask("하늘이 맑아요. 하늘이가 좋아해요", "김하늘", exceptions=exc).text == "하늘이 맑아요. [이름]이가 좋아해요"

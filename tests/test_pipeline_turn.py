@@ -72,6 +72,7 @@ def test_g09_masked_question_is_stored_and_sent(conn, ctx):
     client = FakeClient(fake_response({"intent": "explain", "confidence": 0.9}), fake_response(GOOD))
     r = pipeline.handle_question(conn, ctx, UNDECIDED_Q, client=client)
     assert _turn(conn, r.turn_id)["question_masked"] == "[이름]이가 요즘 밤에 잠을 잘 못 자요"
+    assert r.question_masked == "[이름]이가 요즘 밤에 잠을 잘 못 자요"   # 화면에 'AI에게 보낸 문장'으로 표시
     sent = json.dumps(client.calls, ensure_ascii=False, default=str)
     assert "재원" not in sent and "백재원" not in sent
 

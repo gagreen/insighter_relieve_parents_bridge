@@ -210,6 +210,7 @@ class TurnResult:
     stopped: bool = False                        # 위기 → 대화 중단 (입력 막기는 화면이 한다)
     note_saved: bool = False
     intent: str | None = None
+    question_masked: str | None = None           # 외부로 보낸 문장 (화면에 'AI에게 보낸 문장'으로 표시, G-09)
     turn_id: int | None = None                   # input_error면 저장하지 않아 None
     llm_calls: list[LLMResult] = field(default_factory=list)
 
@@ -241,7 +242,7 @@ def _save(conn: sqlite3.Connection, ctx: Context, turn: _Turn, *, route: str, me
         notes.save_note(conn, ctx.child_id, turn_id, turn.masked, note[0], note[1])
     return TurnResult(route=route, message=message, label=label, evidence_ids=list(evidence_ids), guard_result=guard,
                       guard_failures=turn.failures, crisis=crisis, stopped=crisis, note_saved=note is not None,
-                      intent=turn.intent, turn_id=turn_id, llm_calls=list(turn.calls))
+                      intent=turn.intent, question_masked=turn.masked, turn_id=turn_id, llm_calls=list(turn.calls))
 
 
 def _crisis(conn, ctx: Context, turn: _Turn, stage: str, keyword_ids: list[str]) -> TurnResult:

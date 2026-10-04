@@ -282,3 +282,22 @@ def test_crisis_channels_are_sourced():
     assert channels
     for ch in channels:
         assert ch["source_url"].startswith("https://") and re.fullmatch(r"\d{4}-\d{2}-\d{2}", ch["checked_at"])
+
+
+# ── 마스킹 낱말 예외 (PoC2-02) ───────────────────────
+
+
+def test_name_word_exceptions_load():
+    assert {e["word"] for e in content.load_name_word_exceptions()} >= {"인사", "지우"}
+
+
+@pytest.mark.parametrize("fn", [
+    lambda es: es + [{**es[0], "word": "새낱말"}],                    # id 중복
+    lambda es: es + [{**es[0], "id": "nw.dup"}],                      # word 중복
+    lambda es: [{**es[0], "keep_patterns": ["(인사"]}] + es[1:],     # 깨진 정규식
+    lambda es: [{**es[0], "keep_patterns": []}] + es[1:],            # 패턴 없음
+], ids=["dup_id", "dup_word", "regex", "empty"])
+def test_name_word_exceptions_reject_bad_format(content_copy, fn):
+    _edit(content_copy, "name_word_exceptions.json", fn)
+    with pytest.raises(ContentError):
+        content.load_name_word_exceptions(content_copy)

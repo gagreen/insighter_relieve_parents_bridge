@@ -57,7 +57,7 @@ def _on_question() -> None:
         result = pipeline.handle_question(conn, st.session_state.ctx, question)
     finally:
         conn.close()
-    st.session_state.messages.append({"role": "user", "text": question})
+    st.session_state.messages.append({"role": "user", "text": question, "masked": result.question_masked})
     st.session_state.messages.append({"role": "assistant", "text": result.message, "label": result.label,
                                       "evidence_ids": result.evidence_ids})
     if result.stopped:
@@ -109,6 +109,8 @@ def qa_tab(ctx: pipeline.Context) -> None:
     for m in st.session_state.messages:
         with st.chat_message(m["role"]):
             st.markdown(m["text"])
+            if m["role"] == "user" and m.get("masked"):
+                st.caption(f"AI에게 보낸 문장: {m['masked']}")
             if m["role"] == "assistant":
                 caption = m["label"] or ""
                 if m["evidence_ids"]:

@@ -45,6 +45,7 @@ def test_5_safe_response_and_note(app):
     text = _texts(app)
     assert "안전 응답" in text and "ADHD인가요?" in text
     assert "질문 노트 (1)" in text
+    assert "AI에게 보낸 문장" in text
 
 
 def test_poc2_03_crisis_disables_input(app):
