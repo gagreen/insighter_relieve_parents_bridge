@@ -301,3 +301,20 @@ def test_name_word_exceptions_reject_bad_format(content_copy, fn):
     _edit(content_copy, "name_word_exceptions.json", fn)
     with pytest.raises(ContentError):
         content.load_name_word_exceptions(content_copy)
+
+
+# ── 숫자 자리표시자 뒤 조사 (spec 7장) ───────────────
+
+NUMBER_PLACEHOLDERS = ("t", "percentile", "rank_from_top", "max_chars")
+# 받침 유무에 따라 형태가 바뀌는 조사. 숫자는 읽는 소리에 따라 달라지므로 자리표시자 바로 뒤에 둘 수 없다.
+JOSA_AFTER_NUMBER = re.compile(r"\{(" + "|".join(NUMBER_PLACEHOLDERS) + r")\}(으?로|[은는이가을를와과]|이나|나)(?![가-힣])")
+
+
+def test_number_placeholder_not_followed_by_josa():
+    """'T점수 {t}로' → 66이면 '66로'(틀림). 단위('점', '%', '자')를 붙여 조사를 고정한다."""
+    hits = [(f, where, text) for f, where, text in content.iter_content_sentences() if JOSA_AFTER_NUMBER.search(text)]
+    assert hits == []
+
+
+def test_josa_rule_detects_example():
+    assert JOSA_AFTER_NUMBER.search("T점수 {t}로, 관찰") and not JOSA_AFTER_NUMBER.search("T점수 {t}점으로, 관찰")

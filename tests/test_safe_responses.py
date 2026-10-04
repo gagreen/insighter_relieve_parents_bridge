@@ -62,3 +62,8 @@ def test_poc2_05_general_template_without_usable_scale(ctx, question):
 def test_b4_safe_responses_pass_guard(ctx, kind, question):
     text, _ = pipeline.safe_response(kind, question, ctx)
     assert text and find_violations(text, TERMS) == []
+
+
+def test_poc2_05_number_josa_is_grammatical(ctx):
+    text, _ = pipeline.safe_response("diagnosis", "ADHD인가요?", ctx)
+    assert "T점수 66점으로" in text and "66로" not in text
