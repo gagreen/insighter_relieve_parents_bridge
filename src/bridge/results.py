@@ -1,9 +1,9 @@
-"""M1 쉬운 말 결과 조립 (PoC1-03 한 줄 요약, PoC1-04 척도 설명 카드).
+"""M1 쉬운 말 결과 조립 (PoC1-02~07: 숫자 표시, 한 줄 요약, 카드, 미실시, 기준선, 고정 문구).
 
 미리 만든 문장을 조립만 한다(G-04). LLM을 호출하지 않는다. 검사 종류별 분기 없음(G-12).
 """
 from bridge.content import CARD_SENTENCE_FIELDS
-from bridge.rules.ranges import BORDERLINE, CLINICAL, judge
+from bridge.rules.ranges import BORDERLINE, CLINICAL, NOT_ADMINISTERED, direction, judge
 
 DRAFT_LABEL = "초안(검수 전)"      # G-04, G-11
 REVIEWED_LABEL = "검수된 설명"     # G-11
@@ -48,3 +48,55 @@ def link_card(score: dict, judged_range: str | None, cards: list[dict],
         return {"kind": "card", "card": render_card(card, score, definition), "label": label}
     matched = [f for f in findings if f.get("scale") == score["scale"]]
     return {"kind": "report_text", "finding_ids": [f["id"] for f in matched], "texts": [f["text"] for f in matched]}
+
+
+def thresholds(scale: str, definition: dict) -> list[dict] | None:
+    """PoC1-06: 기준선 값은 정의에서만 읽는다(G-02). group 없는 척도는 None."""
+    scale_def = definition["scales"].get(scale, {})
+    if "group" not in scale_def:
+        return None
+    group = definition["groups"][scale_def["group"]]
+    suffix = "min" if group["direction"] == "higher_is_worse" else "max"
+    return [{"value": group[f"{r}_{suffix}"], "range": r, "label": definition["range_labels"][r]}
+            for r in (BORDERLINE, CLINICAL)]
+
+
+def percentile_text(score: dict, scale_direction: str | None, phrases: dict) -> tuple[str | None, int | None]:
+    """PoC1-02: 방향에 맞는 백분위 문장과 rank_from_top(100 − 백분위)을 돌려준다."""
+    t, p = score["t"], score["percentile"]
+    if t is None or scale_direction is None:
+        return None, None
+    if p is None:
+        # 하한(50T) 설명. 전제(백분위 null ⇒ 50T, higher_is_worse)는 테스트로 확인한다.
+        return (phrases["percentile_unknown"], None) if scale_direction == "higher_is_worse" else (None, None)
+    if scale_direction == "higher_is_worse":
+        rank = 100 - p
+        return phrases["percentile_known"].format(rank_from_top=rank), rank
+    return phrases["percentile_known_lower"].format(percentile=p), None
+
+
+def build_view(payload: dict, definition: dict, cards: list[dict], templates: list[dict], phrases: dict) -> dict:
+    """결과 화면 데이터. 숫자는 payload에서 복사만 한다(G-03). 항목을 숨기지 않는다(PoC1-05).
+
+    payload만 받으므로 식별 정보(subjects)는 들어올 수 없다(G-09).
+    """
+    judged = judge_scores(payload["scores"], definition)
+    items = []
+    for s, j in zip(payload["scores"], judged):
+        d = direction(s["scale"], definition)
+        p_text, rank = percentile_text(s, d, phrases)
+        not_administered = j["range"] == NOT_ADMINISTERED
+        items.append({
+            "id": s["id"], "scale": s["scale"], "name": s["name"],
+            "t": s["t"], "percentile": s["percentile"], "rank_from_top": rank,
+            "range": j["range"],
+            "range_label": definition["range_labels"][j["range"]] if j["range"] else None,
+            "status": "not_administered" if not_administered else "scored",
+            "status_text": phrases["not_administered"] if not_administered else None,
+            "direction": d,
+            "percentile_text": p_text,
+            "direction_note": phrases["direction_note_lower"] if d == "lower_is_worse" and s["t"] is not None else None,
+            "thresholds": thresholds(s["scale"], definition),
+            "explanation": link_card(s, j["range"], cards, payload["findings"], definition, payload["assessment"]),
+        })
+    return {"notice": phrases["fixed_notice_results"], "summary": summarize(judged, templates), "items": items}

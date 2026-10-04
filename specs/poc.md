@@ -155,10 +155,15 @@ Then not_administered 를 반환한다
 Given 기준 샘플
 When 결과 화면 데이터(view model)를 만들면
 Then 모든 T점수·백분위는 payload의 해당 id 값에서 복사된 값이다
- And percentile이 null이면 백분위 문장 대신 content의 '평균 이하' 문장을 쓴다
+ And 백분위 문장은 척도의 direction(2-2)에 맞는 content 문장을 쓴다
+ And percentile이 null이고 T가 있으면(증후군 척도 하한 50T) 하한 설명 문장을 쓴다
 ```
 
-- 백분위 문장은 content 템플릿으로 만든다: `상위 약 {rank_from_top}%` (`rank_from_top` = 100 − 백분위, 코드가 계산). 문장에 숫자를 쓰지 않는다는 7장 규칙에 맞추기 위해 '또래 100명 중' 표현을 쓰지 않는다(2026-10-04 결정).
+- 백분위 문장은 content 템플릿으로 만든다. 문장에 숫자를 쓰지 않는다는 7장 규칙에 맞추기 위해 '또래 100명 중' 표현을 쓰지 않는다(2026-10-04 결정).
+  - `higher_is_worse`: `상위 약 {rank_from_top}%` (`rank_from_top` = 100 − 백분위, 코드가 계산)
+  - `lower_is_worse`: `하위 약 {percentile}%` + 점수가 낮을수록 어려움이 크게 보고되었다는 방향 안내 문장
+  - 백분위 null(하한): 이 척도에서 표시되는 가장 낮은 점수이며 또래 평균과 비슷하거나 낮다는 뜻, 이 구간은 백분위를 따로 계산하지 않는다는 문장
+  - direction이 없는 척도: 백분위 문장 없이 숫자만 표시
 
 ### PoC1-03 한 줄 요약 조립 [G-04] → B-3
 
@@ -193,7 +198,7 @@ Then 항목을 숨기지 않고 '미실시'로 표시하고, 보고서 원문 �
 
 ### PoC1-06 기준선 그래프
 
-- 척도별 가로 막대 1개: T점수 위치 + 정의의 `borderline_min`, `clinical_min` 기준선 + 구간 이름(`range_labels`).
+- 척도별 가로 막대 1개: T점수 위치 + 정의의 기준선(`higher_is_worse`: `borderline_min`, `clinical_min` / `lower_is_worse`: `borderline_max`, `clinical_max`) + 구간 이름(`range_labels`). `group`이 없는 척도는 기준선 없이 T점수 위치만 표시한다.
 - 기준선 값은 정의에서 읽는다(하드코딩 금지).
 
 ### PoC1-07 고정 문구

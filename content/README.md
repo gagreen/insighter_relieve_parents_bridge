@@ -83,11 +83,13 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 
 ```json
 {
-  "percentile_known": "상위 약 {rank_from_top}%에 해당하는 점수입니다.",
-  "percentile_unknown": "(백분위가 없을 때 — 평균 이하 문장)",
   "fixed_notice_results": "선별 검사이며 진단이 아닙니다.",
-  "fixed_notice_qa": "(질문 도우미 고정 안내)",
+  "percentile_known": "상위 약 {rank_from_top}%에 해당하는 점수입니다.",
+  "percentile_known_lower": "하위 약 {percentile}%에 해당하는 점수입니다.",
+  "direction_note_lower": "(점수가 낮을수록 어려움이 많이 보고되었다는 방향 안내)",
+  "percentile_unknown": "(백분위 null = 하한 50T: 가장 낮은 점수, 평균과 비슷하거나 낮음, 백분위 따로 계산 안 함)",
   "not_administered": "(미실시 표시 문장)",
+  "fixed_notice_qa": "(질문 도우미 고정 안내)",
   "out_of_scope": "(고객센터·예약 안내)",
   "input_empty": "(빈 입력 안내)",
   "input_too_long": "(1,000자 초과 안내)",
@@ -95,6 +97,9 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
   "api_error": "(일시 오류 안내 + 노트 저장 안내)"
 }
 ```
+
+- 백분위 문장은 척도의 `direction`(정의의 group 또는 척도 항목, `specs/poc.md` 2-2)으로 고른다: `higher_is_worse` → `percentile_known`, `lower_is_worse` → `percentile_known_lower` + `direction_note_lower`, direction 없음 → 문장 없이 숫자만.
+- 키별 허용 자리표시자는 `bridge.content.PHRASE_PLACEHOLDERS`. M1 키(위 6개)는 필수이고, 아래 2일차 키는 PoC-2 구현 때 추가한다.
 
 ## glossary.json
 

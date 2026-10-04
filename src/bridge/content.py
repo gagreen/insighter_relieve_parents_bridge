@@ -39,6 +39,17 @@ SENTENCE_FIELDS: dict[str, tuple[str, tuple[str, ...] | None]] = {
     "crisis.json": ("keys", ("message",)),
 }
 
+# phrases.json 키별 허용 자리표시자. M1(PoC1-02·05·07) 키만 필수, 2일차 문구는 그때 추가한다.
+PHRASE_PLACEHOLDERS = {
+    "fixed_notice_results": set(),
+    "percentile_known": {"rank_from_top"},
+    "percentile_known_lower": {"percentile"},
+    "direction_note_lower": set(),
+    "percentile_unknown": set(),
+    "not_administered": set(),
+}
+M1_PHRASE_KEYS = tuple(PHRASE_PLACEHOLDERS)
+
 _PLACEHOLDER = re.compile(r"\{(\w+)\}")
 
 
@@ -124,6 +135,15 @@ def load_glossary(content_dir: Path | None = None) -> list[dict]:
     for e in entries:
         _check_placeholders(e["plain"], ALLOWED_PLACEHOLDERS["glossary.json"], e["id"])
     return entries
+
+
+def load_phrases(content_dir: Path | None = None, required: tuple[str, ...] = M1_PHRASE_KEYS) -> dict[str, str]:
+    phrases = load_json("phrases.json", content_dir)
+    if missing := [k for k in required if k not in phrases]:
+        raise ContentError(f"phrases.json: 필수 키 누락 {missing}")
+    for key, text in phrases.items():
+        _check_placeholders(text, PHRASE_PLACEHOLDERS.get(key, set()), f"phrases.{key}")
+    return phrases
 
 
 def iter_content_sentences(content_dir: Path | None = None) -> Iterator[tuple[str, str, str]]:
