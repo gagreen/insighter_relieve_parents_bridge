@@ -53,10 +53,11 @@ PHRASE_PLACEHOLDERS = {
     "out_of_scope": set(),
     "no_evidence": set(),
     "api_error": set(),
+    "fixed_notice_qa": set(),
 }
 M1_PHRASE_KEYS = ("fixed_notice_results", "percentile_known", "percentile_known_lower",
                   "direction_note_lower", "percentile_unknown", "not_administered")
-QA_PHRASE_KEYS = ("input_empty", "input_too_long", "out_of_scope", "no_evidence", "api_error")
+QA_PHRASE_KEYS = ("input_empty", "input_too_long", "out_of_scope", "no_evidence", "api_error", "fixed_notice_qa")
 
 CRISIS_REQUIRED = ("keywords", "message", "channels")
 CRISIS_CATEGORIES = ("child_safety", "caregiver_distress")

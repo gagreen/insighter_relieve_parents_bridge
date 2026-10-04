@@ -13,6 +13,8 @@ pip install -r requirements.txt
 cp .env.example .env               # ANTHROPIC_API_KEY 입력
 python -m bridge.db init           # SQLite 스키마 생성 + 샘플 적재
 pytest
+streamlit run app/main.py          # 데모 화면 (결과 · 질문 도우미 · 상담 브리프)
+python -m bridge.brief R-KCBCL_4_17-035   # 브리프 텍스트 (질문 정리 LLM 1회, --no-llm이면 생략)
 ```
 
 ## 사용 모델·API

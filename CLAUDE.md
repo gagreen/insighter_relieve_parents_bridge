@@ -229,7 +229,7 @@ content/          # 척도 설명 카드, 용어사전, 안전 응답, 위기 �
 prompts/          # intent_vN.md, answer_vN.md, organize_vN.md
 schemas/          # 검사별 JSON Schema (kcbcl_4_17.schema.json)
 eval/             # 평가셋, 실행 스크립트, reports/ (형식: eval/README.md)
-app/              # Streamlit 데모
+app/              # Streamlit 데모 (main.py, components.py: 기준선 그래프 SVG)
 tests/
 data/             # 샘플 데이터 (8-4, data/README.md)
   kcbcl_samples_100.json      # 원천 (수정 금지)
@@ -276,8 +276,9 @@ cp .env.example .env
 pytest
 python scripts/convert_kcbcl_to_skeleton.py   # 원천 → data/kcbcl_results/ (이미 생성됨, 원천을 바꿀 때만)
 python -m bridge.db init            # 스키마 생성 + 샘플 적재 (기본 ./bridge.db, 다시 실행해도 중복 없음)
+streamlit run app/main.py           # 데모 (DB가 없으면 만들고 샘플 적재)
+python -m bridge.brief R-KCBCL_4_17-035 --no-llm   # 브리프 텍스트 (--no-llm: 질문 정리 LLM 생략)
 # 아래는 구현 후 사용 (예정)
-streamlit run app/main.py           # 데모
 python -m eval.run --model claude-haiku-4-5-20251001
 ```
 

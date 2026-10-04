@@ -52,3 +52,17 @@ def build_evidence(view: dict, payload: dict, glossary: list[dict]) -> EvidenceP
         items[e["id"]] = e
     text = "\n".join(json.dumps(e, ensure_ascii=False) for e in entries)
     return EvidencePack(text, items)
+
+
+def item_label(item: dict) -> str:
+    """근거 칩·브리프에 쓰는 'id · 이름'. 값(점수·문장)은 넣지 않는다."""
+    kind = item["kind"]
+    if kind == "score":
+        name = item["name"]
+    elif kind == "finding":
+        name = f"{item['section']} ({item['scale_name']})" if item.get("scale_name") else item["section"]
+    elif kind == "card":
+        name = f"{item['scale_name']} 설명 카드"
+    else:
+        name = item["term"]
+    return f"{item['id']} · {name}"

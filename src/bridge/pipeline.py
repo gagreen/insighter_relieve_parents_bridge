@@ -51,17 +51,8 @@ ANSWER_SCHEMA = {
 
 
 def wrap_question(masked: str) -> str:
-    """보호자 입력을 별도 태그 영역에 넣는다(G-08). 입력 속 꺾쇠는 전각으로 바꿔 태그를 만들 수 없게 한다."""
-    body = masked.replace("<", "＜").replace(">", "＞")
-    return f"<{QUESTION_TAG}>\n{body}\n</{QUESTION_TAG}>"
-
-
-def _json_object(text: str | None) -> dict | None:
-    try:
-        value = json.loads(text or "")
-    except json.JSONDecodeError:
-        return None
-    return value if isinstance(value, dict) else None
+    """보호자 질문을 별도 태그 영역에 넣는다(G-08)."""
+    return llm.tagged(QUESTION_TAG, masked)
 
 
 # ── 의도 분류 (PoC2-04) ──────────────────────────────
@@ -79,7 +70,7 @@ class IntentDecision:
 
 def _parse_intent(text: str | None) -> tuple[str, float] | None:
     """모델과 무관한 형식 검증(G-08): 의도 코드 안의 intent, 0~1 숫자 confidence."""
-    value = _json_object(text)
+    value = llm.parse_json_object(text)
     if value is None:
         return None
     intent, conf = value.get("intent"), value.get("confidence")
@@ -128,7 +119,7 @@ def generate_answer(masked: str, evidence: EvidencePack, *, model: str | None = 
     system_parts = [llm.load_prompt(version), f"<evidence>\n{evidence.text}\n</evidence>"]
     result = llm.call("answer", version, system_parts, wrap_question(masked), ANSWER_SCHEMA,
                       model=model, client=client)
-    return AnswerDraft(_json_object(result.text), result)
+    return AnswerDraft(llm.parse_json_object(result.text), result)
 
 
 # ── 맥락 (아동 1명당 한 번) ──────────────────────────
@@ -137,6 +128,7 @@ def generate_answer(masked: str, evidence: EvidencePack, *, model: str | None = 
 @dataclass(frozen=True)
 class Context:
     """검사 결과 1건에 대한 처리 맥락. 식별 정보(subjects)는 담지 않는다(G-09)."""
+    result_id: str
     child_id: str
     payload: dict
     definition: dict
@@ -157,7 +149,7 @@ def load_context(conn: sqlite3.Connection, result_id: str) -> Context:
     view = results.build_view(payload, definition, content.load_scale_cards(),
                               content.load_summary_templates(), phrases)
     return Context(
-        child_id=result["child_id"], payload=payload, definition=definition, view=view,
+        result_id=result_id, child_id=result["child_id"], payload=payload, definition=definition, view=view,
         pack=evidence.build_evidence(view, payload, content.load_glossary()),
         phrases=phrases, safe_responses=content.load_safe_responses(),
         scale_terms=[t for t in content.load_scale_terms() if t["assessment"] == payload["assessment"]],

@@ -3,6 +3,7 @@
 Anthropic SDK는 이 모듈만 import한다. 응답은 구조화 출력(JSON Schema)으로 받고, 마지막 system 블록에
 캐시 지점을 둔다. 형식 검증은 호출자가 모델과 무관한 규칙으로 따로 한다(G-08).
 """
+import json
 import sqlite3
 import time
 from dataclasses import dataclass
@@ -38,6 +39,21 @@ class LLMResult:
 def get_client(api_key: str | None = None) -> anthropic.Anthropic:
     """재시도는 SDK에 맡긴다(연결 오류·408·409·429·5xx). P-05 축소: 1회."""
     return anthropic.Anthropic(api_key=api_key, max_retries=config.API_RETRY_LIMIT)
+
+
+def tagged(tag: str, body: str) -> str:
+    """보호자 입력을 별도 태그 영역에 넣는다(G-08). 입력 속 꺾쇠는 전각으로 바꿔 태그를 만들 수 없게 한다."""
+    body = body.replace("<", "＜").replace(">", "＞")
+    return f"<{tag}>\n{body}\n</{tag}>"
+
+
+def parse_json_object(text: str | None) -> dict | None:
+    """JSON 객체가 아니면 None (형식 검증의 첫 단계, 모델과 무관)."""
+    try:
+        value = json.loads(text or "")
+    except json.JSONDecodeError:
+        return None
+    return value if isinstance(value, dict) else None
 
 
 def load_prompt(version: str) -> str:
@@ -87,6 +103,11 @@ def call(stage: str, prompt_version: str, system_parts: list[str], user_text: st
         response = client.messages.create(**_request(stage, model, system_parts, user_text, schema))
     except anthropic.APIError as e:
         raise LLMError(f"{stage} 호출 실패: {type(e).__name__}: {e}") from e
+    except TypeError as e:
+        # 인증 정보가 없으면 SDK가 요청 시점에 TypeError를 낸다. 다른 TypeError는 코드 오류이므로 그대로 둔다.
+        if "authentication" not in str(e).lower():
+            raise
+        raise LLMError(f"{stage} 호출 실패: 인증 정보 없음 (ANTHROPIC_API_KEY 확인)") from e
     latency_ms = round((time.perf_counter() - started) * 1000)
 
     usage = response.usage

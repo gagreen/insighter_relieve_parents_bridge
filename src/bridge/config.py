@@ -71,7 +71,7 @@ MAX_TOKENS = {"intent": 1024, "answer": 4096, "organize": 4096}
 
 # ── 프롬프트 (CLAUDE.md 7장) ──────────────────────────
 # 현재 쓰는 버전. 기존 버전 파일은 고치지 않고 새 버전 파일을 만든 뒤 여기만 바꾼다.
-PROMPT_VERSIONS = {"intent": "intent_v1", "answer": "answer_v1"}
+PROMPT_VERSIONS = {"intent": "intent_v1", "answer": "answer_v1", "organize": "organize_v1"}
 
 # ── 정책 상수 (CLAUDE.md 6장) ─────────────────────────
 # P-01 입력 길이. 가정: 기획안 2-5

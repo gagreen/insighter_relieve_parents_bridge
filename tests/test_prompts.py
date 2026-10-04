@@ -38,3 +38,11 @@ def test_answer_prompt_requires_output_fields():
     prompt = llm.load_prompt(config.PROMPT_VERSIONS["answer"])
     for field in ("answerable", "answer", "evidence_ids", "note_question"):
         assert f"`{field}`" in prompt
+
+
+def test_organize_prompt_names_all_brief_types():
+    from bridge.notes import BRIEF_TYPES
+    prompt = llm.load_prompt(config.PROMPT_VERSIONS["organize"])
+    for code in BRIEF_TYPES:
+        assert f"`{code}`" in prompt
+    assert "source_item_ids" in prompt

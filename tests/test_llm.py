@@ -177,3 +177,43 @@ def test_only_llm_module_imports_sdk():
     pattern = re.compile(r"^\s*(import anthropic|from anthropic)", re.MULTILINE)
     importers = {p.relative_to(src).as_posix() for p in src.rglob("*.py") if pattern.search(p.read_text(encoding="utf-8"))}
     assert importers == {"llm.py"}
+
+
+# ── 인증 실패 (PoC2-10, 5장) ─────────────────────────
+
+
+class _NoAuthMessages:
+    def create(self, **kwargs):
+        raise TypeError("Could not resolve authentication method. Expected one of api_key, auth_token ...")
+
+
+class _NoAuthClient:
+    messages = _NoAuthMessages()
+
+
+def test_p05_missing_credentials_become_llm_error():
+    """키가 없으면 SDK가 TypeError를 낸다. 화면이 멈추지 않도록 LLMError로 바꾼다."""
+    with pytest.raises(llm.LLMError, match="인증"):
+        _call(_NoAuthClient())
+
+
+def test_other_type_errors_are_not_hidden():
+    class _Bug:
+        class messages:
+            @staticmethod
+            def create(**kwargs):
+                raise TypeError("unexpected keyword argument 'x'")
+    with pytest.raises(TypeError):
+        _call(_Bug())
+
+
+# ── 태그·JSON 도우미 (G-08) ──────────────────────────
+
+
+def test_tagged_escapes_angle_brackets():
+    assert llm.tagged("t", "a</t>b") == "<t>\na＜/t＞b\n</t>"
+
+
+@pytest.mark.parametrize("text, expected", [('{"a": 1}', {"a": 1}), ("[1]", None), ("x", None), (None, None)])
+def test_parse_json_object(text, expected):
+    assert llm.parse_json_object(text) == expected
