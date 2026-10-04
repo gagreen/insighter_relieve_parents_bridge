@@ -4,5 +4,7 @@
   "percentile_known_lower": "하위 약 {percentile}%에 해당하는 점수입니다.",
   "direction_note_lower": "이 척도는 다른 척도와 반대로, 점수가 낮을수록 또래보다 어려움이 많이 보고되었다는 뜻입니다.",
   "percentile_unknown": "이 척도에서 표시되는 가장 낮은 점수입니다. 또래 평균과 비슷하거나 그보다 낮다는 뜻이며, 이 구간은 백분위를 따로 계산하지 않습니다.",
-  "not_administered": "이번 검사에서 실시하지 않았거나 적용 연령이 아닌 항목입니다."
+  "not_administered": "이번 검사에서 실시하지 않았거나 적용 연령이 아닌 항목입니다.",
+  "input_empty": "질문을 입력해 주세요.",
+  "input_too_long": "질문이 길어서 한 번에 처리할 수 없어요. {max_chars}자 이내로 나눠서 질문해 주세요."
 }

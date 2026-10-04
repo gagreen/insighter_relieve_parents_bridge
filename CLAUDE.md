@@ -214,7 +214,7 @@ src/bridge/
   llm.py          # 모델 호출 단일 진입점, 토큰·비용 기록
   db.py           # 스키마 생성, 적재
   ingest/         # 원천 데이터 → 공통 뼈대 변환 + JSON Schema 검증
-  rules/          # 범위 판정, 마스킹, 위기 키워드, 의도 키워드
+  rules/          # 입력 검증, 범위 판정, 마스킹, 위기 키워드, 의도 키워드
   guard/          # 출력 검증(진단명 사전, 금칙 표현, 숫자 대조)
   pipeline.py     # 질문 1건 처리(6장)
   results.py      # M1 조립

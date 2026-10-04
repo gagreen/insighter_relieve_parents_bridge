@@ -180,3 +180,54 @@ def test_glossary_rejects_duplicate_alias(content_copy):
     _edit(content_copy, "glossary.json", lambda es: es + [{**es[0], "id": "term.dup", "term": "새 용어"}])
     with pytest.raises(ContentError):
         content.load_glossary(content_copy)
+
+
+# ── 위기 키워드·의도 키워드·2일차 문구 (PoC2-01, 03, 04) ──
+
+
+def test_crisis_and_intent_keywords_load():
+    assert content.load_crisis()["keywords"]
+    assert all(content.load_intent_keywords()[k] for k in content.INTENT_KEYWORD_KEYS)
+
+
+def test_crisis_channels_have_source_when_present():
+    """spec 7장: 공공 상담 채널은 공식 출처·확인일과 함께만 적는다."""
+    for ch in content.load_crisis()["channels"]:
+        assert ch["source_url"] and ch["checked_at"]
+
+
+@pytest.mark.parametrize("fn", [
+    lambda d: {**d, "keywords": d["keywords"] + [d["keywords"][0]]},                           # id 중복
+    lambda d: {**d, "keywords": [{**d["keywords"][0], "category": "other"}]},                  # 알 수 없는 category
+    lambda d: {**d, "keywords": [{**d["keywords"][0], "type": "glob"}]},                       # 알 수 없는 type
+    lambda d: {**d, "keywords": [{**d["keywords"][0], "type": "regex", "pattern": "(죽고"}]},  # 깨진 정규식
+    lambda d: {k: v for k, v in d.items() if k != "message"},                                  # 필수 키 누락
+], ids=["dup_id", "category", "type", "regex", "missing_key"])
+def test_crisis_rejects_bad_format(content_copy, fn):
+    _edit(content_copy, "crisis.json", fn)
+    with pytest.raises(ContentError):
+        content.load_crisis(content_copy)
+
+
+@pytest.mark.parametrize("fn", [
+    lambda d: {**d, "crisis": [{"id": "intent.cr.001", "pattern": "죽고", "type": "literal"}]},  # 위기는 crisis.json에
+    lambda d: {k: v for k, v in d.items() if k != "explain"},                                   # 키 누락
+    lambda d: {**d, "explain": d["explain"] + [{**d["explain"][0], "id": d["diagnosis"][0]["id"]}]},  # 파일 전체 id 중복
+    lambda d: {**d, "explain": [{**d["explain"][0], "type": "regex", "pattern": "[뜻"}]},       # 깨진 정규식
+], ids=["crisis_key", "missing_key", "dup_id", "regex"])
+def test_intent_keywords_reject_bad_format(content_copy, fn):
+    _edit(content_copy, "intent_keywords.json", fn)
+    with pytest.raises(ContentError):
+        content.load_intent_keywords(content_copy)
+
+
+def test_m1_phrases_do_not_require_qa_keys(content_copy):
+    """2일차 문구가 없어도 결과 화면(M1) 문구 로드는 통과한다."""
+    _edit(content_copy, "phrases.json", lambda d: {k: v for k, v in d.items() if k not in content.QA_PHRASE_KEYS})
+    assert content.load_phrases(content_copy)
+    with pytest.raises(ContentError):
+        content.load_phrases(content_copy, required=content.QA_PHRASE_KEYS)
+
+
+def test_poc1_08_scan_includes_crisis_message():
+    assert ("crisis.json", "message[0]") in {(f, w) for f, w, _ in content.iter_content_sentences()}

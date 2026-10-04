@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from bridge import config
+from bridge.rules.patterns import compile_patterns
 
 
 class ContentError(ValueError):
@@ -47,8 +48,17 @@ PHRASE_PLACEHOLDERS = {
     "direction_note_lower": set(),
     "percentile_unknown": set(),
     "not_administered": set(),
+    "input_empty": set(),
+    "input_too_long": {"max_chars"},
 }
-M1_PHRASE_KEYS = tuple(PHRASE_PLACEHOLDERS)
+M1_PHRASE_KEYS = ("fixed_notice_results", "percentile_known", "percentile_known_lower",
+                  "direction_note_lower", "percentile_unknown", "not_administered")
+QA_PHRASE_KEYS = ("input_empty", "input_too_long")  # PoC-2 문구는 구현하면서 추가한다
+
+CRISIS_REQUIRED = ("keywords", "message", "channels")
+CRISIS_CATEGORIES = ("child_safety", "caregiver_distress")
+# 위기는 crisis.json에 따로 둔다(위기 검사가 먼저 실행됨). diagnosis 우선 규칙은 bridge.rules.intents.
+INTENT_KEYWORD_KEYS = ("diagnosis", "parenting", "out_of_scope", "explain")
 
 _PLACEHOLDER = re.compile(r"\{(\w+)\}")
 
@@ -144,6 +154,35 @@ def load_phrases(content_dir: Path | None = None, required: tuple[str, ...] = M1
     for key, text in phrases.items():
         _check_placeholders(text, PHRASE_PLACEHOLDERS.get(key, set()), f"phrases.{key}")
     return phrases
+
+
+def _check_patterns(items: list[dict], where: str) -> None:
+    try:
+        compile_patterns(items, where)
+    except (KeyError, ValueError) as e:
+        raise ContentError(str(e)) from e
+
+
+def load_crisis(content_dir: Path | None = None) -> dict:
+    crisis = load_json("crisis.json", content_dir)
+    if missing := [k for k in CRISIS_REQUIRED if k not in crisis]:
+        raise ContentError(f"crisis.json: 필수 키 누락 {missing}")
+    _check_unique([k["id"] for k in crisis["keywords"]], "위기 키워드 id")
+    for k in crisis["keywords"]:
+        if k.get("category") not in CRISIS_CATEGORIES:
+            raise ContentError(f"{k['id']}: 알 수 없는 category {k.get('category')!r}")
+    _check_patterns(crisis["keywords"], "crisis")
+    return crisis
+
+
+def load_intent_keywords(content_dir: Path | None = None) -> dict[str, list[dict]]:
+    keywords = load_json("intent_keywords.json", content_dir)
+    if set(keywords) != set(INTENT_KEYWORD_KEYS):
+        raise ContentError(f"intent_keywords.json: 키는 정확히 {list(INTENT_KEYWORD_KEYS)} (현재 {sorted(keywords)})")
+    _check_unique([k["id"] for items in keywords.values() for k in items], "의도 키워드 id")
+    for intent, items in keywords.items():
+        _check_patterns(items, f"intent.{intent}")
+    return keywords
 
 
 def iter_content_sentences(content_dir: Path | None = None) -> Iterator[tuple[str, str, str]]:

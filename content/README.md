@@ -30,6 +30,7 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 | `{percentile}` / `{rank_from_top}` | 백분위 / 100 − 백분위(반올림) | payload `scores[].percentile` |
 | `{range_label}` | 범위 이름 | 판정 결과 + 정의 `range_labels` |
 | `{clinical_list}` / `{borderline_list}` | 판정 결과가 clinical / borderline인 척도 이름 나열 ("A, B", payload 순서) | 판정 결과 + payload `scores[].name` |
+| `{max_chars}` | 입력 길이 상한 ("1,000") | `config.MAX_INPUT_CHARS` (P-01) |
 
 정의에 없는 자리표시자를 쓰면 콘텐츠 로드 시 오류로 처리한다(`bridge.content`). 파일별 허용 범위:
 
@@ -92,14 +93,15 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
   "fixed_notice_qa": "(질문 도우미 고정 안내)",
   "out_of_scope": "(고객센터·예약 안내)",
   "input_empty": "(빈 입력 안내)",
-  "input_too_long": "(1,000자 초과 안내)",
+  "input_too_long": "(… {max_chars}자 … 나눠 질문 안내)",
   "no_evidence": "(보고서에 해당 내용이 없다는 안내 + 노트 저장 안내)",
   "api_error": "(일시 오류 안내 + 노트 저장 안내)"
 }
 ```
 
 - 백분위 문장은 척도의 `direction`(정의의 group 또는 척도 항목, `specs/poc.md` 2-2)으로 고른다: `higher_is_worse` → `percentile_known`, `lower_is_worse` → `percentile_known_lower` + `direction_note_lower`, direction 없음 → 문장 없이 숫자만.
-- 키별 허용 자리표시자는 `bridge.content.PHRASE_PLACEHOLDERS`. M1 키(위 6개)는 필수이고, 아래 2일차 키는 PoC-2 구현 때 추가한다.
+- 키별 허용 자리표시자는 `bridge.content.PHRASE_PLACEHOLDERS`. M1 키(위 6개, `M1_PHRASE_KEYS`)는 결과 화면의 필수 키다. 2일차 키는 PoC-2 구현 때 추가하고 `QA_PHRASE_KEYS`에 적는다.
+- `input_too_long`은 `{max_chars}`만 쓴다(문장에 숫자를 직접 쓰지 않는다).
 
 ## glossary.json
 
@@ -142,20 +144,24 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 ```
 
 - `type`: `literal | regex`. `category`: `child_safety | caregiver_distress`.
+- 원문과 공백을 지운 문장 양쪽에서 찾는다. 관용어("힘들어 죽겠어요")와 공격성 행동("친구를 때려요")은 잡지 않는다(`specs/poc.md` PoC2-03).
 - `channels`는 공식 출처 확인 전에는 비워 둔다.
 
 ## intent_keywords.json
 
 ```json
 {
-  "diagnosis":    [{"pattern": "(표현)", "type": "literal"}],
+  "diagnosis":    [{"id": "intent.dx.001", "pattern": "(표현)", "type": "literal"}],
   "parenting":    [],
   "out_of_scope": [],
   "explain":      []
 }
 ```
 
-- 두 개 이상의 의도에 걸리거나 아무 것에도 걸리지 않으면 LLM 2차 분류로 넘긴다(PoC2-04).
+- 키는 정확히 위 4개. `id`는 파일 전체에서 유일하다. `type`: `literal | regex`.
+- diagnosis에 걸리면 다른 의도와 겹쳐도 diagnosis다. 그 밖에 두 개 이상의 의도에 걸리거나 아무 것에도 걸리지 않으면 LLM 2차 분류로 넘긴다(PoC2-04, 2026-10-04 결정).
+- `guard_terms.json`의 `diagnosis_name` 항목은 모두 diagnosis 키워드로도 잡혀야 한다(테스트로 확인). 진단명을 사전에 추가하면 여기에도 추가한다.
+- 모든 검사가 공유하는 파일이므로 특정 검사의 척도 이름을 넣지 않는다(G-12).
 - 위기 키워드는 여기가 아니라 `crisis.json`에 둔다(위기 검사가 먼저 실행됨).
 
 ## guard_terms.json
