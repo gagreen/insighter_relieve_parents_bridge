@@ -26,6 +26,9 @@ pytest
 | --- | --- | --- |
 | `ANTHROPIC_API_KEY` | 예 | Anthropic API 키 |
 | `LLM_MODEL` | 아니오 | 기본 `claude-haiku-4-5-20251001` |
+| `ANTHROPIC_CUSTOM_HEADERS` | 아니오 | 워크스페이스에 묶이지 않은 API 키를 쓸 때 `anthropic-workspace-id: <워크스페이스 ID>` |
+
+`.env`는 실행 시 자동으로 읽는다. 셸에 이미 설정된 환경 변수가 있으면 그 값이 우선한다.
 
 ## 예상 비용
 

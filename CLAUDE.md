@@ -200,7 +200,8 @@
 - 캐시 최소 프리픽스: Haiku 4.5 4,096토큰, Sonnet 5.5 512토큰. 짧으면 오류 없이 캐시되지 않는다. 의도 분류 프롬프트는 짧아 캐시되지 않는다.
 - API 오류 재시도(P-05)는 SDK `max_retries`로 한다(직접 구현하지 않음).
 - 단가(기획안 6장, Anthropic 가격표 2026-10-02 조회 기준): Haiku 4.5 입력 $1 / 출력 $5, Sonnet 5.5 입력 $2 / 출력 $10 (100만 토큰당). 캐시 쓰기 1.25배, 캐시 읽기 0.1배. 단가는 `config`에 두고 `cost_usd` 계산에 쓴다.
-- 환경 변수: `ANTHROPIC_API_KEY`(필수), `LLM_MODEL`(선택, 기본 Haiku 4.5). `.env.example`만 커밋한다.
+- 환경 변수: `ANTHROPIC_API_KEY`(필수), `LLM_MODEL`(선택, 기본 Haiku 4.5), `ANTHROPIC_CUSTOM_HEADERS`(선택, 워크스페이스에 묶이지 않은 키일 때 `anthropic-workspace-id: <ID>`). `.env.example`만 커밋한다.
+- `.env`는 `bridge.config`를 import할 때 표준 라이브러리로 읽는다. 셸에 이미 있는 환경 변수가 우선한다(2026-10-04 결정).
 - 의존성: anthropic(>=1.11, 구조화 출력), streamlit, jsonschema(payload 스키마 검증, 2026-10-03 승인), pytest. 추가는 사용자에게 먼저 묻는다. 표준 라이브러리로 되는 일에 패키지를 추가하지 않는다.
 
 ## 10. 리포지토리 구조 (2026-10-03 확정)

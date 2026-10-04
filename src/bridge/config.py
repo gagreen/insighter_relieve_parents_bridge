@@ -8,6 +8,36 @@ from pathlib import Path
 
 # ── 경로 ──────────────────────────────────────────────
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def load_env_file(path: Path) -> dict[str, str]:
+    """`.env`의 KEY=VALUE를 아직 설정되지 않은 환경 변수에만 넣는다(셸 설정이 우선). 표준 라이브러리만 쓴다.
+
+    빈 줄·`#` 주석·형식이 틀린 줄은 건너뛰고, 앞의 `export `와 값 양끝의 같은 따옴표를 뗀다.
+    값 안의 `=`, `:`, `#`은 그대로 둔다. 빈 값은 넣지 않는다. 실제로 넣은 항목을 돌려준다.
+    """
+    if not path.exists():
+        return {}
+    applied = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.removeprefix("export ").strip()
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            value = value[1:-1]
+        if not key or not value or key in os.environ:
+            continue
+        os.environ[key] = value
+        applied[key] = value
+    return applied
+
+
+# 아래 os.environ 조회(LLM_MODEL, BRIDGE_DB_PATH)와 SDK의 ANTHROPIC_* 조회보다 먼저 읽는다.
+load_env_file(ROOT / ".env")
+
 DATA_DIR = ROOT / "data"
 RESULTS_DIR = DATA_DIR / "kcbcl_results"
 ASSESSMENT_TYPES_DIR = DATA_DIR / "assessment_types"
