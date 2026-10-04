@@ -61,14 +61,22 @@ def thresholds(scale: str, definition: dict) -> list[dict] | None:
             for r in (BORDERLINE, CLINICAL)]
 
 
-def percentile_text(score: dict, scale_direction: str | None, phrases: dict) -> tuple[str | None, int | None]:
+def t_floor(scale: str, definition: dict) -> int | None:
+    """그룹의 T점수 하한(spec 2-2 t_floor). 없으면 None."""
+    group = definition["scales"].get(scale, {}).get("group")
+    return definition["groups"][group].get("t_floor") if group else None
+
+
+def percentile_text(score: dict, scale_direction: str | None, phrases: dict,
+                    floor: int | None = None) -> tuple[str | None, int | None]:
     """PoC1-02: 방향에 맞는 백분위 문장과 rank_from_top(100 − 백분위)을 돌려준다."""
     t, p = score["t"], score["percentile"]
     if t is None or scale_direction is None:
         return None, None
     if p is None:
-        # 하한(50T) 설명. 전제(백분위 null ⇒ 50T, higher_is_worse)는 테스트로 확인한다.
-        return (phrases["percentile_unknown"], None) if scale_direction == "higher_is_worse" else (None, None)
+        # 하한(정의의 t_floor)일 때만 하한 설명. 원보고서에 백분위가 없는 경우는 숫자만 둔다(2026-10-05).
+        at_floor = floor is not None and t == floor and scale_direction == "higher_is_worse"
+        return (phrases["percentile_unknown"], None) if at_floor else (None, None)
     if scale_direction == "higher_is_worse":
         rank = 100 - p
         return phrases["percentile_known"].format(rank_from_top=rank), rank
@@ -84,7 +92,7 @@ def build_view(payload: dict, definition: dict, cards: list[dict], templates: li
     items = []
     for s, j in zip(payload["scores"], judged):
         d = direction(s["scale"], definition)
-        p_text, rank = percentile_text(s, d, phrases)
+        p_text, rank = percentile_text(s, d, phrases, t_floor(s["scale"], definition))
         not_administered = j["range"] == NOT_ADMINISTERED
         items.append({
             "id": s["id"], "scale": s["scale"], "name": s["name"],

@@ -40,6 +40,8 @@ load_env_file(ROOT / ".env")
 
 DATA_DIR = ROOT / "data"
 RESULTS_DIR = DATA_DIR / "kcbcl_results"
+# 회사 제공 보고서를 옮긴 결과(커밋 안 함, specs/poc.md 2-4-1). 있으면 함께 적재한다
+PRIVATE_RESULTS_DIR = DATA_DIR / "private" / "kcbcl_results"
 ASSESSMENT_TYPES_DIR = DATA_DIR / "assessment_types"
 SCHEMAS_DIR = ROOT / "schemas"
 CONTENT_DIR = ROOT / "content"

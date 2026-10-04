@@ -57,7 +57,8 @@ PoC가 끝났다는 것은 아래 6개가 모두 측정되어 리포트에 기�
     "syndrome": {
       "direction": "higher_is_worse",
       "borderline_min": 60,
-      "clinical_min": 70
+      "clinical_min": 70,
+      "t_floor": 50
     }
   },
   "scales": {
@@ -73,6 +74,7 @@ PoC가 끝났다는 것은 아래 6개가 모두 측정되어 리포트에 기�
 - `lower_is_worse`(사회능력)는 판정 로직이 지원하되, PoC 시드에서는 사회능력 기준을 넣지 않는다(샘플 기준 값이 가정이므로).
   - `lower_is_worse` 그룹의 기준 키는 `borderline_max`, `clinical_max`다(T ≤ `clinical_max` → clinical, T ≤ `borderline_max` → borderline).
 - 판정 기준이 없는 척도(KCBCL 시드의 특수척도·사회능력)는 `group` 없이 `direction`만 둔다. 예: `"total_competence": {"direction": "lower_is_worse"}`. `direction`은 백분위 문장(PoC1-02)의 방향에만 쓴다(2026-10-04 결정).
+- `t_floor`(선택): 그 그룹의 T점수 하한. 증후군 척도는 50(백분위 50 이하는 50T, `CLAUDE.md` 8-2). 백분위 문장(PoC1-02)에만 쓴다(2026-10-05 추가).
 - `group`이 없는 척도(또는 `scales`에 없는 척도)는 판정하지 않는다. 판정 결과는 '정의 없음'이고 B-2 대조에서 제외한다(2026-10-03 결정). 화면 표시는 PoC1-04의 '카드 없음' 처리를 따른다.
 
 ### 2-3. 기준 샘플
@@ -104,6 +106,15 @@ Given 이미 적재된 DB
 When init 을 다시 실행하면
 Then 같은 결과가 중복 저장되지 않는다
 ```
+
+### 2-4-1. 회사 제공 원본 보고서 (2026-10-05)
+
+- 원본: `docs/AI개발자_테스트자료_CBCL보고서.pdf`(가상 아동, "지원자 외 공유 금지"). 같은 검사(KCBCL_4_17)라 정의·카드·코드를 그대로 쓴다(G-12).
+- 일회성 변환으로 공통 뼈대 JSON을 만들어 `data/private/kcbcl_results/`에 둔다. 이 폴더는 `.gitignore` 대상이며 커밋하지 않는다(`CLAUDE.md` 11장).
+- 옮기는 규칙: 점수는 점수표 값만(백분위는 점수표에 없으므로 null, 서술 속 "약 95%tile"은 원문 문장에만 남음). 서술은 원문 문장 그대로. 보호자 의견은 척도에 연결하지 않는다(`scale: null`, 해석이 들어가므로). 이름·성별·나이는 `subject`에만.
+- 숫자가 PDF와 같은지는 사용자가 대조한다(B-1의 원천).
+- 적재: `db.init`이 이 폴더가 있으면 함께 적재한다. 데모 선택: `BRIDGE_RESULT_ID=<result_id> streamlit run app/main.py`(없으면 기준 샘플).
+- 데모·평가 기준 샘플은 그대로 `035`다.
 
 ### 2-5. 의도 코드
 
@@ -156,7 +167,8 @@ Given 기준 샘플
 When 결과 화면 데이터(view model)를 만들면
 Then 모든 T점수·백분위는 payload의 해당 id 값에서 복사된 값이다
  And 백분위 문장은 척도의 direction(2-2)에 맞는 content 문장을 쓴다
- And percentile이 null이고 T가 있으면(증후군 척도 하한 50T) 하한 설명 문장을 쓴다
+ And percentile이 null이고 T가 그룹의 t_floor와 같으면(증후군 척도 하한 50T) 하한 설명 문장을 쓴다
+ And percentile이 null이고 T가 하한이 아니면(원보고서에 백분위가 없음) 백분위 문장 없이 숫자만 쓴다
 ```
 
 - 백분위 문장은 content 템플릿으로 만든다. 문장에 숫자를 쓰지 않는다는 7장 규칙에 맞추기 위해 '또래 100명 중' 표현을 쓰지 않는다(2026-10-04 결정).

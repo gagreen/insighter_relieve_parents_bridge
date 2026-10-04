@@ -106,7 +106,8 @@ def assessment_type_definition(meta):
                              "clinical": "전문 상담 권고 범위", "not_administered": "미실시"},
             "groups": {
                 "composite": {"direction": "higher_is_worse", "borderline_min": 60, "clinical_min": 63},
-                "syndrome": {"direction": "higher_is_worse", "borderline_min": 60, "clinical_min": 70},
+                # t_floor: 증후군 척도 T점수 하한(백분위 50 이하는 50T). 백분위 문장에만 쓴다(2026-10-05)
+                "syndrome": {"direction": "higher_is_worse", "borderline_min": 60, "clinical_min": 70, "t_floor": 50},
             },
             "scales": scales,
         },

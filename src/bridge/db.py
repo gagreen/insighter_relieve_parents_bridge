@@ -142,10 +142,14 @@ def load_samples(
 
 
 def init(path: Path | str | None = None) -> list[tuple[str, list[str]]]:
+    """스키마 생성 + 샘플 적재. data/private/의 결과(회사 원본 보고서, spec 2-4-1)가 있으면 함께 적재한다."""
     conn = connect(path)
     try:
         create_schema(conn)
-        return load_samples(conn)
+        rejected = load_samples(conn)
+        if config.PRIVATE_RESULTS_DIR.exists():
+            rejected += load_samples(conn, results_dir=config.PRIVATE_RESULTS_DIR)
+        return rejected
     finally:
         conn.close()
 

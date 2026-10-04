@@ -92,3 +92,24 @@ def test_poc1_06_scale_without_group_has_no_baselines():
 def test_poc1_05_not_administered_has_no_marker():
     svg = components.baseline_svg(_item("sex_problems", None), DEF["range_labels"])
     assert "data-t=" not in svg
+
+
+# ── 결과 선택 (spec 2-4-1) ──────────────────────────
+
+
+def test_2_4_1_result_selected_by_env(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "DB_PATH", tmp_path / "app.db")
+    monkeypatch.setenv("BRIDGE_RESULT_ID", "R-KCBCL_4_17-001")
+    at = AppTest.from_file(APP, default_timeout=30)
+    at.run()
+    assert not at.exception, at.exception
+    assert "R-KCBCL_4_17-001" in _texts(at)
+
+
+def test_2_4_1_unknown_result_shows_error(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "DB_PATH", tmp_path / "app.db")
+    monkeypatch.setenv("BRIDGE_RESULT_ID", "R-NONE")
+    at = AppTest.from_file(APP, default_timeout=30)
+    at.run()
+    assert not at.exception
+    assert at.error and "R-NONE" in at.error[0].value

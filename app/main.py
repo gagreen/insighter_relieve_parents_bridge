@@ -5,6 +5,7 @@ A 쉬운 말 결과 / B 질문 도우미 / C 상담 브리프. 기준 샘플 1�
 노트·브리프는 이 화면을 연 뒤의 기록만 넣는다(spec 5장 세션 범위). 로그인·노트 수정·승인은 없다.
 """
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -31,9 +32,14 @@ def _conn():
     return db.connect(_init_db(str(config.DB_PATH)))
 
 
+def _result_id() -> str:
+    """BRIDGE_RESULT_ID(셸 또는 .env)로 결과를 고른다. 없으면 기준 샘플 (spec 2-4-1)."""
+    return os.environ.get("BRIDGE_RESULT_ID") or BASE_RESULT_ID
+
+
 def _start_session() -> None:
     conn = _conn()
-    st.session_state.ctx = pipeline.load_context(conn, BASE_RESULT_ID)
+    st.session_state.ctx = pipeline.load_context(conn, _result_id())
     st.session_state.since = conn.execute("SELECT COALESCE(MAX(turn_id), 0) FROM qa_turns").fetchone()[0]
     st.session_state.messages = []
     st.session_state.stopped = False
@@ -140,8 +146,13 @@ def brief_tab(ctx: pipeline.Context) -> None:
 st.set_page_config(page_title="상담 브리지 데모", layout="centered")
 st.title("아맘때 '상담 브리지' 데모")
 if "ctx" not in st.session_state:
-    _start_session()
+    try:
+        _start_session()
+    except KeyError:
+        st.error(f"검사 결과를 찾을 수 없습니다: {_result_id()} (BRIDGE_RESULT_ID 확인, `python -m bridge.db init`으로 적재)")
+        st.stop()
 context = st.session_state.ctx
+st.caption(f"검사 결과 {context.result_id}")
 
 tab_results, tab_qa, tab_brief = st.tabs(["쉬운 말 결과", "질문 도우미", "상담 브리프"])
 with tab_results:

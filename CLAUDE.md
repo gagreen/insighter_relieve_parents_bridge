@@ -156,7 +156,7 @@
 ### 8-2. 판정 기준 데이터 주의점
 
 - 사회능력 척도는 **점수가 낮을수록** 문제다. `definition`에 판정 방향(`direction: higher_is_worse | lower_is_worse`)을 둔다.
-- 증후군 척도 T점수 하한은 50이다(백분위 50 이하는 50T, 백분위 null 가능).
+- 증후군 척도 T점수 하한은 50이다(백분위 50 이하는 50T, 백분위 null 가능). 정의의 그룹에 `t_floor`로 둔다(2026-10-05). 백분위가 null이어도 T가 하한이 아니면(원보고서에 백분위 없음) 하한 문장을 쓰지 않는다.
 - 미실시·적용 연령 아님 항목은 점수 `null` + `range: not_administered`로 두고, 화면에서 숨기지 말고 '미실시'로 표시한다.
 - KCBCL 시드 정의(`data/assessment_types/KCBCL_4_17.json`)에서 판정 기준(`group`)은 종합척도 3개 + 증후군 척도 8개에만 있다. 특수척도(`emotional_instability`, `sex_problems`)와 사회능력(`sociability`, `school_performance`, `total_competence`)은 기준이 가정값이라 `group` 없이 `direction`만 두었고(백분위 문장 방향용, 2026-10-04), 이 항목의 `range`는 원보고서 라벨 그대로이며, 규칙 엔진은 판정하지 않고 B-2 대조에서 제외한다(2026-10-03 결정).
 
@@ -246,7 +246,7 @@ docs/             # 과제 자료(공개 커밋 제외 — 11장)
 
 - API 키·개인정보를 커밋하지 않는다(`.env`, `*.db`는 `.gitignore`).
 - 안내문과 CBCL 보고서 PDF는 "지원자 외 공유 금지"로 표시되어 있다(안내문 하단). **`docs/*.pdf`는 공개 리포지토리에 커밋하지 않는다.**
-- 제공된 샘플 보고서(가상 아동)를 JSON으로 옮긴 파일의 공개 여부는 미정이다. 결정 전까지 커밋하지 않는다.
+- 제공된 샘플 보고서(가상 아동)를 JSON으로 옮긴 파일의 공개 여부는 미정이다. 결정 전까지 커밋하지 않는다. 위치: `data/private/`(`.gitignore`, `specs/poc.md` 2-4-1).
 - 커밋 메시지에 관련 요구사항 ID를 적는다(예: `feat(guard): 숫자 대조 검증 [G-03]`).
 - 제출 전 체크(안내문): 리포지토리 public 전환, README 항목, 민감 정보 미포함 확인.
 - 기획안 파일명 `[지원자성명]_AI과제_기획안.pdf`, 메일 제목 `[AI과제] 지원자성명 - AI 개발자`.
@@ -277,6 +277,7 @@ pytest
 python scripts/convert_kcbcl_to_skeleton.py   # 원천 → data/kcbcl_results/ (이미 생성됨, 원천을 바꿀 때만)
 python -m bridge.db init            # 스키마 생성 + 샘플 적재 (기본 ./bridge.db, 다시 실행해도 중복 없음)
 streamlit run app/main.py           # 데모 (DB가 없으면 만들고 샘플 적재)
+BRIDGE_RESULT_ID=<result_id> streamlit run app/main.py   # 다른 결과로 데모 (예: data/private/의 회사 원본 보고서)
 python -m bridge.brief R-KCBCL_4_17-035 --no-llm   # 브리프 텍스트 (--no-llm: 질문 정리 LLM 생략)
 # 아래는 구현 후 사용 (예정)
 python -m eval.run --model claude-haiku-4-5-20251001

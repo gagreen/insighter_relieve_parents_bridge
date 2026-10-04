@@ -19,7 +19,8 @@
       "syndrome": {
         "direction": "higher_is_worse",
         "borderline_min": 60,
-        "clinical_min": 70
+        "clinical_min": 70,
+        "t_floor": 50
       }
     },
     "scales": {

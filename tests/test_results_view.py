@@ -93,15 +93,32 @@ def test_poc1_02_percentile_null_uses_floor_phrase():
     assert item["percentile_text"] == PHRASES["percentile_unknown"]
 
 
-def test_poc1_02_percentile_null_only_at_floor_all_samples():
-    """하한 설명 문장의 전제: 백분위 없이 T만 있는 항목은 모두 50T이고 higher_is_worse다."""
-    off = []
-    for r in SAMPLES:
-        for item in _view(r["payload"])["items"]:
-            if item["t"] is not None and item["percentile"] is None:
-                if item["t"] != 50 or item["direction"] != "higher_is_worse":
-                    off.append((r["result_id"], item["id"], item["t"]))
-    assert off == []
+def _with_score(scale, **kw):
+    payload = copy.deepcopy(BASE["payload"])
+    for s in payload["scores"]:
+        if s["scale"] == scale:
+            s.update(kw)
+    return payload
+
+
+@pytest.mark.parametrize("scale, t", [("attention", 66), ("internalizing", 61)])
+def test_poc1_02_percentile_null_above_floor_has_no_sentence(scale, t):
+    """2026-10-05: 원보고서에 백분위가 없을 때(T가 하한이 아님) 하한 문장을 쓰지 않고 숫자만 둔다."""
+    item = _item(scale, _view(_with_score(scale, t=t, percentile=None)))
+    assert (item["t"], item["percentile_text"], item["rank_from_top"]) == (t, None, None)
+
+
+def test_poc1_02_floor_comes_from_definition():
+    """G-02: 하한값은 정의의 t_floor에서 읽는다(하드코딩 금지)."""
+    d = copy.deepcopy(DEF)
+    d["groups"]["syndrome"]["t_floor"] = 55
+    item = _item("delinquent", _view(BASE["payload"], d))
+    assert (item["t"], item["percentile_text"]) == (50, None)
+
+
+def test_poc1_02_definition_has_syndrome_floor():
+    assert DEF["groups"]["syndrome"]["t_floor"] == 50
+    assert "t_floor" not in DEF["groups"]["composite"]
 
 
 def test_poc1_02_no_direction_scale_has_numbers_only():

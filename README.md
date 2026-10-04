@@ -14,6 +14,7 @@ cp .env.example .env               # ANTHROPIC_API_KEY 입력
 python -m bridge.db init           # SQLite 스키마 생성 + 샘플 적재
 pytest
 streamlit run app/main.py          # 데모 화면 (결과 · 질문 도우미 · 상담 브리프)
+BRIDGE_RESULT_ID=R-KCBCL_4_17-001 streamlit run app/main.py   # 다른 결과로 데모 (기본: 기준 샘플 035)
 python -m bridge.brief R-KCBCL_4_17-035   # 브리프 텍스트 (질문 정리 LLM 1회, --no-llm이면 생략)
 ```
 
@@ -47,3 +48,4 @@ python -m bridge.brief R-KCBCL_4_17-035   # 브리프 텍스트 (질문 정리 L
 - 척도 설명 카드는 상담사 검수 전 초안이다.
 - 샘플 데이터의 T점수는 실제 K-CBCL 규준이 아닌 시뮬레이션 규준으로 만든 가상 값이다.
 - 마스킹은 아동 이름(3글자 이상, 복성 미지원), 전화번호, 이메일, 붙여 쓴 초·중·고등학교 이름만 대상으로 한다. 생년월일, 유치원·어린이집 이름, 아동 외 가족 이름, 학교 줄임말은 마스킹하지 않는다.
+- 과제로 제공된 CBCL 보고서(가상 아동)는 공유 금지 자료라 리포지토리에 포함하지 않았다. 로컬에서는 공통 뼈대 JSON으로 옮겨 `data/private/`(제외 폴더)에 두고 같은 코드로 실행해 확인했다(`specs/poc.md` 2-4-1).
