@@ -91,7 +91,7 @@ SAFE_MAX_SCALES = 3
 ROUTE_BY_INTENT = {
     "explain": "answer",
     "diagnosis": "safe",
-    "parenting": "safe",  # 가정: 기획안 2-7 (양육 방법 추천을 처방으로 보고 제외)
+    "parenting": "safe",  # 양육 방법 추천은 처방에 해당 (2026-10-05 사용자 확정, 기획안 2-7)
     "crisis": "crisis",
     "out_of_scope": "redirect",
 }

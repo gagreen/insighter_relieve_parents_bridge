@@ -158,7 +158,7 @@ Then 같은 결과가 중복 저장되지 않는다
 | -------------- | --------------------- | ------------------------------ |
 | `explain`      | 설명형                | `answer` (근거 제한 응답)      |
 | `diagnosis`    | 진단·처방·예후형      | `safe`                         |
-| `parenting`    | 양육 조언형           | `safe` (가정, `CLAUDE.md` 6장) |
+| `parenting`    | 양육 조언형           | `safe` (처방에 해당, 2026-10-05 확정, `CLAUDE.md` 6장) |
 | `crisis`       | 위기                  | `crisis`                       |
 | `out_of_scope` | 범위 밖(예약·결제 등) | `redirect`                     |
 | —              | 분류 신뢰도 미달      | `safe`                         |
