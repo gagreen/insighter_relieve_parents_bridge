@@ -74,14 +74,17 @@ def _format_failures(parsed) -> list[str]:
 
 def validate_answer(parsed: dict | None, pack: EvidencePack, terms: list[GuardTerm],
                     range_labels: dict[str, str]) -> GuardReport:
-    """answerable=false면 1·2만 확인한다(답이 화면에 나가지 않음)."""
+    """answerable=false이고 답이 비어 있으면 1·2만 확인한다(답이 화면에 나가지 않음).
+
+    answer가 있으면(부분 답변 포함, PoC2-07) answerable과 무관하게 1~5를 모두 확인한다.
+    """
     failures = _format_failures(parsed)
     if failures:
         return GuardReport(False, failures)
 
     ids = parsed["evidence_ids"]
     failures += [f"evidence:unknown:{i}" for i in ids if i not in pack.items]
-    if not parsed["answerable"]:
+    if not parsed["answerable"] and not parsed["answer"].strip():
         return GuardReport(not failures, failures)
     if not ids:
         failures.append("evidence:empty")

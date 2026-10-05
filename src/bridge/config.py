@@ -73,7 +73,7 @@ MAX_TOKENS = {"intent": 1024, "answer": 4096, "organize": 4096}
 
 # ── 프롬프트 (CLAUDE.md 7장) ──────────────────────────
 # 현재 쓰는 버전. 기존 버전 파일은 고치지 않고 새 버전 파일을 만든 뒤 여기만 바꾼다.
-PROMPT_VERSIONS = {"intent": "intent_v1", "answer": "answer_v1", "organize": "organize_v1"}
+PROMPT_VERSIONS = {"intent": "intent_v2", "answer": "answer_v2", "organize": "organize_v1"}
 
 # ── 정책 상수 (CLAUDE.md 6장) ─────────────────────────
 # P-01 입력 길이. 가정: 기획안 2-5
@@ -84,6 +84,8 @@ AUTO_REGEN_LIMIT = 1
 API_RETRY_LIMIT = 1
 # 의도 분류 신뢰도 임계값. 가정: 평가셋 1차 실행 전 임시값 (specs/poc.md PoC2-04, 2026-10-04)
 INTENT_CONFIDENCE_THRESHOLD = 0.7
+# 안전 응답에 사실 문장으로 넣는 척도 수 상한. 설계값: 응답이 길어져 읽히지 않는 것을 막음 (specs/poc.md PoC2-05, 2026-10-05)
+SAFE_MAX_SCALES = 3
 
 # 의도 → 처리 경로 (specs/poc.md 2-5). 신뢰도 미달·분류 실패는 safe.
 ROUTE_BY_INTENT = {

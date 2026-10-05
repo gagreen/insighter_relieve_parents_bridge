@@ -238,23 +238,28 @@ def test_poc1_08_scan_includes_crisis_message():
 
 def test_safe_responses_cover_each_kind():
     templates = content.load_safe_responses()
-    for kind in content.SAFE_KINDS:
-        general = [t for t in templates if kind in t["intents"] and not t["requires_scale"]]
-        scale = [t for t in templates if kind in t["intents"] and t["requires_scale"]]
-        assert len(general) == 1 and len(scale) <= 1, kind
+    assert sorted(t["kind"] for t in templates) == sorted(content.SAFE_KINDS)
 
 
 @pytest.mark.parametrize("fn", [
-    lambda ts: [t for t in ts if t["id"] != "safe.parenting"],                                   # 일반 템플릿 누락
-    lambda ts: ts + [{**ts[0], "id": "safe.extra"}],                                             # 척도 템플릿 2개
-    lambda ts: [{**t, "text": t["text"] + "{t}"} if t["id"] == "safe.diagnosis" else t for t in ts],  # 일반 템플릿에 숫자 자리
-    lambda ts: [{**t, "text": t["text"] + "{percentile}"} if t["requires_scale"] else t for t in ts],  # 허용 밖 자리표시자
-    lambda ts: [{**t, "intents": ["smalltalk"]} if t["id"] == "safe.diagnosis" else t for t in ts],     # 모르는 종류
-], ids=["missing_general", "two_scale", "general_placeholder", "scale_placeholder", "unknown_kind"])
+    lambda ts: [t for t in ts if t["kind"] != "parenting"],                                      # 종류 누락
+    lambda ts: ts + [{**ts[0], "id": "safe.extra"}],                                             # 같은 종류 2개
+    lambda ts: [{**t, "body": t["body"] + "{t}"} if t["kind"] == "diagnosis" else t for t in ts],  # 숫자 자리표시자
+    lambda ts: [{**t, "empathy": "{scale_name}"} if t["kind"] == "parenting" else t for t in ts],  # 공감 문장 자리표시자
+    lambda ts: [{**t, "kind": "smalltalk"} if t["kind"] == "diagnosis" else t for t in ts],       # 모르는 종류
+    lambda ts: [{k: v for k, v in t.items() if k != "closing"} for t in ts],                    # 필드 누락
+    lambda ts: [{**t, "screening_note": "yes"} for t in ts],                                    # bool 아님
+], ids=["missing_kind", "duplicate_kind", "body_placeholder", "empathy_placeholder", "unknown_kind",
+        "missing_field", "screening_type"])
 def test_safe_responses_reject_bad_format(content_copy, fn):
     _edit(content_copy, "safe_responses.json", fn)
     with pytest.raises(ContentError):
         content.load_safe_responses(content_copy)
+
+
+def test_poc1_08_scan_includes_safe_response_parts():
+    where = {w for f, w, _ in content.iter_content_sentences() if f == "safe_responses.json"}
+    assert {"safe.diagnosis.empathy[0]", "safe.diagnosis.body[0]", "safe.diagnosis.closing[0]"} <= where
 
 
 def test_scale_terms_match_definition(definitions):

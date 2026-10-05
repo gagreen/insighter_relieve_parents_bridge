@@ -36,7 +36,7 @@ SENTENCE_FIELDS: dict[str, tuple[str, tuple[str, ...] | None]] = {
     "summary_templates.json": ("items", ("text",)),
     # term·aliases·patterns는 보고서 원문에서 가져온 찾기 패턴이라 검사하지 않는다(PoC1-10, 2026-10-05)
     "glossary.json": ("items", ("plain",)),
-    "safe_responses.json": ("items", ("text",)),
+    "safe_responses.json": ("items", ("empathy", "body", "closing")),
     "phrases.json": ("values", None),
     "crisis.json": ("keys", ("message",)),
 }
@@ -58,20 +58,26 @@ PHRASE_PLACEHOLDERS = {
     "interpretive_note": set(),
     "report_phrase_note": {"term"},
     "report_phrase_saved": set(),
+    # 안전 응답 조립·다음 단계 안내 (PoC2-05·07, spec 1-1 R-2, 2026-10-05)
+    "note_saved": set(),
+    "safe_scale_fact": {"scale_name", "t", "range_label"},
+    "safe_report_quote": {"quote"},
+    "screening_note": set(),
 }
 M1_PHRASE_KEYS = ("fixed_notice_results", "percentile_known", "percentile_known_lower",
                   "direction_note_lower", "percentile_unknown", "not_administered",
                   "interpretive_note", "report_phrase_note", "report_phrase_saved")  # 마지막 3개: PoC1-10·11
-QA_PHRASE_KEYS = ("input_empty", "input_too_long", "out_of_scope", "no_evidence", "api_error", "fixed_notice_qa")
+QA_PHRASE_KEYS = ("input_empty", "input_too_long", "out_of_scope", "no_evidence", "api_error", "fixed_notice_qa",
+                  "note_saved", "safe_scale_fact", "safe_report_quote", "screening_note")
 
 CRISIS_REQUIRED = ("keywords", "message", "channels")
 CRISIS_CATEGORIES = ("child_safety", "caregiver_distress")
 # 위기는 crisis.json에 따로 둔다(위기 검사가 먼저 실행됨). diagnosis 우선 규칙은 bridge.rules.intents.
 INTENT_KEYWORD_KEYS = ("diagnosis", "parenting", "out_of_scope", "explain")
 
-# 안전 응답 종류 (specs/poc.md PoC2-05). 종류마다 일반 템플릿 1개 + 척도 템플릿 0~1개.
+# 안전 응답 종류 (specs/poc.md PoC2-05). 종류마다 템플릿 정확히 1개. 척도 사실·인용은 phrases.json 문구로 조립한다.
 SAFE_KINDS = ("diagnosis", "parenting", "low_confidence", "guard_fallback")
-SAFE_SCALE_PLACEHOLDERS = {"scale_name", "t", "range_label"}
+SAFE_REQUIRED = ("id", "kind", "empathy", "body", "screening_note", "closing")
 TERM_STATUSES = ("draft", "reviewed")
 # 용어 종류 (PoC1-10): 표기 / 검사 용어 / 해석 표현(뜻만 설명 + 상담 안내 + 상담 질문 저장)
 GLOSSARY_KINDS = ("notation", "term", "interpretive")
@@ -215,17 +221,25 @@ def load_intent_keywords(content_dir: Path | None = None) -> dict[str, list[dict
 
 
 def load_safe_responses(content_dir: Path | None = None) -> list[dict]:
+    """종류마다 1개. 문장 필드에는 자리표시자를 쓰지 않는다(숫자는 코드가 조립 단계에서 채움, G-03)."""
     templates = load_json("safe_responses.json", content_dir)
-    _check_unique([t["id"] for t in templates], "안전 응답 id")
+    _check_unique([t.get("id") for t in templates], "안전 응답 id")
     for t in templates:
-        if unknown := set(t["intents"]) - set(SAFE_KINDS):
-            raise ContentError(f"{t['id']}: 알 수 없는 종류 {sorted(unknown)}")
-        _check_placeholders(t["text"], SAFE_SCALE_PLACEHOLDERS if t["requires_scale"] else set(), t["id"])
-    for kind in SAFE_KINDS:
-        general = [t["id"] for t in templates if kind in t["intents"] and not t["requires_scale"]]
-        scale = [t["id"] for t in templates if kind in t["intents"] and t["requires_scale"]]
-        if len(general) != 1 or len(scale) > 1:
-            raise ContentError(f"안전 응답 {kind}: 일반 템플릿 1개, 척도 템플릿 0~1개여야 함 (일반 {general}, 척도 {scale})")
+        where = t.get("id", "?")
+        if missing := [k for k in SAFE_REQUIRED if k not in t]:
+            raise ContentError(f"{where}: 필수 필드 누락 {missing}")
+        if t["kind"] not in SAFE_KINDS:
+            raise ContentError(f"{where}: 알 수 없는 종류 {t['kind']!r}")
+        if not isinstance(t["screening_note"], bool):
+            raise ContentError(f"{where}: screening_note는 true/false")
+        if not (t["empathy"] is None or isinstance(t["empathy"], str)):
+            raise ContentError(f"{where}: empathy는 문자열 또는 null")
+        for field in ("empathy", "body", "closing"):
+            _check_placeholders(t[field] or "", set(), f"{where}.{field}")
+    kinds = [t["kind"] for t in templates]
+    _check_unique(kinds, "안전 응답 종류")
+    if missing := set(SAFE_KINDS) - set(kinds):
+        raise ContentError(f"안전 응답 종류 누락: {sorted(missing)}")
     return templates
 
 
@@ -274,7 +288,7 @@ def iter_content_sentences(content_dir: Path | None = None) -> Iterator[tuple[st
         if kind == "items":
             for item in data:
                 for field in fields:
-                    for i, text in enumerate(_strings(item.get(field, []))):
+                    for i, text in enumerate(_strings(item.get(field) or [])):   # null(예: 공감 문장 없음)은 건너뜀
                         yield name, f"{item['id']}.{field}[{i}]", text
         elif kind == "values":
             for key, value in data.items():

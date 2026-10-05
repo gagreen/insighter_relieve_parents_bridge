@@ -137,3 +137,27 @@ def test_g02_range_label_from_cited_card_text_passes():
 def test_poc2_07_unanswerable_skips_content_checks():
     r = _check({"answerable": False, "answer": "", "evidence_ids": [], "note_question": None})
     assert r.ok, r.failures
+
+
+# ── 부분 답변 (PoC2-07·08, 2026-10-05) ───────────────
+
+
+def test_poc2_08_partial_answer_gets_all_checks():
+    """answerable=false여도 answer가 있으면 화면에 나가므로 1~5를 모두 확인한다."""
+    partial = _with(answerable=False, answer="주의집중 문제 T점수는 66입니다. 또래 100명 중 92명보다 높습니다.")
+    r = _check(partial)
+    assert not r.ok and "number:92" in r.failures and "number:100" in r.failures
+
+
+def test_poc2_08_partial_answer_requires_evidence():
+    assert "evidence:empty" in _check(_with(answerable=False, evidence_ids=[])).failures
+
+
+def test_poc2_08_partial_answer_with_guard_term_fails():
+    r = _check(_with(answerable=False, answer="주의집중 문제는 앞으로 좋아질 수 있습니다."))
+    assert not r.ok and any(f.startswith("term:") for f in r.failures)
+
+
+def test_poc2_08_valid_partial_answer_passes():
+    r = _check(_with(answerable=False, answer="주의집중 문제 T점수는 66입니다. 다시 검사할 시기는 보고서에 적혀 있지 않습니다."))
+    assert (r.ok, r.failures) == (True, [])

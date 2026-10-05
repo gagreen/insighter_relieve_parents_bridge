@@ -100,14 +100,20 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
   "out_of_scope": "(고객센터·예약 안내)",
   "input_empty": "(빈 입력 안내)",
   "input_too_long": "(… {max_chars}자 … 나눠 질문 안내)",
-  "no_evidence": "(보고서에 해당 내용이 없다는 안내 + 노트 저장 안내)",
-  "api_error": "(일시 오류 안내 + 노트 저장 안내)"
+  "no_evidence": "(보고서에 해당 내용이 없다는 안내)",
+  "api_error": "(일시 오류 안내)",
+  "note_saved": "(질문이 상담 노트에 저장되어 상담사가 상담 전에 확인한다는 안내)",
+  "safe_scale_fact": "보고서에서 {scale_name} 점수는 T점수 {t}점으로, {range_label}에 있습니다.",
+  "safe_report_quote": "(보고서 인용 도입) “{quote}”",
+  "screening_note": "(선별 검사이며 진단이 아니라는 안내)"
 }
 ```
 
 - 백분위 문장은 척도의 `direction`(정의의 group 또는 척도 항목, `specs/poc.md` 2-2)으로 고른다: `higher_is_worse` → `percentile_known`, `lower_is_worse` → `percentile_known_lower` + `direction_note_lower`, direction 없음 → 문장 없이 숫자만.
 - 키별 허용 자리표시자는 `bridge.content.PHRASE_PLACEHOLDERS`. M1 키(`M1_PHRASE_KEYS`: 백분위·미실시·고정 문구 6개 + 낱말 풀이·상담 질문 저장 3개)는 결과 화면의 필수 키다. 2일차 키는 PoC-2 구현 때 추가하고 `QA_PHRASE_KEYS`에 적는다.
 - `input_too_long`은 `{max_chars}`만 쓴다(문장에 숫자를 직접 쓰지 않는다).
+- `note_saved`는 노트에 저장하는 모든 응답(안전 응답, 근거 없음, 부분 답변, API 오류) 끝에 코드가 붙인다(`specs/poc.md` 1-1 R-2). 그래서 `no_evidence`·`api_error`에는 저장 안내를 쓰지 않는다.
+- `safe_report_quote`의 `{quote}`는 보고서 관찰 소견 첫 줄 원문이다. 인용 끝말에 따라 조사가 달라지므로 인용 뒤에 조사를 붙이지 않는다.
 
 ## glossary.json
 
@@ -130,18 +136,20 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 ```json
 [
   {
-    "id": "safe.diagnosis.scale",
-    "intents": ["diagnosis"],
-    "requires_scale": true,
-    "text": "(보고서 사실: {scale_name} T={t}, {range_label}) + (진단·치료는 상담에서 다룸) + (질문을 노트에 저장했다는 안내)"
-  },
-  {"id": "safe.diagnosis", "intents": ["diagnosis"], "requires_scale": false, "text": "(…)"}
+    "id": "safe.diagnosis",
+    "kind": "diagnosis",
+    "empathy": "(보호자의 마음을 받는 문장. 없으면 null)",
+    "body": "(무엇을 상담에서 다루는지)",
+    "screening_note": true,
+    "closing": "(준비 행동 안내)"
+  }
 ]
 ```
 
-- 종류(`intents` 값): `diagnosis`, `parenting`, `low_confidence`, `guard_fallback`. 종류마다 일반 템플릿(`requires_scale: false`)이 정확히 1개, 척도 템플릿(`requires_scale: true`)이 0~1개.
-- 척도 템플릿은 `{scale_name}`, `{t}`, `{range_label}`만, 일반 템플릿은 자리표시자를 쓰지 않는다.
-- 질문에서 찾은 첫 척도에 T점수와 범위 이름이 모두 있을 때만 척도 템플릿을 쓴다. 아니면 일반 템플릿(`specs/poc.md` PoC2-05).
+- 종류(`kind`): `diagnosis`, `parenting`, `low_confidence`, `guard_fallback`. 종류마다 정확히 1개.
+- 문장 필드(`empathy`, `body`, `closing`)에는 자리표시자를 쓰지 않는다. 척도 사실·보고서 인용·선별 검사 안내·노트 저장 안내는 `phrases.json` 문구로 코드가 조립한다.
+- 조립 순서(`specs/poc.md` PoC2-05): `empathy` → 질문에서 찾은 척도마다 `safe_scale_fact`(최대 `config.SAFE_MAX_SCALES`개) → 첫 척도의 관찰 소견 첫 줄 `safe_report_quote`(금칙 표현에 걸리면 생략) → `body` → `screening_note`(true일 때) → `note_saved` → `closing`.
+- `empathy`는 보호자의 마음만 받는다. 아이 상태 판단, 안심·완화 문구("괜찮다", "~라는 뜻은 아니다")는 쓰지 않는다(G-01, 2026-10-05).
 
 ## scale_terms.json
 

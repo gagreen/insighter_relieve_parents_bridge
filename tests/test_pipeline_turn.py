@@ -112,7 +112,7 @@ def test_poc2_05_diagnosis_keyword_safe_response(conn, ctx):
     assert client.calls == [] and "66" in r.message
     [note] = _notes(conn, r.turn_id)
     assert (note["type"], note["text"]) == ("diagnosis", "[이름]이 ADHD인가요?")   # 마스킹된 원래 질문
-    assert json.loads(note["related_refs"]) == ["III.attention"]
+    assert json.loads(note["related_refs"]) == ["III.attention", "V.attention"]   # 척도 + 인용한 관찰 소견
 
 
 def test_poc2_05_low_confidence(conn, ctx):
@@ -161,8 +161,35 @@ def test_poc2_08_two_failures_fallback(conn, ctx):
 def test_poc2_07_unanswerable(conn, ctx):
     out = {"answerable": False, "answer": "", "evidence_ids": [], "note_question": None}
     r = pipeline.handle_question(conn, ctx, EXPLAIN_Q, client=FakeClient(fake_response(out)))
-    assert (r.route, r.guard_result, r.message, r.note_saved) == ("answer", "pass", ctx.phrases["no_evidence"], True)
+    expected = f"{ctx.phrases['no_evidence']} {ctx.phrases['note_saved']}"
+    assert (r.route, r.guard_result, r.message, r.note_saved) == ("answer", "pass", expected, True)
+    assert r.label == pipeline.LABEL_SAFE
     assert _notes(conn, r.turn_id)[0]["type"] == "no_evidence"
+
+
+PARTIAL = {
+    "answerable": False,
+    "answer": "보고서는 주의집중 문제 T점수 66을 관찰 권고 범위로 적었습니다. 다시 검사할 시기는 보고서에 적혀 있지 않습니다.",
+    "evidence_ids": ["III.attention", "term.reevaluation"],
+    "note_question": None,
+}
+
+
+def test_poc2_07_partial_answer_is_shown_and_saved(conn, ctx):
+    """보고서에 일부만 있으면 있는 부분은 'AI 생성'으로 답하고, 질문은 노트에 저장한다(G-07)."""
+    r = pipeline.handle_question(conn, ctx, EXPLAIN_Q, client=FakeClient(fake_response(PARTIAL)))
+    assert (r.route, r.guard_result, r.label, r.note_saved) == ("answer", "pass", pipeline.LABEL_AI, True)
+    assert r.message == f"{PARTIAL['answer']} {ctx.phrases['note_saved']}"
+    assert r.evidence_ids == PARTIAL["evidence_ids"]
+    [note] = _notes(conn, r.turn_id)
+    assert note["type"] == "no_evidence" and json.loads(note["related_refs"]) == PARTIAL["evidence_ids"]
+
+
+def test_poc2_08_partial_answer_is_validated(conn, ctx):
+    bad = {**PARTIAL, "answer": "보통 6개월 뒤에 다시 검사합니다."}
+    r = pipeline.handle_question(conn, ctx, EXPLAIN_Q, client=FakeClient(fake_response(bad), fake_response(PARTIAL)))
+    assert (r.guard_result, r.label) == ("regen", pipeline.LABEL_AI)
+    assert "number:6" in r.guard_failures[0]
 
 
 # ── PoC2-10 API 오류 ────────────────────────────────
@@ -170,7 +197,8 @@ def test_poc2_07_unanswerable(conn, ctx):
 
 def test_poc2_10_api_error_at_answer(conn, ctx):
     r = pipeline.handle_question(conn, ctx, EXPLAIN_Q, client=FakeClient(anthropic.APIConnectionError(request=_REQ)))
-    assert (r.route, r.message, r.note_saved) == ("api_error", ctx.phrases["api_error"], True)
+    expected = f"{ctx.phrases['api_error']} {ctx.phrases['note_saved']}"
+    assert (r.route, r.message, r.note_saved) == ("api_error", expected, True)
     assert _calls(conn, r.turn_id) == [] and _notes(conn, r.turn_id)[0]["type"] == "api_error"
 
 
@@ -196,3 +224,13 @@ def test_list_notes_returns_saved_notes(conn, ctx):
     items = notes.list_notes(conn, ctx.child_id)
     assert items and all(i["child_id"] == ctx.child_id for i in items)
     assert all(isinstance(i["related_refs"], list) for i in items)
+
+
+# ── R-2 다음 단계 안내 ──────────────────────────────
+
+
+def test_r2_every_note_saving_turn_says_note_saved(conn, ctx):
+    """이 모듈에서 노트에 저장된 턴(안전·부분 답변·근거 없음·fallback·API 오류)의 응답에는 모두 note_saved 문구가 있다 (spec 1-1 R-2)."""
+    rows = conn.execute("SELECT turn_id, answer FROM qa_turns WHERE saved_to_note = 1").fetchall()
+    assert rows
+    assert [r["turn_id"] for r in rows if ctx.phrases["note_saved"] not in r["answer"]] == []

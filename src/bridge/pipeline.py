@@ -14,7 +14,7 @@ from typing import Literal
 from bridge import config, content, db, evidence, llm, notes, results
 from bridge.evidence import EvidencePack
 from bridge.guard.output import validate_answer
-from bridge.guard.terms import GuardTerm, load_guard_terms
+from bridge.guard.terms import GuardTerm, find_violations, load_guard_terms
 from bridge.llm import LLMError, LLMResult
 from bridge.rules.crisis import detect_crisis
 from bridge.rules.input import check_input
@@ -167,29 +167,59 @@ def _compact(text: str) -> str:
 
 
 def find_scales(masked: str, ctx: Context) -> list[dict]:
-    """질문에 나온 척도(view 항목). 척도 이름 일치가 먼저, 그다음 scale_terms 표현. 그 안에서는 payload 순서."""
+    """질문에 나온 척도(view 항목). 척도 이름 일치가 먼저, 그다음 scale_terms 표현. 그 안에서는 payload 순서.
+
+    이름이 일치한 부분은 표현 검색에서 뺀다('정서불안정'의 '불안'으로 우울/불안을 다시 찾지 않음).
+    """
     question = _compact(masked)
     items = ctx.view["items"]
     by_name = [i for i in items if _compact(i["name"]) in question]
+    rest = question
+    for i in by_name:
+        rest = rest.replace(_compact(i["name"]), " ")
     terms = {t["scale"]: t["terms"] for t in ctx.scale_terms}
     by_term = [i for i in items if i not in by_name
-               and any(_compact(w) in question for w in terms.get(i["scale"], []))]
+               and any(_compact(w) in rest for w in terms.get(i["scale"], []))]
     return by_name + by_term
 
 
-def safe_response(kind: str, masked: str, ctx: Context) -> tuple[str, list[str]]:
-    """(문장, 관련 척도 id). 첫 척도에 T점수와 범위 이름(규칙 판정)이 있으면 척도 템플릿, 아니면 일반 템플릿.
+def _report_quote(scale: str, ctx: Context) -> tuple[str, str] | None:
+    """(서술 id, 첫 줄). 척도에 연결된 관찰 소견의 첫 줄(관찰 사실). 금칙 표현에 걸리면 인용하지 않는다(B-4)."""
+    finding = next((f for f in ctx.payload["findings"] if f["type"] == "observation" and f["scale"] == scale), None)
+    if finding is None:
+        return None
+    line = finding["text"].split("\n")[0].strip()
+    if not line or find_violations(line, ctx.terms):
+        return None
+    return finding["id"], line
 
-    숫자는 view(= payload)에서만 채운다(G-03). LLM을 호출하지 않는다(G-05).
+
+def with_note_saved(text: str, ctx: Context) -> str:
+    """노트에 저장한 응답 끝에 다음 단계 안내를 붙인다 (spec 1-1 R-2)."""
+    return f"{text} {ctx.phrases['note_saved']}"
+
+
+def safe_response(kind: str, masked: str, ctx: Context) -> tuple[str, list[str]]:
+    """(문장, 근거 id). 공감 → 척도 사실 → 보고서 인용 → 본문 → 선별 검사 안내 → note_saved → 준비 행동 (PoC2-05).
+
+    미리 만든 문장만 조립한다(G-04). 숫자·인용은 view·payload에서만 채운다(G-03). LLM을 호출하지 않는다(G-05).
     """
-    templates = [t for t in ctx.safe_responses if kind in t["intents"]]
+    template = next(t for t in ctx.safe_responses if t["kind"] == kind)
     found = find_scales(masked, ctx)
     refs = [i["id"] for i in found]
-    top = found[0] if found else None
-    scale_template = next((t for t in templates if t["requires_scale"]), None)
-    if top and top["t"] is not None and top["range_label"] and scale_template:
-        return scale_template["text"].format(scale_name=top["name"], t=top["t"], range_label=top["range_label"]), refs
-    return next(t for t in templates if not t["requires_scale"])["text"], refs
+    stated = [i for i in found if i["t"] is not None and i["range_label"]][:config.SAFE_MAX_SCALES]
+
+    parts = [template["empathy"]]
+    parts += [ctx.phrases["safe_scale_fact"].format(scale_name=i["name"], t=i["t"], range_label=i["range_label"])
+              for i in stated]
+    if stated and (quote := _report_quote(stated[0]["scale"], ctx)):
+        refs.append(quote[0])
+        parts.append(ctx.phrases["safe_report_quote"].format(quote=quote[1]))
+    parts.append(template["body"])
+    if template["screening_note"]:
+        parts.append(ctx.phrases["screening_note"])
+    parts += [ctx.phrases["note_saved"], template["closing"]]
+    return " ".join(p for p in parts if p), refs
 
 
 def crisis_message(crisis: dict) -> str:
@@ -263,8 +293,8 @@ def _safe(conn, ctx: Context, turn: _Turn, kind: str) -> TurnResult:
 
 def _api_error(conn, ctx: Context, turn: _Turn) -> TurnResult:
     """P-05: SDK 재시도 후에도 실패. 성공한 호출만 기록하고 질문은 노트에 저장한다(PoC2-10)."""
-    return _save(conn, ctx, turn, route="api_error", message=ctx.phrases["api_error"], label=LABEL_SAFE,
-                 note=("api_error", []))
+    return _save(conn, ctx, turn, route="api_error", message=with_note_saved(ctx.phrases["api_error"], ctx),
+                 label=LABEL_SAFE, note=("api_error", []))
 
 
 def _answer(conn, ctx: Context, turn: _Turn, model: str | None, client) -> TurnResult:
@@ -280,12 +310,16 @@ def _answer(conn, ctx: Context, turn: _Turn, model: str | None, client) -> TurnR
         if not report.ok:
             continue
         guard = "pass" if attempt == 0 else "regen"
+        answer, ids = draft.parsed["answer"], draft.parsed["evidence_ids"]
         if draft.parsed["answerable"]:
-            return _save(conn, ctx, turn, route="answer", message=draft.parsed["answer"], label=LABEL_AI,
-                         evidence_ids=draft.parsed["evidence_ids"], guard=guard)
+            return _save(conn, ctx, turn, route="answer", message=answer, label=LABEL_AI, evidence_ids=ids, guard=guard)
+        if answer.strip():
+            # 부분 답변: 근거에 있는 부분만 답하고 질문은 노트로 (PoC2-07, G-07)
+            return _save(conn, ctx, turn, route="answer", message=with_note_saved(answer, ctx), label=LABEL_AI,
+                         evidence_ids=ids, guard=guard, note=("no_evidence", ids))
         # G-07: 근거로 답할 수 없음 → 안내 + 노트
-        return _save(conn, ctx, turn, route="answer", message=ctx.phrases["no_evidence"], label=LABEL_SAFE,
-                     guard=guard, note=("no_evidence", []))
+        return _save(conn, ctx, turn, route="answer", message=with_note_saved(ctx.phrases["no_evidence"], ctx),
+                     label=LABEL_SAFE, guard=guard, note=("no_evidence", []))
     text, refs = safe_response("guard_fallback", turn.masked, ctx)
     return _save(conn, ctx, turn, route="answer", message=text, label=LABEL_SAFE, evidence_ids=refs,
                  guard="fallback", note=("guard_fallback", refs))
