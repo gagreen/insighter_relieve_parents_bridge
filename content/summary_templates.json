@@ -1,0 +1,22 @@
+[
+  {
+    "id": "sum.none",
+    "when": {"has_clinical": false, "has_borderline": false},
+    "text": "이번 검사에서 기준이 정해진 문제행동 영역은 모두 또래 평균 범위에 있습니다. 궁금한 점은 상담에서 함께 이야기할 수 있습니다."
+  },
+  {
+    "id": "sum.borderline",
+    "when": {"has_clinical": false, "has_borderline": true},
+    "text": "{borderline_list} 영역이 관찰 권고 범위에 있습니다. 이 영역의 의미는 상담에서 자세히 살펴볼 수 있습니다."
+  },
+  {
+    "id": "sum.clinical",
+    "when": {"has_clinical": true, "has_borderline": false},
+    "text": "{clinical_list} 영역이 전문 상담 권고 범위에 있습니다. 상담에서 이 영역을 중심으로 자세히 이야기 나눌 수 있습니다."
+  },
+  {
+    "id": "sum.both",
+    "when": {"has_clinical": true, "has_borderline": true},
+    "text": "{clinical_list} 영역은 전문 상담 권고 범위, {borderline_list} 영역은 관찰 권고 범위에 있습니다. 상담에서 이 영역들을 중심으로 자세히 이야기 나눌 수 있습니다."
+  }
+]

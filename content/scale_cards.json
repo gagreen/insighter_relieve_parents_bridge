@@ -1,0 +1,596 @@
+[
+  {
+    "id": "card.KCBCL_4_17.internalizing.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "internalizing",
+    "range": "normal",
+    "title": "내재화 문제",
+    "what_it_asks": "위축, 신체증상, 우울/불안처럼 마음속으로 향하는 어려움을 묶어서 본 점수입니다.",
+    "behavior_examples": [
+      "혼자 있으려 하거나 말수가 줄어드는 모습",
+      "뚜렷한 이유 없이 몸이 불편하다고 하는 모습",
+      "걱정이 많거나 쉽게 슬퍼하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.internalizing.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "internalizing",
+    "range": "borderline",
+    "title": "내재화 문제",
+    "what_it_asks": "위축, 신체증상, 우울/불안처럼 마음속으로 향하는 어려움을 묶어서 본 점수입니다.",
+    "behavior_examples": [
+      "혼자 있으려 하거나 말수가 줄어드는 모습",
+      "뚜렷한 이유 없이 몸이 불편하다고 하는 모습",
+      "걱정이 많거나 쉽게 슬퍼하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 기분이 가라앉거나 몸이 불편하다고 하는 때가 언제인지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.internalizing.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "internalizing",
+    "range": "clinical",
+    "title": "내재화 문제",
+    "what_it_asks": "위축, 신체증상, 우울/불안처럼 마음속으로 향하는 어려움을 묶어서 본 점수입니다.",
+    "behavior_examples": [
+      "혼자 있으려 하거나 말수가 줄어드는 모습",
+      "뚜렷한 이유 없이 몸이 불편하다고 하는 모습",
+      "걱정이 많거나 쉽게 슬퍼하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 기분이 가라앉거나 몸이 불편하다고 하는 때가 언제인지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.externalizing.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "externalizing",
+    "range": "normal",
+    "title": "외현화 문제",
+    "what_it_asks": "비행, 공격성처럼 겉으로 드러나는 행동의 어려움을 묶어서 본 점수입니다.",
+    "behavior_examples": [
+      "집이나 학교의 규칙을 지키기 어려워하는 모습",
+      "화가 나면 소리를 지르거나 물건을 던지는 모습",
+      "고집을 부리며 말다툼이 잦은 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.externalizing.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "externalizing",
+    "range": "borderline",
+    "title": "외현화 문제",
+    "what_it_asks": "비행, 공격성처럼 겉으로 드러나는 행동의 어려움을 묶어서 본 점수입니다.",
+    "behavior_examples": [
+      "집이나 학교의 규칙을 지키기 어려워하는 모습",
+      "화가 나면 소리를 지르거나 물건을 던지는 모습",
+      "고집을 부리며 말다툼이 잦은 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 규칙을 어기거나 화를 내기 전에 어떤 일이 있었는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.externalizing.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "externalizing",
+    "range": "clinical",
+    "title": "외현화 문제",
+    "what_it_asks": "비행, 공격성처럼 겉으로 드러나는 행동의 어려움을 묶어서 본 점수입니다.",
+    "behavior_examples": [
+      "집이나 학교의 규칙을 지키기 어려워하는 모습",
+      "화가 나면 소리를 지르거나 물건을 던지는 모습",
+      "고집을 부리며 말다툼이 잦은 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 규칙을 어기거나 화를 내기 전에 어떤 일이 있었는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.total.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "total",
+    "range": "normal",
+    "title": "총 문제행동",
+    "what_it_asks": "보호자가 답한 문제행동 문항 전체를 합쳐서 본 점수입니다. 여러 영역의 어려움을 한꺼번에 보여 줍니다.",
+    "behavior_examples": [
+      "마음속으로 향하는 어려움(내재화)",
+      "겉으로 드러나는 행동의 어려움(외현화)",
+      "또래 관계, 생각, 집중 등 그 밖의 영역"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.total.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "total",
+    "range": "borderline",
+    "title": "총 문제행동",
+    "what_it_asks": "보호자가 답한 문제행동 문항 전체를 합쳐서 본 점수입니다. 여러 영역의 어려움을 한꺼번에 보여 줍니다.",
+    "behavior_examples": [
+      "마음속으로 향하는 어려움(내재화)",
+      "겉으로 드러나는 행동의 어려움(외현화)",
+      "또래 관계, 생각, 집중 등 그 밖의 영역"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 여러 영역 가운데 어떤 모습이 가장 신경 쓰이는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.total.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "total",
+    "range": "clinical",
+    "title": "총 문제행동",
+    "what_it_asks": "보호자가 답한 문제행동 문항 전체를 합쳐서 본 점수입니다. 여러 영역의 어려움을 한꺼번에 보여 줍니다.",
+    "behavior_examples": [
+      "마음속으로 향하는 어려움(내재화)",
+      "겉으로 드러나는 행동의 어려움(외현화)",
+      "또래 관계, 생각, 집중 등 그 밖의 영역"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 여러 영역 가운데 어떤 모습이 가장 신경 쓰이는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.withdrawn.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "withdrawn",
+    "range": "normal",
+    "title": "위축",
+    "what_it_asks": "다른 사람과 어울리기보다 혼자 있으려 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "혼자 있는 것을 더 좋아하는 모습",
+      "말을 잘 하지 않거나 수줍어하는 모습",
+      "활기가 적어 보이는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.withdrawn.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "withdrawn",
+    "range": "borderline",
+    "title": "위축",
+    "what_it_asks": "다른 사람과 어울리기보다 혼자 있으려 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "혼자 있는 것을 더 좋아하는 모습",
+      "말을 잘 하지 않거나 수줍어하는 모습",
+      "활기가 적어 보이는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 어떤 자리에서 혼자 있으려 하는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.withdrawn.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "withdrawn",
+    "range": "clinical",
+    "title": "위축",
+    "what_it_asks": "다른 사람과 어울리기보다 혼자 있으려 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "혼자 있는 것을 더 좋아하는 모습",
+      "말을 잘 하지 않거나 수줍어하는 모습",
+      "활기가 적어 보이는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 어떤 자리에서 혼자 있으려 하는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.somatic.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "somatic",
+    "range": "normal",
+    "title": "신체증상",
+    "what_it_asks": "뚜렷한 원인이 확인되지 않았는데 몸이 불편하다고 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "자주 피곤하다고 하는 모습",
+      "머리나 배가 아프다고 하는 모습",
+      "어지럽다고 하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.somatic.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "somatic",
+    "range": "borderline",
+    "title": "신체증상",
+    "what_it_asks": "뚜렷한 원인이 확인되지 않았는데 몸이 불편하다고 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "자주 피곤하다고 하는 모습",
+      "머리나 배가 아프다고 하는 모습",
+      "어지럽다고 하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 몸이 불편하다고 하는 때가 하루 중 언제인지, 그 전에 어떤 일이 있었는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.somatic.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "somatic",
+    "range": "clinical",
+    "title": "신체증상",
+    "what_it_asks": "뚜렷한 원인이 확인되지 않았는데 몸이 불편하다고 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "자주 피곤하다고 하는 모습",
+      "머리나 배가 아프다고 하는 모습",
+      "어지럽다고 하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 몸이 불편하다고 하는 때가 하루 중 언제인지, 그 전에 어떤 일이 있었는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.anxdep.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "anxdep",
+    "range": "normal",
+    "title": "우울/불안",
+    "what_it_asks": "걱정, 두려움, 슬픔 같은 감정을 얼마나 자주 보이는지 묻습니다.",
+    "behavior_examples": [
+      "작은 일에도 걱정이 많은 모습",
+      "쉽게 울거나 슬퍼하는 모습",
+      "스스로를 낮추어 말하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.anxdep.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "anxdep",
+    "range": "borderline",
+    "title": "우울/불안",
+    "what_it_asks": "걱정, 두려움, 슬픔 같은 감정을 얼마나 자주 보이는지 묻습니다.",
+    "behavior_examples": [
+      "작은 일에도 걱정이 많은 모습",
+      "쉽게 울거나 슬퍼하는 모습",
+      "스스로를 낮추어 말하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 걱정하거나 슬퍼하는 모습이 어떤 상황에서 나타나는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.anxdep.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "anxdep",
+    "range": "clinical",
+    "title": "우울/불안",
+    "what_it_asks": "걱정, 두려움, 슬픔 같은 감정을 얼마나 자주 보이는지 묻습니다.",
+    "behavior_examples": [
+      "작은 일에도 걱정이 많은 모습",
+      "쉽게 울거나 슬퍼하는 모습",
+      "스스로를 낮추어 말하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 걱정하거나 슬퍼하는 모습이 어떤 상황에서 나타나는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.socimm.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "socimm",
+    "range": "normal",
+    "title": "사회적 미성숙",
+    "what_it_asks": "나이에 비해 어리게 행동하거나 또래 관계에서 어려움을 겪는 정도를 묻습니다.",
+    "behavior_examples": [
+      "또래보다 어린 아이들과 어울리려는 모습",
+      "또래와 어울리기 어려워하는 모습",
+      "어른에게 많이 기대는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.socimm.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "socimm",
+    "range": "borderline",
+    "title": "사회적 미성숙",
+    "what_it_asks": "나이에 비해 어리게 행동하거나 또래 관계에서 어려움을 겪는 정도를 묻습니다.",
+    "behavior_examples": [
+      "또래보다 어린 아이들과 어울리려는 모습",
+      "또래와 어울리기 어려워하는 모습",
+      "어른에게 많이 기대는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 또래와 놀 때 어떤 상황에서 어려움이 생기는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.socimm.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "socimm",
+    "range": "clinical",
+    "title": "사회적 미성숙",
+    "what_it_asks": "나이에 비해 어리게 행동하거나 또래 관계에서 어려움을 겪는 정도를 묻습니다.",
+    "behavior_examples": [
+      "또래보다 어린 아이들과 어울리려는 모습",
+      "또래와 어울리기 어려워하는 모습",
+      "어른에게 많이 기대는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 또래와 놀 때 어떤 상황에서 어려움이 생기는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.thought.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "thought",
+    "range": "normal",
+    "title": "사고의 문제",
+    "what_it_asks": "같은 생각이나 행동에 오래 머무르거나, 다른 사람이 보기에 낯선 말이나 행동을 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "같은 생각을 계속 떠올리는 모습",
+      "같은 행동을 여러 번 되풀이하는 모습",
+      "다른 사람이 이해하기 어려운 말이나 행동을 하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.thought.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "thought",
+    "range": "borderline",
+    "title": "사고의 문제",
+    "what_it_asks": "같은 생각이나 행동에 오래 머무르거나, 다른 사람이 보기에 낯선 말이나 행동을 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "같은 생각을 계속 떠올리는 모습",
+      "같은 행동을 여러 번 되풀이하는 모습",
+      "다른 사람이 이해하기 어려운 말이나 행동을 하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 되풀이되는 생각이나 행동이 어떤 때 나타나는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.thought.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "thought",
+    "range": "clinical",
+    "title": "사고의 문제",
+    "what_it_asks": "같은 생각이나 행동에 오래 머무르거나, 다른 사람이 보기에 낯선 말이나 행동을 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "같은 생각을 계속 떠올리는 모습",
+      "같은 행동을 여러 번 되풀이하는 모습",
+      "다른 사람이 이해하기 어려운 말이나 행동을 하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 되풀이되는 생각이나 행동이 어떤 때 나타나는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.attention.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "attention",
+    "range": "normal",
+    "title": "주의집중 문제",
+    "what_it_asks": "한 가지 일에 집중하고, 가만히 앉아 있고, 차분하게 행동하는 것을 얼마나 어려워하는지 묻습니다.",
+    "behavior_examples": [
+      "숙제나 과제를 끝까지 하기 어려워하는 모습",
+      "가만히 앉아 있기 힘들어하는 모습",
+      "생각하기 전에 먼저 행동하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.attention.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "attention",
+    "range": "borderline",
+    "title": "주의집중 문제",
+    "what_it_asks": "한 가지 일에 집중하고, 가만히 앉아 있고, 차분하게 행동하는 것을 얼마나 어려워하는지 묻습니다.",
+    "behavior_examples": [
+      "숙제나 과제를 끝까지 하기 어려워하는 모습",
+      "가만히 앉아 있기 힘들어하는 모습",
+      "생각하기 전에 먼저 행동하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 집중이 잘 되는 때와 어려운 때가 언제인지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.attention.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "attention",
+    "range": "clinical",
+    "title": "주의집중 문제",
+    "what_it_asks": "한 가지 일에 집중하고, 가만히 앉아 있고, 차분하게 행동하는 것을 얼마나 어려워하는지 묻습니다.",
+    "behavior_examples": [
+      "숙제나 과제를 끝까지 하기 어려워하는 모습",
+      "가만히 앉아 있기 힘들어하는 모습",
+      "생각하기 전에 먼저 행동하는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 집중이 잘 되는 때와 어려운 때가 언제인지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.delinquent.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "delinquent",
+    "range": "normal",
+    "title": "비행",
+    "what_it_asks": "규칙을 어기거나 해서는 안 되는 행동을 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "사실과 다른 말을 하는 모습",
+      "집이나 학교의 규칙을 어기는 모습",
+      "잘못한 뒤에도 미안해하지 않는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.delinquent.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "delinquent",
+    "range": "borderline",
+    "title": "비행",
+    "what_it_asks": "규칙을 어기거나 해서는 안 되는 행동을 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "사실과 다른 말을 하는 모습",
+      "집이나 학교의 규칙을 어기는 모습",
+      "잘못한 뒤에도 미안해하지 않는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 규칙을 어기는 일이 어떤 상황에서 생기는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.delinquent.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "delinquent",
+    "range": "clinical",
+    "title": "비행",
+    "what_it_asks": "규칙을 어기거나 해서는 안 되는 행동을 하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "사실과 다른 말을 하는 모습",
+      "집이나 학교의 규칙을 어기는 모습",
+      "잘못한 뒤에도 미안해하지 않는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 규칙을 어기는 일이 어떤 상황에서 생기는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.aggressive.normal",
+    "assessment": "KCBCL_4_17",
+    "scale": "aggressive",
+    "range": "normal",
+    "title": "공격성",
+    "what_it_asks": "말이나 행동으로 다른 사람에게 공격적으로 대하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "말다툼을 하거나 고집을 부리는 모습",
+      "쉽게 짜증을 내거나 화를 내는 모습",
+      "다른 사람을 때리거나 물건을 부수는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서에서 이 영역은 또래 아이들에게서 흔히 보고되는 정도로 나왔습니다. 궁금한 점이 있으면 상담에서 물어볼 수 있습니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.aggressive.borderline",
+    "assessment": "KCBCL_4_17",
+    "scale": "aggressive",
+    "range": "borderline",
+    "title": "공격성",
+    "what_it_asks": "말이나 행동으로 다른 사람에게 공격적으로 대하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "말다툼을 하거나 고집을 부리는 모습",
+      "쉽게 짜증을 내거나 화를 내는 모습",
+      "다른 사람을 때리거나 물건을 부수는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 관찰이 권고되는 범위로 보고 있습니다. 화를 내기 전에 어떤 일이 있었는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  },
+  {
+    "id": "card.KCBCL_4_17.aggressive.clinical",
+    "assessment": "KCBCL_4_17",
+    "scale": "aggressive",
+    "range": "clinical",
+    "title": "공격성",
+    "what_it_asks": "말이나 행동으로 다른 사람에게 공격적으로 대하는 정도를 묻습니다.",
+    "behavior_examples": [
+      "말다툼을 하거나 고집을 부리는 모습",
+      "쉽게 짜증을 내거나 화를 내는 모습",
+      "다른 사람을 때리거나 물건을 부수는 모습"
+    ],
+    "position_text": "{scale_name} 점수는 {range_label}에 있습니다.",
+    "report_recommendation": "보고서는 이 영역을 전문 상담이 권고되는 범위로 보고 있습니다. 화를 내기 전에 어떤 일이 있었는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+    "status": "draft",
+    "version": 1,
+    "reviewed_at": null
+  }
+]

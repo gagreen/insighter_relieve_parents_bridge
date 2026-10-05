@@ -5,6 +5,8 @@
 
 # 과제 자료: 지원자 외 공유 금지 (CLAUDE.md 10·11장)
 docs/
+# 회사 제공 보고서를 옮긴 JSON: 공개 여부 미정 (CLAUDE.md 11장, specs/poc.md 2-4-1)
+data/private/
 
 # Python
 __pycache__/

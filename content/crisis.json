@@ -1,0 +1,127 @@
+{
+  "keywords": [
+    {
+      "id": "crisis.kw.cs.001",
+      "pattern": "죽고\\s*싶",
+      "type": "regex",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.002",
+      "pattern": "죽어\\s*버리|죽을\\s*래|죽을\\s*거",
+      "type": "regex",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.003",
+      "pattern": "자살",
+      "type": "literal",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.004",
+      "pattern": "자해",
+      "type": "literal",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.005",
+      "pattern": "극단적(인)?\\s*선택",
+      "type": "regex",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.006",
+      "pattern": "(손목|팔|몸)(을|에|이)?\\s*(긋|그었|그어|그은)",
+      "type": "regex",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.007",
+      "pattern": "뛰어\\s*내리",
+      "type": "regex",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.008",
+      "pattern": "목(을)?\\s*(매|맸|조르|졸라|졸랐)",
+      "type": "regex",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.009",
+      "pattern": "(사라지|없어지)고\\s*싶|태어나지\\s*말",
+      "type": "regex",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.010",
+      "pattern": "살기\\s*싫|살고\\s*싶지\\s*않",
+      "type": "regex",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.011",
+      "pattern": "학대",
+      "type": "literal",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.012",
+      "pattern": "성\\s*(폭력|추행|폭행)",
+      "type": "regex",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cs.013",
+      "pattern": "(?<![가-힣])(아이|애|아들|딸)(를|을)\\s*(때리|때려|때렸|팼|패요|패고)",
+      "type": "regex",
+      "category": "child_safety"
+    },
+    {
+      "id": "crisis.kw.cd.001",
+      "pattern": "(아이|애|아들|딸)(를|을)?\\s*(때릴|해칠|죽일|때려\\s*버릴)\\s*(것|거)\\s*같",
+      "type": "regex",
+      "category": "caregiver_distress"
+    },
+    {
+      "id": "crisis.kw.cd.002",
+      "pattern": "(아이|애)(랑|와|하고)?\\s*(같이|함께)\\s*죽",
+      "type": "regex",
+      "category": "caregiver_distress"
+    },
+    {
+      "id": "crisis.kw.cd.003",
+      "pattern": "더\\s*(이상|는)\\s*못\\s*(버티|견디|살)",
+      "type": "regex",
+      "category": "caregiver_distress"
+    },
+    {
+      "id": "crisis.kw.cd.004",
+      "pattern": "(아이|애)(를|을)?\\s*(버리|두고\\s*떠나)고\\s*싶",
+      "type": "regex",
+      "category": "caregiver_distress"
+    }
+  ],
+  "message": "말씀해 주신 내용은 아이나 보호자의 안전과 관련될 수 있어 질문 도우미 대화를 여기서 멈춥니다. 지금 위급한 상황이라면 바로 긴급 신고를 하거나 공공 위기 상담 채널에 연락해 주세요. 남겨 주신 내용은 상담 전에 상담사가 볼 수 있도록 위기 표시로 남겨 둡니다.",
+  "channels": [
+    {
+      "name": "자살예방상담전화",
+      "contact": "109 (24시간)",
+      "source_url": "https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1479607&tag=&nPage=1",
+      "checked_at": "2026-10-04"
+    },
+    {
+      "name": "청소년상담 1388",
+      "contact": "국번 없이 1388 (휴대폰은 지역번호 + 1388)",
+      "source_url": "https://www.bokjiro.go.kr/ssis-tbu/cms/pc/news/promotion/1305297_1118.html",
+      "checked_at": "2026-10-04"
+    },
+    {
+      "name": "아동학대 신고·긴급 신고",
+      "contact": "112",
+      "source_url": "https://www.bokjiro.go.kr/ssis-tbu/cms/pc/news/promotion/1188971_1118.html",
+      "checked_at": "2026-10-04"
+    }
+  ]
+}

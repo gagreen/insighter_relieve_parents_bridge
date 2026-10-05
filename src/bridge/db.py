@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS qa_turns (
     question_masked   TEXT NOT NULL,
     intent            TEXT,
     intent_confidence REAL,
+    route             TEXT,                   -- crisis/safe/redirect/answer/api_error (2026-10-04 추가) / note (PoC1-11)
     answer            TEXT,
     evidence_refs     TEXT,                   -- JSON 배열
     guard_result      TEXT CHECK (guard_result IN ('pass', 'regen', 'fallback')),
@@ -70,9 +71,11 @@ CREATE TABLE IF NOT EXISTS llm_calls (
     stage          TEXT NOT NULL CHECK (stage IN ('intent', 'answer', 'organize')),
     model          TEXT NOT NULL,
     prompt_version TEXT NOT NULL,
-    input_tokens   INTEGER,
-    cached_tokens  INTEGER,
+    input_tokens   INTEGER,                  -- 캐시를 거치지 않은 입력
+    cached_tokens  INTEGER,                  -- 캐시 읽기
+    cache_write_tokens INTEGER,              -- 캐시 쓰기 (2026-10-04 추가)
     output_tokens  INTEGER,
+    stop_reason    TEXT,                     -- end_turn / max_tokens / refusal ... (2026-10-04 추가)
     latency_ms     INTEGER,
     cost_usd       REAL,
     created_at     TEXT NOT NULL DEFAULT (datetime('now'))
@@ -87,8 +90,17 @@ def connect(path: Path | str | None = None) -> sqlite3.Connection:
     return conn
 
 
+# 나중에 추가한 컬럼. CREATE TABLE IF NOT EXISTS는 기존 테이블에 컬럼을 더하지 않으므로 확인한다.
+ADDED_COLUMNS = {"llm_calls": ("cache_write_tokens", "stop_reason"), "qa_turns": ("route",)}
+
+
 def create_schema(conn: sqlite3.Connection) -> None:
     conn.executescript(SCHEMA)
+    for table, columns in ADDED_COLUMNS.items():
+        existing = {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
+        if missing := [c for c in columns if c not in existing]:
+            raise RuntimeError(f"DB 스키마가 오래되었습니다({table}에 {missing} 없음). "
+                               "DB 파일을 지우고 `python -m bridge.db init`을 다시 실행하세요.")
 
 
 def load_samples(
@@ -130,10 +142,14 @@ def load_samples(
 
 
 def init(path: Path | str | None = None) -> list[tuple[str, list[str]]]:
+    """스키마 생성 + 샘플 적재. data/private/의 결과(회사 원본 보고서, spec 2-4-1)가 있으면 함께 적재한다."""
     conn = connect(path)
     try:
         create_schema(conn)
-        return load_samples(conn)
+        rejected = load_samples(conn)
+        if config.PRIVATE_RESULTS_DIR.exists():
+            rejected += load_samples(conn, results_dir=config.PRIVATE_RESULTS_DIR)
+        return rejected
     finally:
         conn.close()
 
@@ -150,6 +166,15 @@ def get_payload(conn: sqlite3.Connection, result_id: str) -> dict:
     if row is None:
         raise KeyError(f"검사 결과 없음: {result_id}")
     return json.loads(row["payload"])
+
+
+def get_result(conn: sqlite3.Connection, result_id: str) -> dict:
+    """검사 결과 1건(식별 정보 없음): result_id, child_id(가명), assessment_code, payload."""
+    row = conn.execute("SELECT result_id, child_id, assessment_code, payload FROM assessment_results"
+                       " WHERE result_id = ?", (result_id,)).fetchone()
+    if row is None:
+        raise KeyError(f"검사 결과 없음: {result_id}")
+    return {**dict(row), "payload": json.loads(row["payload"])}
 
 
 def get_subject(conn: sqlite3.Connection, child_id: str) -> dict:

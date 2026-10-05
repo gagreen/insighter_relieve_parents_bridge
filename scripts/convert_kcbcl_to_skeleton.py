@@ -40,6 +40,9 @@ SECTION = {
     "C": "해석 시 유의사항",
 }
 
+# 화면 섹션 제목의 번호 (원보고서 표기, specs/poc.md 2-2 report_sections)
+SECTION_NUMERAL = {"I": "Ⅰ", "II": "Ⅱ", "III": "Ⅲ", "IV": "Ⅳ", "V": "Ⅴ", "VI": "Ⅵ", "VII": "Ⅶ"}
+
 # 원본 key_findings·guardian_comments의 특수척도 키 -> scores의 scale 키로 통일
 SCALE_ALIAS = {"emoinst": "emotional_instability", "sexprob": "sex_problems"}
 
@@ -87,12 +90,15 @@ def assessment_type_definition(meta):
     """assessment_types 시드 1행. definition 형식은 specs/poc.md 2-2를 따른다.
 
     - scales 키 = payload scores[].scale 키 = 원천 데이터 키.
-    - PoC 시드에는 종합척도·증후군 척도 기준만 넣는다(2-2). 특수척도·사회능력 기준은
+    - PoC 시드에는 종합척도·증후군 척도 기준(group)만 넣는다(2-2). 특수척도·사회능력 기준은
       참고 보고서에 없는 가정값이라 넣지 않는다(해당 scores의 range는 원보고서 라벨 그대로 둠).
+    - 판정 기준 없는 척도는 group 없이 direction만 둔다(백분위 문장 방향용, PoC1-02).
     """
     syn = meta["scales"]["syndromes"]
     scales = {k: {"group": "composite"} for k in COMPOSITE_ORDER}
     scales.update({s["key"]: {"group": "syndrome"} for s in syn})
+    scales.update({k: {"direction": "higher_is_worse"} for k in SPECIAL})
+    scales.update({k: {"direction": "lower_is_worse"} for k in SOCIAL})
     return {
         "code": ASSESSMENT_CODE,
         "name": "K-CBCL 한국 아동·청소년 행동평가척도 (보호자 보고형, 만 4–17세)",
@@ -103,11 +109,26 @@ def assessment_type_definition(meta):
                              "clinical": "전문 상담 권고 범위", "not_administered": "미실시"},
             "groups": {
                 "composite": {"direction": "higher_is_worse", "borderline_min": 60, "clinical_min": 63},
-                "syndrome": {"direction": "higher_is_worse", "borderline_min": 60, "clinical_min": 70},
+                # t_floor: 증후군 척도 T점수 하한(백분위 50 이하는 50T). 백분위 문장에만 쓴다(2026-10-05)
+                "syndrome": {"direction": "higher_is_worse", "borderline_min": 60, "clinical_min": 70, "t_floor": 50},
             },
             "scales": scales,
+            "report_sections": report_sections(syn),
         },
     }
+
+
+def report_sections(syn):
+    """원보고서 섹션 순서·제목. Ⅲ은 증후군 영역(domain)별 소제목으로 묶는다(PoC1-09, 2026-10-05)."""
+    sections = []
+    for key, title in SECTION.items():
+        sec = {"key": key, "title": f"{SECTION_NUMERAL[key]}. {title}" if key in SECTION_NUMERAL else title}
+        if key == "III":
+            domains = list(dict.fromkeys(x["domain"] for x in syn))
+            sec["subgroups"] = [{"title": f"{d} 증후군", "scales": [x["key"] for x in syn if x["domain"] == d]}
+                                for d in domains]
+        sections.append(sec)
+    return sections
 
 
 def score(id_, scale, name, t, pct, range_ko, extra):

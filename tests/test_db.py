@@ -8,11 +8,11 @@ TABLE_COLUMNS = {
     "assessment_types": {"code", "name", "respondent", "schema_version", "definition"},
     "assessment_results": {"result_id", "child_id", "assessment_code", "administered_at", "schema_version", "payload"},
     "subjects": {"child_id", "name", "sex", "birth_date", "school_level", "grade"},
-    "qa_turns": {"turn_id", "child_id", "question_masked", "intent", "intent_confidence", "answer",
+    "qa_turns": {"turn_id", "child_id", "question_masked", "intent", "intent_confidence", "route", "answer",
                  "evidence_refs", "guard_result", "crisis_flag", "saved_to_note"},
     "note_items": {"item_id", "child_id", "source_turn_id", "text", "type", "related_refs",
                    "parent_edited", "parent_approved"},
-    "llm_calls": {"call_id", "turn_id", "stage", "model", "prompt_version", "input_tokens", "cached_tokens",
+    "llm_calls": {"call_id", "turn_id", "stage", "model", "prompt_version", "input_tokens", "cached_tokens", "cache_write_tokens", "stop_reason",
                   "output_tokens", "latency_ms", "cost_usd"},
 }
 
@@ -87,3 +87,28 @@ def test_2_4_schema_invalid_payload_not_stored(tmp_path):
     # 저장하지 않은 결과의 식별 정보도 남기지 않는다
     base_child_id = json.loads(config.BASE_SAMPLE_FILE.read_text(encoding="utf-8"))["child_id"]
     assert [r[0] for r in conn.execute("SELECT child_id FROM subjects")] == [base_child_id]
+
+
+def test_2_4_1_init_also_loads_private_results(tmp_path, monkeypatch):
+    """spec 2-4-1: data/private/kcbcl_results/가 있으면 함께 적재 (subject는 subjects 테이블에만)."""
+    private = tmp_path / "private"
+    private.mkdir()
+    r = json.loads(config.BASE_SAMPLE_FILE.read_text(encoding="utf-8"))
+    r.update(result_id="R-PRIVATE-TEST", child_id="C-PRIVATE")
+    r["subject"] = {**r["subject"], "child_id": "C-PRIVATE", "name": "홍길동"}
+    (private / "report.json").write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(config, "PRIVATE_RESULTS_DIR", private)
+    path = tmp_path / "t.db"
+    assert db.init(path) == []
+    conn = db.connect(path)
+    assert db.get_result(conn, "R-PRIVATE-TEST")["child_id"] == "C-PRIVATE"
+    assert db.get_subject(conn, "C-PRIVATE")["name"] == "홍길동"
+    assert "홍길동" not in json.dumps(db.get_payload(conn, "R-PRIVATE-TEST"), ensure_ascii=False)
+    conn.close()
+
+
+def test_2_4_1_private_dir_is_git_ignored():
+    """CLAUDE.md 11장: 회사 보고서를 옮긴 JSON은 커밋하지 않는다."""
+    import subprocess
+    out = subprocess.run(["git", "check-ignore", "-q", "data/private/kcbcl_results/report.json"], cwd=config.ROOT)
+    assert out.returncode == 0

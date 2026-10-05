@@ -1,0 +1,355 @@
+{
+  "diagnosis": [
+    {
+      "id": "intent.dx.001",
+      "pattern": "ADHD",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.002",
+      "pattern": "(?<![A-Za-z])ADD(?![A-Za-z])",
+      "type": "regex"
+    },
+    {
+      "id": "intent.dx.003",
+      "pattern": "주의력결핍",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.004",
+      "pattern": "과잉행동장애",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.005",
+      "pattern": "장애",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.006",
+      "pattern": "자폐",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.007",
+      "pattern": "아스퍼거",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.008",
+      "pattern": "우울증",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.009",
+      "pattern": "공황",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.010",
+      "pattern": "강박",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.011",
+      "pattern": "(?<![가-힣])틱(?:장애|증상?|이|을|은|도|과|와)?(?![가-힣])",
+      "type": "regex"
+    },
+    {
+      "id": "intent.dx.012",
+      "pattern": "[투뚜]렛",
+      "type": "regex"
+    },
+    {
+      "id": "intent.dx.013",
+      "pattern": "PTSD",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.014",
+      "pattern": "외상후",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.015",
+      "pattern": "조현",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.016",
+      "pattern": "정신분열",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.017",
+      "pattern": "양극성",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.018",
+      "pattern": "조울",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.019",
+      "pattern": "스펙트럼",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.020",
+      "pattern": "진단",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.021",
+      "pattern": "치료",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.022",
+      "pattern": "약물",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.023",
+      "pattern": "(?<![가-힣])약(을|은|이|도)?\\s*(먹|복용|처방|써|쓰)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.dx.024",
+      "pattern": "처방",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.025",
+      "pattern": "복용",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.026",
+      "pattern": "병원",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.027",
+      "pattern": "정신과",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.028",
+      "pattern": "(발달|치료)\\s*센터",
+      "type": "regex"
+    },
+    {
+      "id": "intent.dx.029",
+      "pattern": "의심",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.030",
+      "pattern": "가능성",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.031",
+      "pattern": "(정밀|추가)\\s*검사|검사(를)?\\s*(더|다시|또)\\s*받",
+      "type": "regex"
+    },
+    {
+      "id": "intent.dx.032",
+      "pattern": "좋아질|나아질|괜찮아질|고쳐질|나을\\s*수|낫(나요|을까|는\\s*건|겠)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.dx.033",
+      "pattern": "(?<![가-힣])(크면|커서|자라면서?|나이가?\\s*들면)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.dx.034",
+      "pattern": "평생",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.035",
+      "pattern": "정상(인가|인\\s*건가|이에요|이죠|일까|이라고|인지)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.dx.036",
+      "pattern": "괜찮",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.037",
+      "pattern": "심각",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.038",
+      "pattern": "위험",
+      "type": "literal"
+    },
+    {
+      "id": "intent.dx.039",
+      "pattern": "문제(가|는)?\\s*있(는|나|을|어)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.dx.040",
+      "pattern": "걱정(해야|할\\s*정도|안\\s*해도)",
+      "type": "regex"
+    }
+  ],
+  "parenting": [
+    {
+      "id": "intent.pa.001",
+      "pattern": "훈육",
+      "type": "literal"
+    },
+    {
+      "id": "intent.pa.002",
+      "pattern": "혼내|혼나|야단",
+      "type": "regex"
+    },
+    {
+      "id": "intent.pa.003",
+      "pattern": "어떻게\\s*(해야|하면|대해|대하|도와|가르치|지도|말해|해\\s*줘야|해줘야)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.pa.004",
+      "pattern": "집에서\\s*(할|해\\s*줄|해줄)\\s*수\\s*있는",
+      "type": "regex"
+    },
+    {
+      "id": "intent.pa.005",
+      "pattern": "(습관|버릇)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.pa.006",
+      "pattern": "양육\\s*(방법|태도)",
+      "type": "regex"
+    }
+  ],
+  "out_of_scope": [
+    {
+      "id": "intent.os.001",
+      "pattern": "예약",
+      "type": "literal"
+    },
+    {
+      "id": "intent.os.002",
+      "pattern": "결제",
+      "type": "literal"
+    },
+    {
+      "id": "intent.os.003",
+      "pattern": "환불",
+      "type": "literal"
+    },
+    {
+      "id": "intent.os.004",
+      "pattern": "(?<![가-힣])취소",
+      "type": "regex"
+    },
+    {
+      "id": "intent.os.005",
+      "pattern": "(상담|통화)\\s*(일정|날짜|시간\\s*(변경|조정))",
+      "type": "regex"
+    },
+    {
+      "id": "intent.os.006",
+      "pattern": "언제\\s*(전화|연락)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.os.007",
+      "pattern": "비용|가격|요금|영수증",
+      "type": "regex"
+    },
+    {
+      "id": "intent.os.008",
+      "pattern": "로그인|비밀번호|회원\\s*(가입|탈퇴)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.os.009",
+      "pattern": "(앱|어플)(이|가)?\\s*(안|오류|에러)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.os.010",
+      "pattern": "재검사\\s*(신청|예약)",
+      "type": "regex"
+    }
+  ],
+  "explain": [
+    {
+      "id": "intent.ex.001",
+      "pattern": "(?<![가-힣])뜻",
+      "type": "regex"
+    },
+    {
+      "id": "intent.ex.002",
+      "pattern": "의미",
+      "type": "literal"
+    },
+    {
+      "id": "intent.ex.003",
+      "pattern": "무슨\\s*말",
+      "type": "regex"
+    },
+    {
+      "id": "intent.ex.004",
+      "pattern": "(무엇|뭘|무얼)\\s*(묻|보는|측정|알아보)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.ex.005",
+      "pattern": "T\\s*점수|티\\s*점수",
+      "type": "regex"
+    },
+    {
+      "id": "intent.ex.006",
+      "pattern": "백분위",
+      "type": "literal"
+    },
+    {
+      "id": "intent.ex.007",
+      "pattern": "상위|하위",
+      "type": "regex"
+    },
+    {
+      "id": "intent.ex.008",
+      "pattern": "기준선",
+      "type": "literal"
+    },
+    {
+      "id": "intent.ex.009",
+      "pattern": "범위",
+      "type": "literal"
+    },
+    {
+      "id": "intent.ex.010",
+      "pattern": "척도",
+      "type": "literal"
+    },
+    {
+      "id": "intent.ex.011",
+      "pattern": "(뭐|무엇)(예요|에요|인가요|이에요|야|죠)",
+      "type": "regex"
+    },
+    {
+      "id": "intent.ex.012",
+      "pattern": "설명",
+      "type": "literal"
+    },
+    {
+      "id": "intent.ex.013",
+      "pattern": "어떻게\\s*(읽|봐야|보면)",
+      "type": "regex"
+    }
+  ]
+}
