@@ -126,3 +126,30 @@ def test_poc2_07_unparseable_answer_is_none(text):
 def test_poc2_07_answer_schema_fields():
     assert set(pipeline.ANSWER_SCHEMA["required"]) == {"answerable", "answer", "evidence_ids", "note_question"}
     assert pipeline.ANSWER_SCHEMA["additionalProperties"] is False
+
+
+# ── 프롬프트 세트 (specs/poc.md 6-1, --prompt-set v1|v2) ──
+
+V1 = {"intent": "intent_v1", "answer": "answer_v1", "organize": "organize_v1"}
+
+
+def test_6_1_default_prompts_follow_config():
+    client = FakeClient(fake_response({"intent": "explain", "confidence": 0.9}))
+    d = pipeline.classify_intent(UNDECIDED, client=client)
+    assert d.llm.prompt_version == config.PROMPT_VERSIONS["intent"]
+    assert client.calls[0]["system"][0]["text"] == llm.load_prompt(config.PROMPT_VERSIONS["intent"])
+
+
+def test_6_1_prompt_set_overrides_intent_prompt():
+    client = FakeClient(fake_response({"intent": "explain", "confidence": 0.9}))
+    d = pipeline.classify_intent(UNDECIDED, client=client, prompts=V1)
+    assert d.llm.prompt_version == "intent_v1"
+    assert client.calls[0]["system"][0]["text"] == llm.load_prompt("intent_v1")
+
+
+def test_6_1_prompt_set_overrides_answer_prompt():
+    answer = {"answerable": True, "answer": "a", "evidence_ids": ["III.attention"], "note_question": None}
+    client = FakeClient(fake_response(answer))
+    draft = pipeline.generate_answer("질문", PACK, client=client, prompts=V1)
+    assert draft.llm.prompt_version == "answer_v1"
+    assert client.calls[0]["system"][0]["text"] == llm.load_prompt("answer_v1")

@@ -46,3 +46,17 @@ def test_organize_prompt_names_all_brief_types():
     for code in BRIEF_TYPES:
         assert f"`{code}`" in prompt
     assert "source_item_ids" in prompt
+
+
+def test_answer_v3_is_current_and_covers_loss_fixes():
+    """답 손실 개선(spec PoC2-07, 2026-10-06): 예시 숫자·차이 계산 금지, gap, id 복사, 재생성 사유."""
+    assert config.PROMPT_VERSIONS["answer"] == "answer_v3"
+    prompt = llm.load_prompt("answer_v3")
+    for phrase in ("`gap`", "<retry_feedback>", "글자 그대로", "예시"):
+        assert phrase in prompt
+
+
+def test_old_answer_prompts_are_kept():
+    """기존 버전 파일은 고치지 않고 남긴다 (CLAUDE.md 7장)."""
+    for version in ("answer_v1", "answer_v2"):
+        assert llm.load_prompt(version).strip()

@@ -14,6 +14,15 @@ class EvidencePack:
     items: dict[str, dict]     # id → 항목
 
 
+def _threshold(t: dict, score: int | float | None) -> dict:
+    """기준선 값과 이름. T점수가 있으면 차이(gap)와 위치(side)를 코드가 계산해 넣는다(모델이 계산하지 않게, G-03)."""
+    out = {"value": t["value"], "label": t["label"]}
+    if score is not None:
+        out["gap"] = abs(score - t["value"])
+        out["side"] = "at_or_above" if score >= t["value"] else "below"
+    return out
+
+
 def _score_item(item: dict) -> dict:
     return {
         "kind": "score", "id": item["id"], "name": item["name"],
@@ -22,8 +31,7 @@ def _score_item(item: dict) -> dict:
         "status_text": item["status_text"],
         "percentile_text": item["percentile_text"],
         "direction_note": item["direction_note"],
-        "thresholds": [{"value": t["value"], "label": t["label"]} for t in item["thresholds"]]
-        if item["thresholds"] else None,
+        "thresholds": [_threshold(t, item["t"]) for t in item["thresholds"]] if item["thresholds"] else None,
     }
 
 

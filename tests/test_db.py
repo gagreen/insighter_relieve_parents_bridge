@@ -4,6 +4,8 @@ import shutil
 
 from bridge import config, db
 
+N_RESULTS = len(list(config.RESULTS_DIR.glob("*.json")))   # 공개 샘플 10건 (specs/poc.md 2-3-1)
+
 TABLE_COLUMNS = {
     "assessment_types": {"code", "name", "respondent", "schema_version", "definition"},
     "assessment_results": {"result_id", "child_id", "assessment_code", "administered_at", "schema_version", "payload"},
@@ -28,7 +30,7 @@ def test_2_4_init_creates_tables_with_core_columns(loaded_db):
 
 def test_2_4_init_loads_definition_and_all_results(loaded_db):
     assert loaded_db.execute("SELECT COUNT(*) FROM assessment_types").fetchone()[0] == 1
-    assert loaded_db.execute("SELECT COUNT(*) FROM assessment_results").fetchone()[0] == 100
+    assert loaded_db.execute("SELECT COUNT(*) FROM assessment_results").fetchone()[0] == N_RESULTS
     definition = db.get_definition(loaded_db, "KCBCL_4_17")
     assert definition["groups"]["composite"]["clinical_min"] == 63
     assert definition["groups"]["syndrome"]["clinical_min"] == 70
@@ -43,7 +45,7 @@ def test_2_4_subject_loaded_only_into_subjects(loaded_db):
     """G-09: 식별 정보(subject)는 subjects 테이블에만 있다."""
     src = json.loads(config.BASE_SAMPLE_FILE.read_text(encoding="utf-8"))
     assert db.get_subject(loaded_db, src["child_id"]) == src["subject"]
-    assert loaded_db.execute("SELECT COUNT(*) FROM subjects").fetchone()[0] == 100
+    assert loaded_db.execute("SELECT COUNT(*) FROM subjects").fetchone()[0] == N_RESULTS
 
     other_tables = "\n".join(
         line for line in loaded_db.iterdump() if '"subjects"' not in line and "subjects " not in line
@@ -62,9 +64,9 @@ def test_2_4_reinit_does_not_duplicate(tmp_path):
     db.init(path)
     db.init(path)
     conn = db.connect(path)
-    assert conn.execute("SELECT COUNT(*) FROM assessment_results").fetchone()[0] == 100
+    assert conn.execute("SELECT COUNT(*) FROM assessment_results").fetchone()[0] == N_RESULTS
     assert conn.execute("SELECT COUNT(*) FROM assessment_types").fetchone()[0] == 1
-    assert conn.execute("SELECT COUNT(*) FROM subjects").fetchone()[0] == 100
+    assert conn.execute("SELECT COUNT(*) FROM subjects").fetchone()[0] == N_RESULTS
 
 
 def test_2_4_schema_invalid_payload_not_stored(tmp_path):

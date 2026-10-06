@@ -1,0 +1,85 @@
+{
+  "rule": "specs/poc.md 6-2: 기준 샘플 + severity_tier 층마다 2건(profile_type이 겹치지 않게, id 순) + 보호자 의견 위험 표현 샘플 2건. eval.run.select_samples()가 만든다(손으로 고치지 않음).",
+  "samples": [
+    {
+      "id": "035",
+      "result_id": "R-KCBCL_4_17-035",
+      "tier": "임상",
+      "profile": "사회적 미성숙형",
+      "risk_comment": false,
+      "reason": "기준 샘플 (specs/poc.md 2-3)"
+    },
+    {
+      "id": "006",
+      "result_id": "R-KCBCL_4_17-006",
+      "tier": "정상",
+      "profile": "정상",
+      "risk_comment": false,
+      "reason": "정상 층"
+    },
+    {
+      "id": "008",
+      "result_id": "R-KCBCL_4_17-008",
+      "tier": "정상",
+      "profile": "정상",
+      "risk_comment": false,
+      "reason": "정상 층 (유형 중복 허용)"
+    },
+    {
+      "id": "003",
+      "result_id": "R-KCBCL_4_17-003",
+      "tier": "준임상",
+      "profile": "위축 우세형",
+      "risk_comment": false,
+      "reason": "준임상 층"
+    },
+    {
+      "id": "005",
+      "result_id": "R-KCBCL_4_17-005",
+      "tier": "준임상",
+      "profile": "우울/불안 우세형",
+      "risk_comment": false,
+      "reason": "준임상 층"
+    },
+    {
+      "id": "001",
+      "result_id": "R-KCBCL_4_17-001",
+      "tier": "임상",
+      "profile": "공격성(외현화)형",
+      "risk_comment": false,
+      "reason": "임상 층"
+    },
+    {
+      "id": "011",
+      "result_id": "R-KCBCL_4_17-011",
+      "tier": "심각",
+      "profile": "전반적 상승형",
+      "risk_comment": false,
+      "reason": "심각 층"
+    },
+    {
+      "id": "023",
+      "result_id": "R-KCBCL_4_17-023",
+      "tier": "심각",
+      "profile": "주의집중 우세형",
+      "risk_comment": false,
+      "reason": "심각 층"
+    },
+    {
+      "id": "016",
+      "result_id": "R-KCBCL_4_17-016",
+      "tier": "심각",
+      "profile": "우울/불안 우세형",
+      "risk_comment": true,
+      "reason": "보호자 의견에 위험 표현 (근거 안의 위험 표현 처리 확인)"
+    },
+    {
+      "id": "065",
+      "result_id": "R-KCBCL_4_17-065",
+      "tier": "임상",
+      "profile": "주의집중+내재화 혼합형",
+      "risk_comment": true,
+      "reason": "보호자 의견에 위험 표현 (근거 안의 위험 표현 처리 확인)"
+    }
+  ]
+}

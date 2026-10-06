@@ -38,3 +38,28 @@ class FakeClient:
     @property
     def calls(self) -> list[dict]:
         return self.messages.calls
+
+
+# ── OpenAI 호환 API (OpenAI, Gemini — specs/poc.md 6-3) ──
+
+
+def fake_chat_response(text: str | dict | None, *, prompt_tokens=100, cached=0, completion_tokens=20,
+                       finish_reason="stop", refusal=None):
+    if isinstance(text, dict):
+        text = json.dumps(text, ensure_ascii=False)
+    message = SimpleNamespace(content=text, refusal=refusal)
+    usage = SimpleNamespace(prompt_tokens=prompt_tokens, completion_tokens=completion_tokens,
+                            prompt_tokens_details=SimpleNamespace(cached_tokens=cached))
+    return SimpleNamespace(choices=[SimpleNamespace(message=message, finish_reason=finish_reason)], usage=usage)
+
+
+class FakeOpenAIClient:
+    """chat.completions.create()에 넘긴 인자를 calls에 기록하고, 준비한 응답(또는 예외)을 순서대로 돌려준다."""
+
+    def __init__(self, *responses):
+        self._completions = _Messages(responses)
+        self.chat = SimpleNamespace(completions=self._completions)
+
+    @property
+    def calls(self) -> list[dict]:
+        return self._completions.calls

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "bridge"
 version = "0.1.0"
-description = "아맘때 '상담 브리지' PoC"
+description = "아맘때 '상담 브릿지' PoC"
 requires-python = ">=3.11"
 dependencies = [
     "anthropic>=1.11,<2",
@@ -15,10 +15,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+# 다른 회사 모델 비교 (specs/poc.md 6-3, 2026-10-06 승인). OpenAI 호환 API(OpenAI, Gemini)
+compare = ["openai>=3,<4"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]

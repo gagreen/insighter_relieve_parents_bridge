@@ -7,7 +7,7 @@ import httpx2
 import pytest
 
 from bridge import config, db, llm
-from llm_fakes import FakeClient, fake_response
+from llm_fakes import FakeClient, FakeOpenAIClient, fake_chat_response, fake_response
 
 SCHEMA = {"type": "object", "properties": {"x": {"type": "string"}}, "required": ["x"], "additionalProperties": False}
 
@@ -217,3 +217,123 @@ def test_tagged_escapes_angle_brackets():
 @pytest.mark.parametrize("text, expected", [('{"a": 1}', {"a": 1}), ("[1]", None), ("x", None), (None, None)])
 def test_parse_json_object(text, expected):
     assert llm.parse_json_object(text) == expected
+
+
+# ── 다른 회사 모델: OpenAI 호환 API (specs/poc.md 6-3, 2026-10-06) ──
+
+
+@pytest.mark.parametrize("model, expected", [
+    (config.HAIKU, ("anthropic", config.HAIKU)),
+    (config.SONNET, ("anthropic", config.SONNET)),
+    ("openai:gpt-5.4-mini", ("openai", "gpt-5.4-mini")),
+    ("gemini:gemini-3.1-flash-lite", ("gemini", "gemini-3.1-flash-lite")),
+    ("openai:ft:gpt-5.4-mini:org", ("openai", "ft:gpt-5.4-mini:org")),   # 모델 이름 안의 ':'는 그대로
+    ("ollama:qwen3:8b", ("anthropic", "ollama:qwen3:8b")),                # 로컬 모델은 제외(2026-10-06)
+    ("unknown:x", ("anthropic", "unknown:x")),             # 등록되지 않은 접두어는 제공사로 보지 않음
+])
+def test_6_3_provider_of(model, expected):
+    assert llm.provider_of(model) == expected
+
+
+def test_6_3_comparison_models_are_priced():
+    for model in (config.GPT_MINI, config.GEMINI_LITE):
+        assert model in config.PRICES_PER_MTOK
+        assert llm.provider_of(model)[0] in config.PROVIDERS
+
+
+def test_6_3_compat_request_uses_strict_json_schema_and_tagged_user():
+    """system은 정책 → 근거 순서 그대로 한 메시지(접두어 캐시), user는 질문만 (G-08)."""
+    client = FakeOpenAIClient(fake_chat_response({"x": "a"}))
+    _call(client, model=config.GPT_MINI, stage="answer", system_parts=["정책", "근거"], user_text="<q>질문</q>")
+    req = client.calls[0]
+    assert req["model"] == "gpt-5.4-mini"
+    assert req["messages"] == [{"role": "system", "content": "정책\n\n근거"}, {"role": "user", "content": "<q>질문</q>"}]
+    assert req["response_format"] == {"type": "json_schema",
+                                      "json_schema": {"name": "answer", "schema": SCHEMA, "strict": True}}
+    assert req["max_completion_tokens"] == config.MAX_TOKENS["answer"]
+    assert not {"temperature", "top_p", "max_tokens"} & set(req)
+
+
+def test_6_3_reasoning_effort_only_where_configured():
+    """GPT-5.4 mini는 effort low(Sonnet과 같은 조건). Gemini는 기본값이라 보내지 않는다."""
+    client = FakeOpenAIClient(fake_chat_response({"x": "a"}), fake_chat_response({"x": "a"}))
+    _call(client, model=config.GPT_MINI)
+    _call(client, model=config.GEMINI_LITE)
+    assert client.calls[0]["reasoning_effort"] == "low"
+    assert "reasoning_effort" not in client.calls[1]
+
+
+def test_6_3_compat_result_tokens_and_cost():
+    """캐시 읽기는 prompt_tokens_details.cached_tokens. 입력 토큰은 캐시를 뺀 나머지."""
+    client = FakeOpenAIClient(fake_chat_response({"x": "a"}, prompt_tokens=3000, cached=2000, completion_tokens=40))
+    r = _call(client, model=config.GPT_MINI)
+    assert r.text == '{"x": "a"}'
+    assert (r.input_tokens, r.cache_write_tokens, r.cache_read_tokens, r.output_tokens) == (1000, 0, 2000, 40)
+    assert r.cost_usd == pytest.approx((1000 * 0.75 + 2000 * 0.075 + 40 * 4.5) / 1_000_000)
+    assert (r.model, r.stop_reason) == (config.GPT_MINI, "stop")
+
+
+def test_6_3_compat_missing_usage_details_count_as_zero():
+    resp = fake_chat_response({"x": "a"}, prompt_tokens=10)
+    resp.usage.prompt_tokens_details = None
+    r = _call(FakeOpenAIClient(resp), model=config.GEMINI_LITE)
+    assert (r.input_tokens, r.cache_read_tokens) == (10, 0)
+
+
+def test_6_3_compat_refusal_has_no_text():
+    r = _call(FakeOpenAIClient(fake_chat_response(None, refusal="거절")), model=config.GPT_MINI)
+    assert (r.text, r.stop_reason) == (None, "refusal")
+
+
+def test_6_3_cost_uses_explicit_cache_read_price():
+    assert llm.cost_usd(config.GEMINI_LITE, 0, 0, 1_000_000, 0) == pytest.approx(0.025)
+
+
+def test_6_3_compat_api_error_becomes_llm_error():
+    openai = pytest.importorskip("openai")
+    req = httpx2.Request("POST", "https://api.openai.com/v1/chat/completions")
+    with pytest.raises(llm.LLMError):
+        _call(FakeOpenAIClient(openai.APIConnectionError(request=req)), model=config.GPT_MINI)
+
+
+def test_6_3_missing_api_key_becomes_llm_error(monkeypatch):
+    """키가 없는 제공사를 고르면 화면·평가가 멈추지 않도록 LLMError (파이프라인에서 api_error)."""
+    pytest.importorskip("openai")
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    llm.get_compat_client.cache_clear()
+    try:
+        with pytest.raises(llm.LLMError, match="OPENAI_API_KEY"):
+            _call(None, model=config.GPT_MINI)
+    finally:
+        llm.get_compat_client.cache_clear()
+
+
+def test_6_3_compat_client_retries_once(monkeypatch):
+    """재시도는 SDK max_retries로 한다 (P-05, CLAUDE.md 9장)."""
+    pytest.importorskip("openai")
+    monkeypatch.setenv("GEMINI_API_KEY", "test")
+    llm.get_compat_client.cache_clear()
+    try:
+        client = llm.get_compat_client("gemini")
+        assert client.max_retries == config.API_RETRY_LIMIT
+        assert str(client.base_url).startswith(config.PROVIDERS["gemini"]["base_url"])
+    finally:
+        llm.get_compat_client.cache_clear()
+
+
+def _strict_ok(schema: dict) -> bool:
+    """OpenAI strict 구조화 출력 조건: 모든 object가 additionalProperties=false이고 모든 속성이 required."""
+    if schema.get("type") == "object":
+        props = schema.get("properties", {})
+        if schema.get("additionalProperties") is not False or set(schema.get("required", [])) != set(props):
+            return False
+        return all(_strict_ok(v) for v in props.values())
+    if schema.get("type") == "array":
+        return _strict_ok(schema["items"])
+    return all(_strict_ok(s) for s in schema.get("anyOf", []))
+
+
+def test_6_3_output_schemas_satisfy_strict_mode():
+    from bridge import notes, pipeline
+    for schema in (pipeline.INTENT_SCHEMA, pipeline.ANSWER_SCHEMA, notes.ORGANIZE_SCHEMA):
+        assert _strict_ok(schema)
