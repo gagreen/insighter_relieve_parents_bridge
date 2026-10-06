@@ -1,4 +1,4 @@
-"""아맘때 '상담 브리지' 데모 (specs/poc.md 5장).
+"""아맘때 '상담 브릿지' 데모 (specs/poc.md 5장).
 
 실행: streamlit run app/main.py
 A 쉬운 말 결과 / B 질문 도우미 / C 상담 브리프. 기준 샘플 1건(spec 2-3)으로 동작한다.
@@ -195,8 +195,8 @@ def brief_tab(ctx: pipeline.Context) -> None:
         st.code(st.session_state.brief, language=None)
 
 
-st.set_page_config(page_title="상담 브리지 데모", layout="centered")
-st.title("아맘때 '상담 브리지' 데모")
+st.set_page_config(page_title="상담 브릿지 데모", layout="centered")
+st.title("아맘때 '상담 브릿지' 데모")
 if "ctx" not in st.session_state:
     try:
         _start_session()

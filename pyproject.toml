@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "bridge"
 version = "0.1.0"
-description = "아맘때 '상담 브리지' PoC"
+description = "아맘때 '상담 브릿지' PoC"
 requires-python = ">=3.11"
 dependencies = [
     "anthropic>=1.11,<2",

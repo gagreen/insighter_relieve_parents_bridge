@@ -1,4 +1,4 @@
-# CLAUDE.md — 아맘때 '상담 브리지' PoC
+# CLAUDE.md — 아맘때 '상담 브릿지' PoC
 
 이 파일은 이 리포지토리에서 작업하는 Claude Code가 매 세션 읽는 규칙이다.
 **무엇을 만드는지(요구사항·수용 기준)는 `specs/`에, 이 파일에는 항상 지켜야 할 규칙과 작업 방식만 둔다.**
@@ -23,7 +23,7 @@
 | -------- | ----------------------------------------- | ------------------------------------ | -------------------- |
 | 1        | 이 파일의 절대 규칙(5장)                  | `CLAUDE.md`                          | 확정                 |
 | 2        | PoC 명세(요구사항·수용 기준)              | `specs/poc.md`                       | v0.1                 |
-| 3        | 기획안 「아맘때 '상담 브리지' AI 기획안」 | Claude Docs 아티팩트(원본)           | 작성 중              |
+| 3        | 기획안 「아맘때 '상담 브릿지' AI 기획안」 | Claude Docs 아티팩트(원본)           | 작성 중              |
 | 4        | 과제 안내문                               | `docs/AI개발자_사전테스트안내문.pdf` | 제출 요구사항의 원천 |
 | 참고     | 기획서 작성 가이드                        | `docs/AI 기획서 작성 가이드.md`      | 참고                 |
 
@@ -179,12 +179,12 @@
 
 ### 8-4. 샘플 데이터 (`data/`, 상세: `data/README.md`)
 
-| 경로                                       | 내용                                                    | 생성                                                |
-| ------------------------------------------ | ------------------------------------------------------- | --------------------------------------------------- |
-| `data/kcbcl_samples.json`                  | 원천 데이터 10건(공통 뼈대 아님, 100건 생성 중 평가 샘플만 공개, 2026-10-06). **손으로 고치지 않는다.** | `scripts/generate_kcbcl_samples.py` (seed 20261002) |
-| `data/kcbcl_results/<번호>.json`           | 검사 결과 1건 = 파일 1개(10건). 8-1 공통 뼈대           | `scripts/convert_kcbcl_to_skeleton.py`              |
-| `data/assessment_types/KCBCL_4_17.json`    | `assessment_types` 시드 1행(`specs/poc.md` 2-2 형식)    | 위 변환 스크립트                                    |
-| `schemas/kcbcl_4_17.schema.json`           | payload JSON Schema(저장 전 검증)                       | 수작업                                              |
+| 경로                                    | 내용                                                                                                    | 생성                                                |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `data/kcbcl_samples.json`               | 원천 데이터 10건(공통 뼈대 아님, 100건 생성 중 평가 샘플만 공개, 2026-10-06). **손으로 고치지 않는다.** | `scripts/generate_kcbcl_samples.py` (seed 20261002) |
+| `data/kcbcl_results/<번호>.json`        | 검사 결과 1건 = 파일 1개(10건). 8-1 공통 뼈대                                                           | `scripts/convert_kcbcl_to_skeleton.py`              |
+| `data/assessment_types/KCBCL_4_17.json` | `assessment_types` 시드 1행(`specs/poc.md` 2-2 형식)                                                    | 위 변환 스크립트                                    |
+| `schemas/kcbcl_4_17.schema.json`        | payload JSON Schema(저장 전 검증)                                                                       | 수작업                                              |
 
 - 결과 파일 1건 = `assessment_results` 컬럼(`result_id`, `child_id`, `assessment_code`, `administered_at`, `schema_version`) + `subject` + `payload` + `sample_meta`.
   - `subject`(이름·생년월일·학년)는 가상이지만 식별 정보로 취급한다. payload 밖에 있으며 `subjects` 테이블에만 적재한다. 마스킹(이름 대조)에만 쓰고 프롬프트·화면 요약에 넣지 않는다(G-09).
