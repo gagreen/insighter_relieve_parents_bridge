@@ -233,6 +233,23 @@
       "type": "regex"
     }
   ],
+  "consult_prep": [
+    {
+      "id": "intent.cp.001",
+      "type": "regex",
+      "pattern": "상담\\s*(전에|전까지|하기\\s*전에?|때|에서|시간에|중에)[^.?!]*(준비|물어|여쭤|이야기|얘기|말해|말하|정리|챙기|질문)"
+    },
+    {
+      "id": "intent.cp.002",
+      "type": "regex",
+      "pattern": "상담사(님)?(에게|한테|께)[^.?!]*(물어|여쭤|질문|말해|말하|이야기)"
+    },
+    {
+      "id": "intent.cp.003",
+      "type": "regex",
+      "pattern": "상담\\s*(준비|질문\\s*(정리|목록))"
+    }
+  ],
   "out_of_scope": [
     {
       "id": "intent.os.001",
@@ -350,6 +367,38 @@
       "id": "intent.ex.013",
       "pattern": "어떻게\\s*(읽|봐야|보면)",
       "type": "regex"
+    }
+  ],
+  "meaning": [
+    {
+      "id": "intent.mn.001",
+      "type": "regex",
+      "pattern": "(?<![가-힣])뜻"
+    },
+    {
+      "id": "intent.mn.002",
+      "type": "literal",
+      "pattern": "의미"
+    },
+    {
+      "id": "intent.mn.003",
+      "type": "regex",
+      "pattern": "무슨\\s*말"
+    },
+    {
+      "id": "intent.mn.004",
+      "type": "regex",
+      "pattern": "(뭐|무엇|뭔)(예요|에요|인가요|이에요|가요|죠|일까요|야)"
+    },
+    {
+      "id": "intent.mn.005",
+      "type": "regex",
+      "pattern": "어떤\\s*(병|질병|질환|증상|것|건가요|말)"
+    },
+    {
+      "id": "intent.mn.006",
+      "type": "regex",
+      "pattern": "차이|(뭐가|무엇이|어떻게)\\s*(달라|다른|다르)"
     }
   ]
 }

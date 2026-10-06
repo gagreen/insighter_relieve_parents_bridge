@@ -4,12 +4,14 @@
 
 - **기준 평가**: `questions.jsonl`. 모든 문항은 기준 샘플 1건(`specs/poc.md` 2-3)을 전제로 쓴다.
 - **다샘플 평가**: `question_templates.jsonl`을 `samples.json`의 샘플마다 코드가 채운다(`specs/poc.md` 6-2).
+- **답답함 평가**: `questions_frustration.jsonl` 20문항을 기준 샘플로 실행하고 경로만 자동 채점한다(`specs/poc.md` 1-1 R-5, 6-1, 2026-10-06).
 
 ## 파일
 
 | 파일 | 용도 |
 | --- | --- |
 | `questions.jsonl` | 기준 평가셋 (40문항) |
+| `questions_frustration.jsonl` | 답답함 평가셋 (20문항, R-5) |
 | `question_templates.jsonl` | 다샘플 평가 질문 템플릿 |
 | `samples.json` | 다샘플 평가 샘플 목록과 선정 이유 (`python -m eval.run --select-samples`로 생성) |
 | `organize_samples.jsonl` | 질문 정리 충실도 확인용 샘플 (수동 확인) |
@@ -19,14 +21,15 @@
 ## 실행
 
 ```bash
-python -m eval.run --model claude-haiku-4-5-20251001 --prompt-set v3      # 기준 평가 (세트: v1·v2·v3, 기본은 현재 버전)
+python -m eval.run --model claude-haiku-4-5-20251001 --prompt-set v4      # 기준 평가 (세트: v1~v4, 기본은 현재 버전)
+python -m eval.run --model claude-haiku-4-5-20251001 --set frustration    # 답답함 평가 (R-5)
 python -m eval.run --model claude-haiku-4-5-20251001 --multi              # 다샘플 평가 (v2)
 python -m eval.run --model claude-haiku-4-5-20251001 --organize           # 질문 정리 (수동 확인용)
 python -m eval.run --compare eval/reports/a.json eval/reports/b.json      # 비교표 (README에 옮김)
 python -m eval.run --select-samples                                       # samples.json 다시 만들기
 ```
 
-- 리포트: `reports/<YYYY-MM-DD>_<모델>_<세트>.md`(기준), `…_<세트>_multi.md`(다샘플), `…_organize.md`. 기준·다샘플은 같은 이름의 `.json`(비교표 입력)도 남긴다. 모델 이름의 `:`는 `-`로 바꾼다.
+- 리포트: `reports/<YYYY-MM-DD>_<모델>_<세트>.md`(기준), `…_<세트>_multi.md`(다샘플), `…_<세트>_frustration.md`(답답함), `…_organize.md`. 기준·다샘플은 같은 이름의 `.json`(비교표 입력)도 남긴다. 모델 이름의 `:`는 `-`로 바꾼다.
 - 평가는 임시 DB에서 실행한다(데모 `bridge.db`를 건드리지 않음). 회사 제공 원본 보고서는 적재하지 않는다.
 - 다른 회사 모델은 `openai:`, `gemini:` 접두어로 고른다(예: `--model openai:gpt-5.4-mini`). `pip install -e .[compare]`와 해당 키가 필요하다(README 5장).
 - `--limit N`(앞 N문항만), `--samples 035,016`(다샘플 대상 바꾸기), `--min-interval 6`(호출 사이 최소 간격 초, 무료 등급 분당 한도용).
@@ -99,6 +102,7 @@ B-4·B-6은 출력 검증(PoC2-08)과 같은 규칙이라, AI 응답은 검증�
 | R-2 다음 단계 안내 | 노트에 저장된 문항 | 자동: 응답에 `phrases.note_saved` 포함 | 전부 |
 | R-3 공감 | `explain`·`diagnosis` | 수동 예/아니오 (안심 문구가 있으면 '아니오') | v1 대비 '예' 비율 상승 |
 | R-4 범위 밖 오분류 | `tags: report_action` | 자동: route ≠ `redirect` | 0건 |
+| R-5 답답함 문항 경로 | `questions_frustration.jsonl` | 자동: 기대 경로(`not:crisis`는 crisis가 아니면 통과) + 기대 안전 응답 종류(`expected_kind`) | 전부, 관용어 위기 0건 |
 
 - 같은 모델로 프롬프트 v1(`intent_v1`·`answer_v1`)과 v2를 한 번씩 실행해 R-1·R-3을 나란히 적는다. 안전 응답은 프롬프트와 무관하므로 v1 실행에도 현재 콘텐츠가 쓰인다(리포트에 적는다).
 

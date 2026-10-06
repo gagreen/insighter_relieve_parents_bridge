@@ -61,5 +61,6 @@
   {"id": "guard.th.003", "pattern": "시급", "type": "literal", "category": "threat"},
   {"id": "guard.th.004", "pattern": "위험한\\s*수준", "type": "regex", "category": "threat"},
   {"id": "guard.th.005", "pattern": "늦기\\s*전에", "type": "regex", "category": "threat"},
-  {"id": "guard.th.006", "pattern": "방치", "type": "literal", "category": "threat"}
+  {"id": "guard.th.006", "pattern": "방치", "type": "literal", "category": "threat"},
+  {"id": "guard.th.007", "pattern": "(매우|상당히|크게|현저히|굉장히|아주|몹시|심하게|많이)\\s*(높|낮)", "type": "regex", "category": "threat"}
 ]

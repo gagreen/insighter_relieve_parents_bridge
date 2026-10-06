@@ -18,7 +18,7 @@ def test_prompt_versions_point_to_files():
 def test_intent_prompt_names_all_intent_codes():
     """spec 2-5의 의도 코드와 프롬프트가 맞아야 한다."""
     prompt = llm.load_prompt(config.PROMPT_VERSIONS["intent"])
-    assert INTENT_CODES == ("explain", "diagnosis", "parenting", "crisis", "out_of_scope")
+    assert INTENT_CODES == ("explain", "diagnosis", "parenting", "crisis", "out_of_scope", "consult_prep")
     for code in INTENT_CODES:
         assert f"`{code}`" in prompt
 

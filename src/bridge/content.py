@@ -63,20 +63,33 @@ PHRASE_PLACEHOLDERS = {
     "safe_scale_fact": {"scale_name", "t", "range_label"},
     "safe_report_quote": {"quote"},
     "screening_note": set(),
+    # 낱말 뜻·진단명 뜻·상담 준비 (PoC2-05·14·15, 2026-10-06)
+    "glossary_answer": {"term", "plain"},
+    "glossary_answer_unnamed": {"plain"},
+    "diagnosis_term_scale": {"scale_name"},
+    "prep_intro": set(),
+    "prep_memo": set(),
+    "prep_notes_intro": set(),
+    "prep_no_notes": set(),
+    "prep_closing": set(),
 }
 M1_PHRASE_KEYS = ("fixed_notice_results", "percentile_known", "percentile_known_lower",
                   "direction_note_lower", "percentile_unknown", "not_administered",
                   "interpretive_note", "report_phrase_note", "report_phrase_saved")  # 마지막 3개: PoC1-10·11
 QA_PHRASE_KEYS = ("input_empty", "input_too_long", "out_of_scope", "no_evidence", "api_error", "fixed_notice_qa",
-                  "note_saved", "safe_scale_fact", "safe_report_quote", "screening_note")
+                  "note_saved", "safe_scale_fact", "safe_report_quote", "screening_note",
+                  "glossary_answer", "glossary_answer_unnamed", "diagnosis_term_scale",
+                  "prep_intro", "prep_memo", "prep_notes_intro", "prep_no_notes", "prep_closing")
 
 CRISIS_REQUIRED = ("keywords", "message", "channels")
 CRISIS_CATEGORIES = ("child_safety", "caregiver_distress")
 # 위기는 crisis.json에 따로 둔다(위기 검사가 먼저 실행됨). diagnosis 우선 규칙은 bridge.rules.intents.
-INTENT_KEYWORD_KEYS = ("diagnosis", "parenting", "out_of_scope", "explain")
+INTENT_KEYWORD_KEYS = ("diagnosis", "parenting", "consult_prep", "out_of_scope", "explain")
+# 의도가 아닌 보조 키워드: 뜻 묻기 표현 (진단 우선의 예외 판정, spec PoC2-04, 2026-10-06)
+AUX_KEYWORD_KEYS = ("meaning",)
 
 # 안전 응답 종류 (specs/poc.md PoC2-05). 종류마다 템플릿 정확히 1개. 척도 사실·인용은 phrases.json 문구로 조립한다.
-SAFE_KINDS = ("diagnosis", "parenting", "low_confidence", "guard_fallback")
+SAFE_KINDS = ("diagnosis", "parenting", "low_confidence", "guard_fallback", "diagnosis_term")
 SAFE_REQUIRED = ("id", "kind", "empathy", "body", "screening_note", "closing")
 TERM_STATUSES = ("draft", "reviewed")
 # 용어 종류 (PoC1-10): 표기 / 검사 용어 / 해석 표현(뜻만 설명 + 상담 안내 + 상담 질문 저장)
@@ -212,8 +225,9 @@ def load_crisis(content_dir: Path | None = None) -> dict:
 
 def load_intent_keywords(content_dir: Path | None = None) -> dict[str, list[dict]]:
     keywords = load_json("intent_keywords.json", content_dir)
-    if set(keywords) != set(INTENT_KEYWORD_KEYS):
-        raise ContentError(f"intent_keywords.json: 키는 정확히 {list(INTENT_KEYWORD_KEYS)} (현재 {sorted(keywords)})")
+    expected = (*INTENT_KEYWORD_KEYS, *AUX_KEYWORD_KEYS)
+    if set(keywords) != set(expected):
+        raise ContentError(f"intent_keywords.json: 키는 정확히 {list(expected)} (현재 {sorted(keywords)})")
     _check_unique([k["id"] for items in keywords.values() for k in items], "의도 키워드 id")
     for intent, items in keywords.items():
         _check_patterns(items, f"intent.{intent}")

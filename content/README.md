@@ -105,7 +105,15 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
   "note_saved": "(질문이 상담 노트에 저장되어 상담사가 상담 전에 확인한다는 안내)",
   "safe_scale_fact": "보고서에서 {scale_name} 점수는 T점수 {t}점으로, {range_label}에 있습니다.",
   "safe_report_quote": "(보고서 인용 도입) “{quote}”",
-  "screening_note": "(선별 검사이며 진단이 아니라는 안내)"
+  "screening_note": "(선별 검사이며 진단이 아니라는 안내)",
+  "glossary_answer": "‘{term}’의 뜻: {plain}",
+  "glossary_answer_unnamed": "질문하신 표현의 뜻: {plain}",
+  "diagnosis_term_scale": "(관련 척도 안내) ‘{scale_name}’",
+  "prep_intro": "(상담 준비 안내 도입)",
+  "prep_memo": "(관찰 장면 메모 안내)",
+  "prep_notes_intro": "(저장된 질문 목록 머리말)",
+  "prep_no_notes": "(저장된 질문이 없을 때 안내)",
+  "prep_closing": "(상담사가 미리 확인한다는 안내)"
 }
 ```
 
@@ -114,6 +122,8 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 - `input_too_long`은 `{max_chars}`만 쓴다(문장에 숫자를 직접 쓰지 않는다).
 - `note_saved`는 노트에 저장하는 모든 응답(안전 응답, 근거 없음, 부분 답변, API 오류) 끝에 코드가 붙인다(`specs/poc.md` 1-1 R-2). 그래서 `no_evidence`·`api_error`에는 저장 안내를 쓰지 않는다.
 - `safe_report_quote`의 `{quote}`는 보고서 관찰 소견 첫 줄 원문이다. 인용 끝말에 따라 조사가 달라지므로 인용 뒤에 조사를 붙이지 않는다.
+- `glossary_answer`(낱말 뜻 질문, `specs/poc.md` PoC2-14)의 `{term}`·`{plain}`은 용어사전의 표현과 풀이다. 표현이 금칙 표현에 걸리면 `glossary_answer_unnamed`로 풀이만 쓴다.
+- `prep_*`는 상담 준비 안내(PoC2-15) 조립용이다. 상담 절차·시간·담당자 자격처럼 근거가 없는 서비스 정보는 쓰지 않는다.
 
 ## glossary.json
 
@@ -146,10 +156,11 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 ]
 ```
 
-- 종류(`kind`): `diagnosis`, `parenting`, `low_confidence`, `guard_fallback`. 종류마다 정확히 1개.
+- 종류(`kind`): `diagnosis`, `parenting`, `low_confidence`, `guard_fallback`, `diagnosis_term`(진단명 뜻, 2026-10-06). 종류마다 정확히 1개.
 - 문장 필드(`empathy`, `body`, `closing`)에는 자리표시자를 쓰지 않는다. 척도 사실·보고서 인용·선별 검사 안내·노트 저장 안내는 `phrases.json` 문구로 코드가 조립한다.
 - 조립 순서(`specs/poc.md` PoC2-05): `empathy` → 질문에서 찾은 척도마다 `safe_scale_fact`(최대 `config.SAFE_MAX_SCALES`개) → 첫 척도의 관찰 소견 첫 줄 `safe_report_quote`(금칙 표현에 걸리면 생략) → `body` → `screening_note`(true일 때) → `note_saved` → `closing`.
 - `empathy`는 보호자의 마음만 받는다. 아이 상태 판단, 안심·완화 문구("괜찮다", "~라는 뜻은 아니다")는 쓰지 않는다(G-01, 2026-10-05).
+- `diagnosis_term`은 조립 순서가 다르다: `body` → `diagnosis_term_scale` + 관련 척도 카드의 `what_it_asks` → `safe_scale_fact` → `screening_note` → `note_saved` → `closing`. 진단명은 응답에 다시 쓰지 않는다(G-01).
 
 ## scale_terms.json
 
@@ -189,13 +200,15 @@ PoC 코드가 읽는 '미리 만든 문장'과 '규칙 데이터'의 형식 정�
 {
   "diagnosis":    [{"id": "intent.dx.001", "pattern": "(표현)", "type": "literal"}],
   "parenting":    [],
+  "consult_prep": [],
   "out_of_scope": [],
-  "explain":      []
+  "explain":      [],
+  "meaning":      []
 }
 ```
 
-- 키는 정확히 위 4개. `id`는 파일 전체에서 유일하다. `type`: `literal | regex`.
-- diagnosis에 걸리면 다른 의도와 겹쳐도 diagnosis다. 그 밖에 두 개 이상의 의도에 걸리거나 아무 것에도 걸리지 않으면 LLM 2차 분류로 넘긴다(PoC2-04, 2026-10-04 결정).
+- 키는 정확히 위 6개. `meaning`은 의도가 아니라 뜻을 묻는 표현이다(진단 우선 예외 판정, `specs/poc.md` PoC2-04, 2026-10-06). `id`는 파일 전체에서 유일하다. `type`: `literal | regex`.
+- diagnosis에 걸리면 다른 의도와 겹쳐도 diagnosis다. 단, `meaning`이 걸리고 진단 키워드가 모두 용어사전 표현 안에 있으면 낱말 뜻(`glossary`), 진단명의 뜻만 묻으면 진단명 뜻 안전 응답이다(`bridge.rules.intents.diagnosis_subroute`). 그 밖에 두 개 이상의 의도에 걸리거나 아무 것에도 걸리지 않으면 LLM 2차 분류로 넘긴다(PoC2-04, 2026-10-04 결정).
 - `guard_terms.json`의 `diagnosis_name` 항목은 모두 diagnosis 키워드로도 잡혀야 한다(테스트로 확인). 진단명을 사전에 추가하면 여기에도 추가한다.
 - 모든 검사가 공유하는 파일이므로 특정 검사의 척도 이름을 넣지 않는다(G-12).
 - 위기 키워드는 여기가 아니라 `crisis.json`에 둔다(위기 검사가 먼저 실행됨).

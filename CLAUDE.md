@@ -81,10 +81,11 @@
 | 의도                  | 처리                                                                                             | LLM 생성 |
 | --------------------- | ------------------------------------------------------------------------------------------------ | -------- |
 | 설명형                | 근거 제한 응답                                                                                   | 예       |
-| 진단·처방·예후형      | 보고서 값을 채운 안전 응답 + 노트 저장                                                           | 아니오   |
+| 진단·처방·예후형      | 보고서 값을 채운 안전 응답 + 노트 저장. 예외(2026-10-06): 용어사전 낱말의 뜻 → 용어사전 풀이, 진단명의 뜻 → 진단명 뜻 안전 응답(`specs/poc.md` PoC2-04) | 아니오   |
 | 양육 조언형           | 안전 응답 + 노트 저장 (양육 방법 추천은 처방에 해당, 2026-10-05 확정)                            | 아니오   |
 | 위기                  | 대화 중단, 위기 안내 템플릿, 알림 로그                                                           | 아니오   |
 | 범위 밖(예약·결제 등) | 고객센터·예약 안내 문구. 보고서 권고 행동(재평가, 다른 질문지 병행 등) 질문은 설명형(2026-10-05) | 아니오   |
+| 상담 준비             | 상담 준비 안내(한 줄 요약 + 관찰 메모 + 저장된 질문 목록), 노트 저장 안 함(2026-10-06)          | 아니오   |
 | 분류 신뢰도 미달      | 안전 응답 + 노트 저장 (임계값 0.7, 2026-10-06 평가 후 확정 — `specs/poc.md` PoC2-04)             | 아니오   |
 
 정책 상수(P-xx, 모두 기획안의 가정값 — `config`에서 관리). **PoC는 기준선(4장 성공 기준) 증명에 필요한 것만 구현한다.**
@@ -285,7 +286,8 @@ python -m bridge.db init            # 스키마 생성 + 샘플 적재 (기본 .
 streamlit run app/main.py           # 데모 (DB가 없으면 만들고 샘플 적재)
 BRIDGE_RESULT_ID=<result_id> streamlit run app/main.py   # 다른 결과로 데모 (예: data/private/의 회사 원본 보고서)
 python -m bridge.brief R-KCBCL_4_17-035 --no-llm   # 브리프 텍스트 (--no-llm: 질문 정리 LLM 생략)
-python -m eval.run --model claude-haiku-4-5-20251001 [--prompt-set v1|v2|v3]   # 기준 평가 → eval/reports/
+python -m eval.run --model claude-haiku-4-5-20251001 [--prompt-set v1|v2|v3|v4]   # 기준 평가 → eval/reports/
+python -m eval.run --model claude-haiku-4-5-20251001 --set frustration   # 답답함 평가 (R-5)
 python -m eval.run --model claude-haiku-4-5-20251001 --multi     # 다샘플 평가
 python -m eval.run --model claude-haiku-4-5-20251001 --organize  # 질문 정리 확인
 python -m eval.run --compare eval/reports/*.json                 # 비교표

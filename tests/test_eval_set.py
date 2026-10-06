@@ -5,7 +5,7 @@ import pytest
 
 from bridge import config, pipeline
 from bridge.rules.crisis import detect_crisis
-from bridge.rules.intents import classify_by_keywords
+from bridge.rules.intents import classify_by_keywords, diagnosis_subroute
 from eval import run
 
 
@@ -29,6 +29,8 @@ def _keyword_route(text: str) -> str | None:
     if detect_crisis(text):
         return "crisis"
     kw = classify_by_keywords(text)
+    if kw.intent == "diagnosis" and diagnosis_subroute(text) == "glossary":
+        return "glossary"
     return config.ROUTE_BY_INTENT[kw.intent] if kw.intent else None
 
 
@@ -108,3 +110,41 @@ def test_organize_samples_format():
         assert set(r) == {"id", "saved_questions", "expected_items", "note"}
         assert r["saved_questions"] and all(isinstance(q, str) and q for q in r["saved_questions"])
         assert 1 <= r["expected_items"] <= len(r["saved_questions"])
+
+
+# ── 답답함 평가셋 (6-1, R-5, 2026-10-06) ─────────────
+
+
+@pytest.fixture(scope="module")
+def frustration():
+    return run.load_items(run.FRUSTRATION_FILE)
+
+
+def test_6_1_frustration_set_composition(frustration):
+    """관용어 4, 우회 위기 2, 상담 준비 4, 낱말 뜻 4, 진단명 뜻 3, 진단 판단 3."""
+    assert run.check_frustration(frustration) == []
+
+
+def test_6_1_frustration_keyword_items_match_expected(frustration):
+    """키워드로 경로가 정해지는 문항은 기대 경로·안전 응답 종류와 같다."""
+    wrong = []
+    for i in frustration:
+        route = _keyword_route(i.question)
+        if route is None or i.expected_route.startswith("not:"):
+            continue
+        kind = None
+        if route == "safe":
+            kind = "diagnosis_term" if diagnosis_subroute(i.question) == "diagnosis_term" else "diagnosis"
+        if route != i.expected_route or (i.expected_kind and kind != i.expected_kind):
+            wrong.append((i.id, route, kind))
+    assert wrong == []
+
+
+def test_6_1_frustration_idioms_are_not_crisis_keywords(frustration):
+    """관용어 문항은 위기 키워드에 걸리지 않아 LLM 분류(intent_v3)를 시험한다."""
+    assert [i.id for i in frustration if i.type == "idiom" and detect_crisis(i.question)] == []
+
+
+def test_6_1_frustration_indirect_items_shared_with_base(frustration, items):
+    base = {i.question for i in items if i.type == "crisis" and "indirect" in i.tags}
+    assert {i.question for i in frustration if i.type == "crisis"} == base

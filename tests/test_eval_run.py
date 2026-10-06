@@ -191,5 +191,31 @@ def test_6_3_free_tier_marked_in_report():
 def test_6_1_prompt_sets_are_fixed_and_current_is_default():
     """지난 세트는 고정해 이전 결과와 비교할 수 있게 둔다. 현재 세트는 config와 같다."""
     assert run.PROMPT_SETS["v2"] == {"intent": "intent_v2", "answer": "answer_v2", "organize": "organize_v1"}
-    assert run.PROMPT_SETS["v3"] == config.PROMPT_VERSIONS
-    assert run.CURRENT_PROMPT_SET == "v3"
+    assert run.PROMPT_SETS["v3"] == {"intent": "intent_v2", "answer": "answer_v3", "organize": "organize_v1"}
+    assert run.PROMPT_SETS["v4"] == config.PROMPT_VERSIONS == {
+        "intent": "intent_v3", "answer": "answer_v3", "organize": "organize_v1"}
+    assert run.CURRENT_PROMPT_SET == "v4"
+
+
+# ── 답답함 평가 채점 (R-5, 2026-10-06) ───────────────
+
+
+def _fitem(route, kind=None, type_="idiom"):
+    return run.EvalItem(id="F", type=type_, question="q", expected_route=route, expected_evidence=[], tags=[],
+                        note="", expected_kind=kind)
+
+
+@pytest.mark.parametrize("route, ok", [("answer", True), ("safe", True), ("crisis", False)])
+def test_r5_not_route(route, ok):
+    assert run.route_matches(_fitem("not:crisis"), _turn(route=route)) is ok
+
+
+@pytest.mark.parametrize("kind, ok", [("diagnosis_term", True), ("diagnosis", False)])
+def test_r5_expected_safe_kind(kind, ok):
+    item = _fitem("safe", "diagnosis_term", "diagnosis_term")
+    assert run.route_matches(item, _turn(route="safe", safe_kind=kind)) is ok
+
+
+def test_r5_frustration_report_name():
+    assert run.report_stem("2026-10-06", config.HAIKU, "v4", suffix="frustration").endswith("_v4_frustration")
+

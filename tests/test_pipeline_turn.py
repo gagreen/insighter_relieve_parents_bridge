@@ -10,6 +10,7 @@ import httpx2
 import pytest
 
 from bridge import config, db, notes, pipeline
+from bridge.guard.terms import find_violations, load_guard_terms
 from llm_fakes import FakeClient, fake_response
 
 GOOD = {
@@ -225,6 +226,78 @@ def test_list_notes_returns_saved_notes(conn, ctx):
     items = notes.list_notes(conn, ctx.child_id)
     assert items and all(i["child_id"] == ctx.child_id for i in items)
     assert all(isinstance(i["related_refs"], list) for i in items)
+
+
+# ── 답답함 1단계 (PoC2-04 예외, PoC2-14, PoC2-15, 2026-10-06) ──
+
+
+def _glossary_entry(ctx, term_id):
+    return next(g for g in ctx.glossary if g["id"] == term_id)
+
+
+def test_poc2_14_interpretive_term_meaning(conn, ctx):
+    """'악화'는 금칙 표현이라 표현을 다시 쓰지 않고 풀이만. 해석 표현이라 상담 안내 + 노트 저장."""
+    client = FakeClient()
+    r = pipeline.handle_question(conn, ctx, "'악화 가능성'이 무슨 뜻이에요?", client=client)
+    entry = _glossary_entry(ctx, "term.worsening")
+    assert client.calls == []
+    assert (r.route, r.label, r.intent, r.note_saved) == ("glossary", pipeline.LABEL_GLOSSARY, "diagnosis", True)
+    assert r.message == " ".join([ctx.phrases["glossary_answer_unnamed"].format(plain=entry["plain"]),
+                                  ctx.phrases["interpretive_note"], ctx.phrases["note_saved"]])
+    assert find_violations(r.message, load_guard_terms()) == []
+    [note] = _notes(conn, r.turn_id)
+    assert (note["type"], json.loads(note["related_refs"])) == ("report_phrase", ["term.worsening"])
+
+
+def test_poc2_14_two_terms_without_note(conn, ctx):
+    """검사 용어 두 개는 이름과 함께 풀이하고, 해석 표현이 없으면 노트에 저장하지 않는다."""
+    r = pipeline.handle_question(conn, ctx, "선별 검사랑 진단 검사는 뭐가 달라요?", client=FakeClient())
+    screening, diagnosis = _glossary_entry(ctx, "term.screening"), _glossary_entry(ctx, "term.diagnosis")
+    assert (r.route, r.note_saved) == ("glossary", False)
+    assert r.message == " ".join(ctx.phrases["glossary_answer"].format(term=e["term"], plain=e["plain"])
+                                 for e in (screening, diagnosis))
+    assert r.evidence_ids == ["term.screening", "term.diagnosis"]
+
+
+def test_poc2_05_diagnosis_term_turn(conn, ctx):
+    client = FakeClient()
+    r = pipeline.handle_question(conn, ctx, "ADHD란 뭔가요?", client=client)
+    assert client.calls == []
+    assert (r.route, r.intent, r.note_saved) == ("safe", "diagnosis", True)
+    assert r.message == pipeline.safe_response("diagnosis_term", "ADHD란 뭔가요?", ctx)[0]
+    assert _notes(conn, r.turn_id)[0]["type"] == "diagnosis_term"
+
+
+def test_poc2_05_diagnosis_judgment_unchanged(conn, ctx):
+    r = pipeline.handle_question(conn, ctx, "ADHD인가요?", client=FakeClient())
+    assert _notes(conn, r.turn_id)[0]["type"] == "diagnosis"
+
+
+def test_poc2_15_consult_prep_lists_session_notes(conn, ctx):
+    """상담 준비 안내: LLM 없음, 노트 저장 없음, 세션 범위의 저장된 질문을 모두 나열한다."""
+    since = conn.execute("SELECT MAX(turn_id) FROM qa_turns").fetchone()[0]
+    saved = pipeline.handle_question(conn, ctx, "ADHD인가요?", client=FakeClient())
+    client = FakeClient()
+    r = pipeline.handle_question(conn, ctx, "상담 전에 뭘 준비하면 되나요?", client=client, since_turn_id=since)
+    assert client.calls == []
+    assert (r.route, r.intent, r.label, r.note_saved) == ("prep", "consult_prep", pipeline.LABEL_GUIDE, False)
+    assert ctx.view["summary"]["text"] in r.message
+    assert f"- {saved.question_masked}" in r.message
+    assert ctx.phrases["prep_no_notes"] not in r.message
+    assert _notes(conn, r.turn_id) == []
+
+
+def test_poc2_15_consult_prep_without_notes(conn, ctx):
+    since = conn.execute("SELECT MAX(turn_id) FROM qa_turns").fetchone()[0]
+    r = pipeline.handle_question(conn, ctx, "상담사에게 뭘 물어보면 좋을까요?", client=FakeClient(), since_turn_id=since)
+    assert ctx.phrases["prep_no_notes"] in r.message and "\n- " not in r.message
+
+
+def test_poc2_15_consult_prep_by_llm(conn, ctx):
+    """키워드로 정해지지 않아도 LLM이 consult_prep으로 분류하면 prep."""
+    client = FakeClient(fake_response({"intent": "consult_prep", "confidence": 0.9}))
+    r = pipeline.handle_question(conn, ctx, "선생님이랑 통화하기 전에 뭘 해 두면 좋아요?", client=client)
+    assert (r.route, r.intent) == ("prep", "consult_prep")
 
 
 # ── R-2 다음 단계 안내 ──────────────────────────────

@@ -78,6 +78,27 @@ def test_guard_allows_boundary_sentences(text):
     assert find_violations(text, TERMS) == []
 
 
+@pytest.mark.parametrize("text", [
+    "상위 약 1%에 해당하는 매우 높은 수준입니다.",
+    "점수가 또래보다 상당히 높게 나왔습니다.",
+    "이 영역의 점수(T=80)가 매우높아서",
+    "사회능력 점수가 크게 낮습니다.",
+])
+def test_guard_detects_intensity_beyond_report(text):
+    """G-01·7장: 보고서 권고 수준을 넘는 정도 표현은 위협 판단으로 본다(9장 미결 '응답 품질', 2026-10-06)."""
+    assert "threat" in _categories(text)
+
+
+@pytest.mark.parametrize("text", [
+    "상위 약 1%에 해당하는 높은 점수입니다.",
+    "점수가 높을수록 이런 모습이 많이 보고되었다는 뜻입니다.",
+    "기준선 70보다 4점 높습니다.",
+])
+def test_guard_allows_plain_position(text):
+    """정도 부사 없이 위치·방향만 말하는 문장은 허용한다."""
+    assert find_violations(text, TERMS) == []
+
+
 def test_guard_allows_all_scale_names_and_range_labels():
     """요약·카드에 그대로 들어가는 척도 이름·범위 이름은 걸리지 않아야 한다."""
     texts = set()

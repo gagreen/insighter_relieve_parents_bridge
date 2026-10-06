@@ -55,7 +55,8 @@ def _on_question() -> None:
         return
     conn = _conn()
     try:
-        result = pipeline.handle_question(conn, st.session_state.ctx, question)
+        result = pipeline.handle_question(conn, st.session_state.ctx, question,
+                                          since_turn_id=st.session_state.since)   # 상담 준비 안내의 노트 범위 (PoC2-15)
     finally:
         conn.close()
     st.session_state.messages.append({"role": "user", "text": question, "masked": result.question_masked})

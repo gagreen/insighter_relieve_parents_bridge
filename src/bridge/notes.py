@@ -18,8 +18,9 @@ BRIEF_TYPES = ("diagnosis", "parenting", "understanding", "other")
 # 정리 실패 시 노트 유형 → 브리프 유형
 NOTE_TYPE_TO_BRIEF = {"diagnosis": "diagnosis", "parenting": "parenting",
                       "no_evidence": "understanding", "guard_fallback": "understanding",
-                      "report_phrase": "understanding"}
+                      "report_phrase": "understanding", "diagnosis_term": "diagnosis"}
 REPORT_PHRASE_ROUTE = "note"   # 결과 화면의 상담 질문 저장 (PoC1-11)
+REPORT_PHRASE_TYPE = "report_phrase"   # 해석 표현 질문 (PoC1-11, 질문 도우미 낱말 뜻 PoC2-14)
 NOTES_TAG = "saved_questions"
 
 ORGANIZE_SCHEMA = {
@@ -68,7 +69,7 @@ def save_report_phrase(conn: sqlite3.Connection, child_id: str, finding_id: str,
             "INSERT INTO qa_turns (child_id, question_masked, route, evidence_refs, saved_to_note) VALUES (?, ?, ?, ?, 1)",
             (child_id, text, REPORT_PHRASE_ROUTE, json.dumps(refs, ensure_ascii=False)),
         )
-    return save_note(conn, child_id, cur.lastrowid, text, "report_phrase", refs)
+    return save_note(conn, child_id, cur.lastrowid, text, REPORT_PHRASE_TYPE, refs)
 
 
 def list_notes(conn: sqlite3.Connection, child_id: str, since_turn_id: int | None = None) -> list[dict]:

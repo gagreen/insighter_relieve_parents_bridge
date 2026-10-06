@@ -17,5 +17,13 @@
   "note_saved": "이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다.",
   "safe_scale_fact": "보고서에서 {scale_name} 점수는 T점수 {t}점으로, {range_label}에 있습니다.",
   "safe_report_quote": "보고서에는 이렇게 적혀 있습니다. “{quote}”",
-  "screening_note": "이 검사는 진단이 아니라, 더 살펴볼 영역을 찾는 선별 검사입니다."
+  "screening_note": "이 검사는 진단이 아니라, 더 살펴볼 영역을 찾는 선별 검사입니다.",
+  "glossary_answer": "‘{term}’의 뜻: {plain}",
+  "glossary_answer_unnamed": "질문하신 표현의 뜻: {plain}",
+  "diagnosis_term_scale": "이 보고서에서 관련된 척도는 ‘{scale_name}’입니다.",
+  "prep_intro": "상담 전에 준비해 두면 좋은 것을 정리해 드릴게요.",
+  "prep_memo": "평소 눈에 띈 아이의 모습을 언제, 어떤 상황이었는지 적어 두시면 상담에 도움이 됩니다.",
+  "prep_notes_intro": "지금까지 상담 노트에 저장된 질문입니다.",
+  "prep_no_notes": "아직 상담 노트에 저장된 질문이 없습니다. 궁금한 점을 물어보시면, 이 도우미가 답하기 어려운 질문은 상담 노트에 저장됩니다.",
+  "prep_closing": "상담사는 상담 전에 보고서와 저장된 질문을 미리 확인하고, 결과가 아이에게 어떤 의미인지 상담에서 함께 살펴봅니다."
 }

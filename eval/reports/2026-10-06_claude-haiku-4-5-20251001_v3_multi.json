@@ -46,56 +46,56 @@
    "safe": 72
   },
   "guard": {
-   "pass": 74,
-   "regen": 22,
-   "fallback": 4
+   "pass": 73,
+   "fallback": 4,
+   "regen": 23
   },
   "guard_failures": {
+   "number:8": 1,
+   "number:100": 5,
+   "number:27": 1,
+   "number:64": 1,
+   "evidence:empty": 16,
+   "term:guard.th.007": 6,
+   "number:31": 1,
    "range_label:미실시": 1,
-   "number:8": 2,
-   "evidence:empty": 18,
-   "number:31": 2,
-   "number:69": 1,
-   "evidence:unknown:term.delinquent": 1,
-   "number:38": 1,
-   "number:62": 1,
-   "number:63": 1,
-   "number:3": 1,
-   "number:100": 4,
-   "number:97": 1,
-   "evidence:unknown:II.anxdep": 2,
-   "number:92": 1,
+   "number:24": 1,
+   "number:76": 1,
+   "number:18": 1,
+   "number:82": 1,
+   "range_label:또래 평균 범위": 1,
+   "number:81": 1,
+   "number:1": 1,
+   "number:99": 1,
+   "term:guard.dp.001": 5,
+   "evidence:unknown:term.rank_from_top": 1,
    "number:2": 1,
-   "number:1": 5,
-   "number:79": 1,
-   "number:99": 3,
-   "number:80": 1,
-   "term:guard.dp.001": 2
+   "number:98": 1
   },
   "R-2": {
-   "total": 93,
+   "total": 94,
    "fail": 0
   },
   "R-4": {
    "total": 10,
    "fail": 0
   },
-  "llm_calls": 156,
+  "llm_calls": 157,
   "tokens": {
-   "input": 46542,
-   "cache_write": 170842,
-   "cache_read": 1983534,
-   "output": 31334
+   "input": 46288,
+   "cache_write": 153342,
+   "cache_read": 2023309,
+   "output": 33519
   },
-  "cost_usd": 0.6151179,
+  "cost_usd": 0.6078913999999999,
   "stop_reasons": {
-   "end_turn": 156
+   "end_turn": 157
   },
   "latency_ms": {
-   "call_mean": 3459,
-   "call_max": 7518,
-   "turn_mean": 4906,
-   "turn_max": 13863
+   "call_mean": 3501,
+   "call_max": 8588,
+   "turn_mean": 4997,
+   "turn_max": 16674
   }
  },
  "skipped": [
@@ -279,11 +279,10 @@
    "question_masked": "주의집중 문제 점수가 T점수 66점이면 어느 정도예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "주의집중 문제 점수 T=66은 상위 약 5%에 해당하는 점수입니다. 또래보다 한 단계 높은 수준으로, 관찰 권고 범위에 있습니다. 이는 과제를 끝까지 하기 어려워하거나 산만함, 충동적 행동 같은 모습이 또래보다 많이 보고되었다는 뜻입니다. 보고서에서도 '숙제 하나 하는 데 몇 시간씩 걸리고 계속 딴짓을 해요'라는 보호자님의 관찰과 일치한다고 적고 있습니다.",
+   "message": "주의집중 문제 T점수 66점은 상위 약 5%에 해당하는 점수입니다. 이는 또래 아이들보다 높게 나타난 상태로, 한 가지 일에 집중하고 가만히 앉아 있고 차분하게 행동하는 것을 또래보다 어려워하는 것으로 보고되었습니다. 보고서에서는 과제 지속의 어려움, 산만함, 충동적 행동 등이 또래 대비 높게 나타났다고 하고 있습니다. 이 점수는 관찰 권고 범위에 있으며, 집중이 잘 되는 때와 어려운 때가 언제인지, 또 어떤 상황에서 산만함이 나타나는지를 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
    "evidence_ids": [
     "III.attention",
-    "V.attention",
-    "VII.2"
+    "V.attention"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -304,12 +303,12 @@
      "stage": "answer",
      "prompt_version": "answer_v3",
      "input_tokens": 47,
-     "cache_write_tokens": 17500,
-     "cache_read_tokens": 0,
-     "output_tokens": 250,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17500,
+     "output_tokens": 353,
      "stop_reason": "end_turn",
-     "latency_ms": 5290,
-     "cost_usd": 0.023172
+     "latency_ms": 5684,
+     "cost_usd": 0.003562
     }
    ]
   },
@@ -327,7 +326,7 @@
    "question_masked": "사회적 미성숙 점수가 T점수 80점인데 이 척도는 어떤 행동을 보는 건가요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회적 미성숙 척도는 나이에 비해 어리게 행동하거나 또래 관계에서 어려움을 겪는 정도를 봅니다. 예를 들어 또래보다 어린 아이들과 어울리려는 모습, 또래와 어울리기 어려워하는 모습, 어른에게 많이 기대는 모습 같은 행동들을 묻는 척도입니다. 아이 경우 이 영역의 점수(T=80)가 매우 높아서 또래보다 이러한 양상이 뚜렷하게 보고된 상태이며, 보호자님이 말씀하신 \"또래 관계 어려움\"과 일치하는 부분입니다. 구체적으로 어떤 상황에서 어려움이 생기는지 상담에서 함께 살펴볼 수 있습니다.",
+   "message": "사회적 미성숙 척도는 나이에 비해 어리게 행동하거나 또래 관계에서 어려움을 겪는 정도를 봅니다. 구체적으로는 또래보다 어린 아이들과 어울리려는 모습, 또래와 어울리기 어려워하는 모습, 어른에게 많이 기대는 모습 같은 행동입니다. 아이의 경우 이 척도 점수가 T=80으로 상위 약 1%에 해당하여 사회적 미성숙이 임상 기준인 70T를 넘었습니다. 보고서에는 또래보다 어린 아이들과 어울리거나 놀림을 받는 등 사회적 미성숙 양상이 뚜렷하며, 이것이 보호자님이 보고하신 또래 관계 어려움과 일치한다고 적혀 있습니다. 이 영역의 의미와 앞으로의 지원 방법에 대해서는 상담에서 상담사와 함께 이야기할 수 있습니다.",
    "evidence_ids": [
     "card.KCBCL_4_17.socimm.clinical",
     "III.socimm",
@@ -354,10 +353,10 @@
      "input_tokens": 61,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 402,
+     "output_tokens": 474,
      "stop_reason": "end_turn",
-     "latency_ms": 5309,
-     "cost_usd": 0.003821
+     "latency_ms": 6669,
+     "cost_usd": 0.004181
     }
    ]
   },
@@ -375,7 +374,7 @@
    "question_masked": "위축 점수 T점수 58점은 기준선에서 얼마나 떨어져 있나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "위축 점수 T=58은 관찰 권고 범위의 기준선인 60T보다 2점 아래에 있습니다. 또래 평균 범위에 속하는 점수예요.",
+   "message": "위축 점수(T=58)는 관찰 권고 범위의 기준선인 60점보다 2점 아래에 있습니다. 또래 평균 범위에 속하는 점수입니다.",
    "evidence_ids": [
     "III.withdrawn"
    ],
@@ -400,10 +399,10 @@
      "input_tokens": 52,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 94,
+     "output_tokens": 96,
      "stop_reason": "end_turn",
-     "latency_ms": 2073,
-     "cost_usd": 0.002272
+     "latency_ms": 1985,
+     "cost_usd": 0.002282
     }
    ]
   },
@@ -423,12 +422,11 @@
    "question_masked": "주의집중 문제 점수가 T점수 66점이라 마음이 쓰이는데 이 점수가 어떤 의미인지 알려주세요",
    "route": "answer",
    "label": "AI 생성",
-   "message": "주의집중 문제 점수가 높아서 마음이 쓰이시는군요. 아이의 T점수 66은 상위 약 5%에 해당하는 점수로, 또래보다 집중 어려움이 더 많이 보고되었다는 뜻입니다. 이 점수는 관찰 권고 범위에 있어서 전문 상담 기준(70T)에는 못 미치지만, 과제를 끝까지 하기 어려워하거나 자주 딴짓을 하는 모습, 생각하기 전에 먼저 행동하는 산만함이 또래 아이들보다 높게 나타나고 있다는 의미입니다. 보고서에도 \"숙제 하나 하는 데 몇 시간씩 걸리고 계속 딴짓을 한다\"는 보호자 보고와 일치한다고 적혀 있습니다. 어느 활동에서 집중이 잘 되고 어려운지, 언제쯤 집중력이 떨어지는지 등을 구체적으로 적어 두시면 상담에서 이 부분을 함께 살펴볼 때 도움이 될 거예요.",
+   "message": "주의집중 문제 점수가 높으신 것을 보면 마음이 쓰이실 수 있겠어요. 아이의 주의집중 문제 T점수는 66으로, 상위 약 5%에 해당하는 점수입니다. 이는 과제를 끝까지 하기, 가만히 앉아 있기, 생각한 뒤에 행동하기 같은 부분에서 또래보다 어려움이 많이 보고되었다는 뜻입니다.\n\n이 점수는 관찰 권고 범위에 있으며, 전문 상담 권고 범위(70T)에는 아직 미치지 않습니다. 보고서에서도 집중이 잘 되는 때와 어려운 때가 언제인지, 특히 숙제할 때 구체적으로 어떤 모습이 보이는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
    "evidence_ids": [
     "III.attention",
-    "V.attention",
-    "VII.2",
-    "card.KCBCL_4_17.attention.borderline"
+    "card.KCBCL_4_17.attention.borderline",
+    "V.attention"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -451,10 +449,10 @@
      "input_tokens": 70,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 479,
+     "output_tokens": 405,
      "stop_reason": "end_turn",
-     "latency_ms": 6211,
-     "cost_usd": 0.004215
+     "latency_ms": 6470,
+     "cost_usd": 0.003845
     }
    ]
   },
@@ -472,7 +470,7 @@
    "question_masked": "비행 점수 옆에는 왜 백분위가 없어요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "비행 점수(T=50)는 이 검사에서 표시되는 가장 낮은 점수라서 백분위를 따로 계산하지 않습니다. 이는 아이의 비행 행동이 또래 평균과 비슷하거나 그보다 낮다는 뜻입니다.",
+   "message": "비행 점수는 T=50으로, 이 척도에서 표시되는 가장 낮은 점수입니다. 또래 평균과 비슷하거나 그보다 낮다는 뜻이며, 이 구간은 백분위를 따로 계산하지 않습니다.",
    "evidence_ids": [
     "III.delinquent"
    ],
@@ -497,10 +495,10 @@
      "input_tokens": 41,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 132,
+     "output_tokens": 127,
      "stop_reason": "end_turn",
-     "latency_ms": 2741,
-     "cost_usd": 0.002451
+     "latency_ms": 2397,
+     "cost_usd": 0.002426
     }
    ]
   },
@@ -518,15 +516,12 @@
    "question_masked": "성문제 척도는 왜 미실시라고 나와요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "성문제 척도는 적용 연령은 맞지만, 필요할 때만 골라 실시하는 척도라서 이번 검사에서는 실시하지 않았습니다.",
+   "message": "성문제 척도는 만 4~11세에 필요할 때만 골라서 실시하는 척도입니다. 아이가 적용 연령에 해당하지만, 이번 검사에서는 실시하지 않았습니다.",
    "evidence_ids": [
     "IV.sex_problems.note"
    ],
-   "guard_result": "regen",
+   "guard_result": "pass",
    "guard_failures": [
-    [
-     "range_label:미실시"
-    ],
     []
    ],
    "note_saved": false,
@@ -546,21 +541,10 @@
      "input_tokens": 39,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 138,
+     "output_tokens": 111,
      "stop_reason": "end_turn",
-     "latency_ms": 2048,
-     "cost_usd": 0.002479
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 106,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 17500,
-     "output_tokens": 95,
-     "stop_reason": "end_turn",
-     "latency_ms": 2044,
-     "cost_usd": 0.002331
+     "latency_ms": 2256,
+     "cost_usd": 0.002344
     }
    ]
   },
@@ -578,11 +562,11 @@
    "question_masked": "사회성 점수가 T점수 42점이면 높은 건가요 낮은 건가요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회성 점수가 T=42는 낮은 점수입니다. 사회성 척도는 다른 척과 반대로, 점수가 낮을수록 또래보다 어려움이 많이 보고되었다는 뜻입니다. 아이의 사회성 점수 T=42는 하위 약 21%에 해당하므로, 친구 관계, 활동 참여, 학업 수행 같은 적응 자원이 또래보다 낮게 보고되었다는 의미입니다. 이 부분이 어떤 장면에서 나타나는지 상담에서 더 자세히 다룰 수 있습니다.",
+   "message": "사회성 점수 T=42는 낮은 점수입니다. 사회성 척도는 다른 척도와 반대로, 점수가 낮을수록 또래보다 어려움이 많이 보고되었다는 뜻입니다. 아이의 점수는 하위 약 21%에 해당하는 점수로, 친구 관계, 활동 참여, 학업 수행 같은 적응 자원이 또래 대비 낮게 보고되었다는 의미입니다.",
    "evidence_ids": [
     "I.sociability",
-    "term.percentile",
-    "term.competence"
+    "I.total_competence",
+    "V.total_competence"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -605,10 +589,10 @@
      "input_tokens": 50,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 288,
+     "output_tokens": 239,
      "stop_reason": "end_turn",
-     "latency_ms": 4574,
-     "cost_usd": 0.00324
+     "latency_ms": 3336,
+     "cost_usd": 0.002995
     }
    ]
   },
@@ -623,28 +607,28 @@
    "template_id": "T-EXP-08",
    "question_masked": "백분위가 뭐예요?",
    "route": "answer",
-   "label": "AI 생성",
-   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타내는 거예요. 이 보고서에서는 '상위 약 몇 %'라는 표현으로 보여 줍니다. 예를 들어 아이의 외현화 문제 점수는 상위 약 8%에 해당한다는 것은 또래 아이들 중에서 아이보다 점수가 낮은 아이들이 약 92%라는 뜻이에요.",
-   "evidence_ids": [
-    "term.percentile",
-    "II.externalizing"
-   ],
-   "guard_result": "regen",
+   "label": "안전 응답",
+   "message": "보고서의 표현이 마음에 걸리셨을 것 같아요. 이 질문에는 보고서에 근거한 설명을 만들지 못했습니다. 자세한 설명은 상담에서 상담사와 함께 확인해 주세요. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다. 그때까지 궁금한 장면이 생기면 언제, 어떤 상황이었는지 메모해 두시면 상담에 도움이 됩니다.",
+   "evidence_ids": [],
+   "guard_result": "fallback",
    "guard_failures": [
     [
-     "number:8"
+     "number:8",
+     "number:100"
     ],
-    []
+    [
+     "number:27"
+    ]
    ],
-   "note_saved": false,
+   "note_saved": true,
    "intent": "explain",
    "intent_source": "keyword",
    "intent_confidence": null,
    "b4": [],
    "b5": null,
-   "b6": [],
+   "b6": null,
    "route_ok": true,
-   "r2": null,
+   "r2": true,
    "r4": null,
    "llm_calls": [
     {
@@ -655,19 +639,19 @@
      "cache_read_tokens": 17500,
      "output_tokens": 210,
      "stop_reason": "end_turn",
-     "latency_ms": 2793,
+     "latency_ms": 2955,
      "cost_usd": 0.002829
     },
     {
      "stage": "answer",
      "prompt_version": "answer_v3",
-     "input_tokens": 152,
+     "input_tokens": 263,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 226,
+     "output_tokens": 190,
      "stop_reason": "end_turn",
-     "latency_ms": 3718,
-     "cost_usd": 0.003032
+     "latency_ms": 2708,
+     "cost_usd": 0.002963
     }
    ]
   },
@@ -683,13 +667,16 @@
    "question_masked": "T점수는 어떻게 읽으면 되나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "T점수는 같은 나이대·성별 또래와 비교해 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 외현화 문제의 T점수가 64라면, 이는 겉으로 드러나는 행동의 어려움이 또래보다 더 많이 보고되었다는 의미입니다. 반면 사회능력처럼 강점을 보는 척도에서는 점수가 낮을수록 또래보다 자원이 적다는 뜻입니다.",
+   "message": "T점수는 같은 나이대·성별 또래와 비교해서 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 아이의 외현화 문제 점수가 T=64라면, 이 숫자가 또래보다 높다는 것을 알 수 있도록 도와줍니다. 반대로 사회능력 척대처럼 점수가 낮을수록 더 좋은 척도도 있으니 어느 척도인지 확인하면서 읽으면 됩니다.",
    "evidence_ids": [
     "term.t_score",
     "II.externalizing"
    ],
-   "guard_result": "pass",
+   "guard_result": "regen",
    "guard_failures": [
+    [
+     "number:64"
+    ],
     []
    ],
    "note_saved": false,
@@ -709,10 +696,21 @@
      "input_tokens": 37,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 272,
+     "output_tokens": 275,
      "stop_reason": "end_turn",
-     "latency_ms": 4129,
-     "cost_usd": 0.003147
+     "latency_ms": 4651,
+     "cost_usd": 0.003162
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 160,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17500,
+     "output_tokens": 275,
+     "stop_reason": "end_turn",
+     "latency_ms": 4320,
+     "cost_usd": 0.003285
     }
    ]
   },
@@ -755,7 +753,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1601,
+     "latency_ms": 1031,
      "cost_usd": 0.001315
     },
     {
@@ -764,10 +762,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 75,
+     "output_tokens": 74,
      "stop_reason": "end_turn",
-     "latency_ms": 2151,
-     "cost_usd": 0.002171
+     "latency_ms": 1474,
+     "cost_usd": 0.002166
     }
    ]
   },
@@ -799,7 +797,7 @@
    "note_saved": true,
    "intent": "explain",
    "intent_source": "llm",
-   "intent_confidence": 0.95,
+   "intent_confidence": 0.92,
    "b4": [],
    "b5": null,
    "b6": null,
@@ -815,7 +813,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1284,
+     "latency_ms": 1522,
      "cost_usd": 0.001315
     },
     {
@@ -824,10 +822,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 166,
+     "output_tokens": 184,
      "stop_reason": "end_turn",
-     "latency_ms": 2432,
-     "cost_usd": 0.002626
+     "latency_ms": 3387,
+     "cost_usd": 0.002716
     },
     {
      "stage": "answer",
@@ -835,10 +833,10 @@
      "input_tokens": 136,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 43,
+     "output_tokens": 157,
      "stop_reason": "end_turn",
-     "latency_ms": 1297,
-     "cost_usd": 0.002101
+     "latency_ms": 2242,
+     "cost_usd": 0.002671
     }
    ]
   },
@@ -858,15 +856,17 @@
    "question_masked": "사회적 미성숙 점수가 가장 높게 나왔는데 이게 무슨 뜻이에요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회적 미성숙은 나이에 비해 어리게 행동하거나 또래 관계에서 어려움을 겪는 정도를 보는 척도입니다. 보고서에 따르면 아이의 사회적 미성숙 점수는 T=80으로 상위 약 1%에 해당하며, 전문 상담 권고 범위(70T 이상)를 크게 넘었습니다. 이는 또래보다 어린 아이들과 어울리거나 놀림을 받는 등 사회적으로 미성숙한 양상이 뚜렷하게 보고되었다는 뜻입니다. 보호자님이 보고해주신 \"친구들 사이에 잘 끼지 못하는 것 같아요\"라는 관찰과도 일치합니다. 이 점수가 무엇을 의미하고 아이에게 어떤 지원이 필요한지는 상담에서 상담사와 함께 자세히 다룰 수 있습니다. 상담을 준비하면서 또래와 놀 때 어떤 상황에서 어려움이 생기는지, 언제 어디서였는지 구체적인 장면들을 적어 두면 도움이 될 거예요.",
+   "message": "사회적 미성숙이 다른 척도 중에서 가장 높은 점수로 나왔습니다. 이것은 나이에 비해 어리게 행동하거나 또래 관계에서 어려움을 겪는 정도를 측정하는 척수예요. 아이의 점수는 T=80으로 상위 약 1%에 해당하며, 전문 상담 권고 범위인 70T를 넘었습니다. 보고서에서 아이가 또래보다 어린 아이들과 어울리거나 놀림을 받는 등 사회적 미성숙 양상이 뚜렷하다고 적었으며, 이는 보호자분이 보고하신 \"또래 관계 어려움\"과 일치하는 양상이라고 합니다. 이 영역이 어떤 구체적인 상황에서 나타나는지, 그리고 앞으로 어떻게 지원할 수 있을지는 상담에서 상담사와 함께 다룰 수 있습니다. 그동안 또래와 놀 때 어떤 상황에서 어려움이 생기는지 적어 두면 상담할 때 도움이 될 거예요.",
    "evidence_ids": [
     "III.socimm",
     "V.socimm",
-    "card.KCBCL_4_17.socimm.clinical",
-    "VII.1"
+    "card.KCBCL_4_17.socimm.clinical"
    ],
-   "guard_result": "pass",
+   "guard_result": "regen",
    "guard_failures": [
+    [
+     "term:guard.th.007"
+    ],
     []
    ],
    "note_saved": false,
@@ -886,10 +886,21 @@
      "input_tokens": 57,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17500,
-     "output_tokens": 532,
+     "output_tokens": 493,
      "stop_reason": "end_turn",
-     "latency_ms": 6165,
-     "cost_usd": 0.004467
+     "latency_ms": 5732,
+     "cost_usd": 0.004272
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 133,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17500,
+     "output_tokens": 493,
+     "stop_reason": "end_turn",
+     "latency_ms": 6154,
+     "cost_usd": 0.004348
     }
    ]
   },
@@ -1131,7 +1142,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1418,
+     "latency_ms": 1520,
      "cost_usd": 0.001329
     }
    ]
@@ -1180,10 +1191,9 @@
    "question_masked": "비행 점수 T점수 57점은 기준선에서 얼마나 떨어져 있나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "비행 점수 T=57은 관찰 권고 범위의 기준선인 60에서 3점 아래에 있습니다. 전문 상담 권고 범위의 기준선인 70에서는 13점 아래에 있어요. 비행 점수는 또래 평균 범위에 속해 있습니다.",
+   "message": "비행 점수는 T=57로, 관찰 권고 범위의 기준선(60)보다 3점 아래에 있습니다. 또래 평균 범위에 속해 있습니다.",
    "evidence_ids": [
-    "III.delinquent",
-    "C.3"
+    "III.delinquent"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -1206,10 +1216,10 @@
      "input_tokens": 52,
      "cache_write_tokens": 16017,
      "cache_read_tokens": 0,
-     "output_tokens": 142,
+     "output_tokens": 97,
      "stop_reason": "end_turn",
-     "latency_ms": 3431,
-     "cost_usd": 0.02078325
+     "latency_ms": 2098,
+     "cost_usd": 0.02055825
     }
    ]
   },
@@ -1227,7 +1237,7 @@
    "question_masked": "위축 점수 옆에는 왜 백분위가 없어요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "위축 척도에서 나타나는 가장 낮은 점수 구간(T=50)은 또래 평균과 비슷하거나 그보다 낮은 범위라서 백분위를 따로 계산하지 않습니다. 이 점수 구간에서는 백분위 대신 '또래 평균과 비슷하거나 그보다 낮다'는 뜻으로 설명하고 있어요.",
+   "message": "위축 점수는 이 척도에서 표시되는 가장 낮은 점수라서 백분위를 따로 계산하지 않습니다. 이런 경우 백분위 대신 '또래 평균과 비슷하거나 그보다 낮다'는 뜻으로 설명합니다. 아이의 위축 점수(T=50)는 또래 평균 범위에 있다는 의미예요.",
    "evidence_ids": [
     "III.withdrawn"
    ],
@@ -1254,7 +1264,7 @@
      "cache_read_tokens": 16017,
      "output_tokens": 166,
      "stop_reason": "end_turn",
-     "latency_ms": 3717,
+     "latency_ms": 3457,
      "cost_usd": 0.0024727
     }
    ]
@@ -1273,10 +1283,9 @@
    "question_masked": "사회성 척도는 왜 미실시라고 나와요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회능력 척도(사회성, 학업수행, 총 사회능력)는 이번 검사에 포함되지 않았습니다. 아이의 나이(만 14세 5개월)가 이 척도를 실시하는 연령이 아니기 때문입니다. 필요하면 이후에 따로 실시할 수 있습니다.",
+   "message": "사회성, 학업수행, 총 사회능력을 보는 사회능력 척도는 이번 검사에 포함되지 않았습니다. 필요하면 이후에 따로 실시할 수 있습니다.",
    "evidence_ids": [
-    "I.note",
-    "H.sex_age"
+    "I.note"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -1299,10 +1308,10 @@
      "input_tokens": 39,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16017,
-     "output_tokens": 151,
+     "output_tokens": 103,
      "stop_reason": "end_turn",
-     "latency_ms": 5149,
-     "cost_usd": 0.0023956999999999997
+     "latency_ms": 2090,
+     "cost_usd": 0.0021557
     }
    ]
   },
@@ -1318,7 +1327,7 @@
    "question_masked": "백분위가 뭐예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타내는 것입니다. 이 화면에서는 '상위 약 몇 %'로 바꾸어 보여 주고 있어요. 예를 들어 아이의 외현화 문제 점수는 상위 약 31%에 해당하는데, 이는 또래 아이들 가운데 아이보다 외현화 문제 점수가 낮은 아이들이 약 69%라는 뜻입니다.",
+   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타냅니다. 이 보고서에서는 '상위 약 몇 %'로 표현해서 보여 줍니다. 예를 들어 아이의 외현화 문제 점수는 상위 약 31%에 해당하는데, 이는 또래 아이들 중에서 아이보다 점수가 낮은 아이들이 약 69%라는 뜻입니다.",
    "evidence_ids": [
     "term.percentile",
     "II.externalizing"
@@ -1327,7 +1336,7 @@
    "guard_failures": [
     [
      "number:31",
-     "number:69"
+     "number:100"
     ],
     []
    ],
@@ -1348,10 +1357,10 @@
      "input_tokens": 29,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16017,
-     "output_tokens": 212,
+     "output_tokens": 207,
      "stop_reason": "end_turn",
-     "latency_ms": 3654,
-     "cost_usd": 0.0026907
+     "latency_ms": 3340,
+     "cost_usd": 0.0026657
     },
     {
      "stage": "answer",
@@ -1359,10 +1368,10 @@
      "input_tokens": 263,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16017,
-     "output_tokens": 234,
+     "output_tokens": 222,
      "stop_reason": "end_turn",
-     "latency_ms": 4076,
-     "cost_usd": 0.0030347
+     "latency_ms": 2945,
+     "cost_usd": 0.0029747
     }
    ]
   },
@@ -1378,10 +1387,10 @@
    "question_masked": "T점수는 어떻게 읽으면 되나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "T점수는 같은 나이대·성별 또래와 비교해 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수예요. 이번 검사 결과에서 아이의 외현화 문제는 T=55인데, 이렇게 적힌 'T=' 뒤의 숫자가 T점수입니다. 문제행동 척도에서는 T점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻이에요.",
+   "message": "T점수는 같은 나이대·성별 또래와 비교해서 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 이 보고서에서는 아이의 T점수가 여러 개 있는데, 예를 들어 비행이 T=57이라면 비행 행동이 또래보다 높게 보고되었다는 뜻입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 의미입니다.",
    "evidence_ids": [
     "term.t_score",
-    "II.externalizing"
+    "III.delinquent"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -1404,10 +1413,10 @@
      "input_tokens": 37,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16017,
-     "output_tokens": 208,
+     "output_tokens": 223,
      "stop_reason": "end_turn",
-     "latency_ms": 3791,
-     "cost_usd": 0.0026787
+     "latency_ms": 4068,
+     "cost_usd": 0.0027537
     }
    ]
   },
@@ -1425,11 +1434,13 @@
    "question_masked": "보고서에 적힌 권고 사항은 언제까지 해야 하나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "보고서의 권고 사항은 구체적인 기간을 정하기보다는, 아이의 상태 변화를 관찰하면서 지속해야 합니다.\n\n현재 보고서는 일상적 관찰을 유지하고, 우려하던 행동이 지속되거나 새롭게 나타날 경우 재평가를 고려하도록 권고하고 있습니다. 학년이 바뀌는 것 같은 발달적 전이 시기에는 결과가 달라질 수 있으므로, 그런 변화가 있을 때도 함께 살펴보는 것이 좋습니다.\n\n구체적인 시기와 방법은 상담에서 상담사와 함께 정할 수 있습니다.",
+   "message": "보고서에는 두 가지 권고 사항이 있습니다.\n\n첫 번째는 '일상적 관찰 유지'인데, 이는 특정 기간을 정해 하는 것이 아니라 평소처럼 아이를 살피면서 새로운 변화가 있는지 주목하라는 뜻입니다. 특히 학년이 바뀌는 것 같은 발달적 전이 시기에는 결과가 달라질 수 있으므로, 그런 변화를 놓치지 않도록 살펴보는 것이 좋습니다.\n\n두 번째는 '우려 행동 지속 시 재평가 고려'입니다. 어머니께서 우려하신 행동(예: 잠드는 시간이 늦어지는 것, 친구들이 바뀐 뒤 말을 안 듣는 것)이 계속되거나 새롭게 나타날 때 다시 평가를 받아보는 것을 고려해 보라는 의미입니다. 그 판단의 시점과 구체적인 장면이 어떨 때인지는 상담에서 상담사와 함께 나눌 수 있습니다.",
    "evidence_ids": [
-    "VI.p3",
     "VI.rec1",
-    "VI.rec2"
+    "VI.rec2",
+    "VI.p3",
+    "VII.1",
+    "VII.2"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -1454,7 +1465,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1454,
+     "latency_ms": 959,
      "cost_usd": 0.001315
     },
     {
@@ -1463,10 +1474,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16017,
-     "output_tokens": 346,
+     "output_tokens": 511,
      "stop_reason": "end_turn",
-     "latency_ms": 5047,
-     "cost_usd": 0.0033777
+     "latency_ms": 5755,
+     "cost_usd": 0.0042027
     }
    ]
   },
@@ -1491,7 +1502,9 @@
     [
      "evidence:empty"
     ],
-    []
+    [
+     "evidence:empty"
+    ]
    ],
    "note_saved": true,
    "intent": "explain",
@@ -1512,7 +1525,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1285,
+     "latency_ms": 1346,
      "cost_usd": 0.001315
     },
     {
@@ -1521,10 +1534,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16017,
-     "output_tokens": 187,
+     "output_tokens": 94,
      "stop_reason": "end_turn",
-     "latency_ms": 3629,
-     "cost_usd": 0.0025827
+     "latency_ms": 2449,
+     "cost_usd": 0.0021176999999999997
     },
     {
      "stage": "answer",
@@ -1532,10 +1545,10 @@
      "input_tokens": 136,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16017,
-     "output_tokens": 58,
+     "output_tokens": 154,
      "stop_reason": "end_turn",
-     "latency_ms": 1937,
-     "cost_usd": 0.0020277
+     "latency_ms": 2384,
+     "cost_usd": 0.0025077
     }
    ]
   },
@@ -1555,18 +1568,15 @@
    "question_masked": "비행 점수가 가장 높게 나왔는데 이게 무슨 뜻이에요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "비행 척도는 규칙을 어기거나 해서는 안 되는 행동을 하는 정도를 묻는 척도예요. 아이의 비행 점수는 T=57로, 또래 평균 범위에 있습니다. 이는 또래 아이들에게서 흔히 보고되는 정도라는 뜻이에요.\n\n다른 척도들과 비교하면 상대적으로 가장 높긴 하지만, 여전히 정상 범위 안에 있고 전문 상담이 필요한 수준은 아닙니다. 보고서에서도 \"개별 증후군 척도도 모두 정상 범위(60T 미만)이며, 상대적으로 가장 높은 비행(T=57) 역시 연령 평균 범위 내에 있습니다\"라고 밝혔어요.\n\n어떤 상황에서 규칙을 어기거나 하면 안 되는 행동이 보이는지 구체적으로 어느 때, 어디서였는지 적어 두시면 상담에서 더 자세히 다룰 수 있습니다.",
+   "message": "비행 점수(T=57)는 규칙을 어기거나 해서는 안 되는 행동을 하는 정도를 보는 것입니다. 보고서에 따르면 아이의 비행 점수는 또래 평균 범위에 있으며, 다른 척도들 중에서 상대적으로 가장 높기는 하지만 여전히 연령 평균 범위 내에 위치하고 있습니다.\n\n구체적으로는 사실과 다른 말을 하거나, 집이나 학교의 규칙을 어기거나, 잘못한 뒤에도 미안해하지 않는 모습 같은 행동들의 정도를 나타냅니다. 보호자 의견에서 언급된 것처럼 최근 어울리는 친구들이 바뀌면서 말을 안 듣는 모습과 관련이 있을 수 있습니다.\n\n이 점수가 아이의 상태를 어떻게 이해해야 하고 앞으로 어떻게 지켜봐야 할지는 상담에서 상담사와 함께 다룰 수 있습니다. 지금은 구체적인 상황들—언제, 어디서, 어떤 행동이 있었는지—을 주의 깊게 관찰하고 기록해 두시면 상담에 도움이 될 것입니다.",
    "evidence_ids": [
     "III.delinquent",
     "V.overall",
-    "VI.p2",
-    "card.KCBCL_4_17.delinquent.normal"
+    "card.KCBCL_4_17.delinquent.normal",
+    "VII.2"
    ],
-   "guard_result": "regen",
+   "guard_result": "pass",
    "guard_failures": [
-    [
-     "evidence:unknown:term.delinquent"
-    ],
     []
    ],
    "note_saved": false,
@@ -1586,21 +1596,10 @@
      "input_tokens": 51,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16017,
-     "output_tokens": 421,
+     "output_tokens": 565,
      "stop_reason": "end_turn",
-     "latency_ms": 5657,
-     "cost_usd": 0.0037576999999999997
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 112,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 16017,
-     "output_tokens": 484,
-     "stop_reason": "end_turn",
-     "latency_ms": 5609,
-     "cost_usd": 0.0041337
+     "latency_ms": 6306,
+     "cost_usd": 0.004477699999999999
     }
    ]
   },
@@ -1770,7 +1769,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1162,
+     "latency_ms": 1622,
      "cost_usd": 0.001323
     }
    ]
@@ -1819,7 +1818,7 @@
    "question_masked": "신체증상 점수 T점수 57점은 기준선에서 얼마나 떨어져 있나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "신체증상 점수 T=57은 관찰 권고 범위의 기준선 60 아래에 있으며, 그 차이는 3입니다. 전문 상담 권고 범위의 기준선 70 아래에는 13 떨어져 있습니다. 현재 점수는 또래 평균 범위 안에 있습니다.",
+   "message": "신체증상 점수 T=57은 관찰 권고 범위의 기준선 60T보다 3점 아래에 있습니다. 전문 상담 권고 범위의 기준선 70T보다는 13점 아래에 있어요. 두 기준선 모두 아래쪽에 위치하고 있으며, 또래 평균 범위에 있습니다.",
    "evidence_ids": [
     "III.somatic",
     "C.3"
@@ -1845,10 +1844,10 @@
      "input_tokens": 54,
      "cache_write_tokens": 16093,
      "cache_read_tokens": 0,
-     "output_tokens": 148,
+     "output_tokens": 158,
      "stop_reason": "end_turn",
-     "latency_ms": 3054,
-     "cost_usd": 0.02091025
+     "latency_ms": 2420,
+     "cost_usd": 0.02096025
     }
    ]
   },
@@ -1866,7 +1865,7 @@
    "question_masked": "우울/불안 점수 옆에는 왜 백분위가 없어요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "우울/불안 점수는 이 척도에서 표시되는 가장 낮은 점수라서 백분위를 따로 계산하지 않습니다. 이것은 아이의 점수가 또래 평균과 비슷하거나 그보다 낮다는 뜻입니다.",
+   "message": "우울/불안 척도의 점수(T=50)는 이 검사에서 표시되는 가장 낮은 점수예요. 이 구간에서는 백분위를 따로 계산하지 않습니다. 점수가 가장 낮다는 것은 아이의 우울/불안 수준이 또래 평균과 비슷하거나 그보다 낮다는 뜻이에요.",
    "evidence_ids": [
     "III.anxdep"
    ],
@@ -1891,10 +1890,10 @@
      "input_tokens": 44,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16093,
-     "output_tokens": 127,
+     "output_tokens": 162,
      "stop_reason": "end_turn",
-     "latency_ms": 2874,
-     "cost_usd": 0.0022883
+     "latency_ms": 3389,
+     "cost_usd": 0.0024633000000000003
     }
    ]
   },
@@ -1912,14 +1911,17 @@
    "question_masked": "정서불안정 척도는 왜 미실시라고 나와요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "정서불안정 척도는 6–11세 아이들을 대상으로 만든 항목이어서, 아이의 나이(만 14세 11개월)에는 실시하지 않습니다. 이 척도 대신 아이의 나이대에 맞는 다른 영역들로 어려움을 살펴봤습니다.",
+   "message": "정서불안정 척도는 만 6–11세 아이들을 대상으로 만든 항목이라서, 아이가 그 연령 범위에 해당하지 않아 이번 검사에서 실시하지 않았습니다.",
    "evidence_ids": [
-    "IV.emotional_instability.note",
     "H.sex_age",
-    "H.norm_group"
+    "IV.emotional_instability",
+    "IV.emotional_instability.note"
    ],
-   "guard_result": "pass",
+   "guard_result": "regen",
    "guard_failures": [
+    [
+     "range_label:미실시"
+    ],
     []
    ],
    "note_saved": false,
@@ -1939,10 +1941,21 @@
      "input_tokens": 41,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16093,
-     "output_tokens": 157,
+     "output_tokens": 136,
      "stop_reason": "end_turn",
-     "latency_ms": 3324,
-     "cost_usd": 0.0024353
+     "latency_ms": 3370,
+     "cost_usd": 0.0023303
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 108,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 16093,
+     "output_tokens": 127,
+     "stop_reason": "end_turn",
+     "latency_ms": 3215,
+     "cost_usd": 0.0023523000000000003
     }
    ]
   },
@@ -1960,11 +1973,10 @@
    "question_masked": "사회성 점수가 T점수 44점이면 높은 건가요 낮은 건가요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회성 점수는 T점수 44점으로, 하위 약 27%에 해당하는 점수입니다. 사회성 척도는 다른 척도와 반대로, 점수가 낮을수록 또래보다 어려움이 많이 보고되었다는 뜻입니다. 그래서 이 점수는 낮은 점수에 해당합니다. 사회성은 친구 관계, 활동 참여, 학업 수행 같은 적응 자원을 보는 영역인데, 아이의 기본적인 사회·활동 적응 자원은 정상 범위에 있다고 보고서에 나와 있습니다.",
+   "message": "사회성 점수는 T점수 44점으로, 하위 약 27%에 해당하는 점수입니다. 사회성 척도는 다른 척도와 반대로, 점수가 낮을수록 또래보다 어려움이 많이 보고되었다는 뜻입니다. 따라서 44점은 또래 평균보다 낮은 점수입니다.",
    "evidence_ids": [
     "I.sociability",
-    "I.total_competence",
-    "VI.p2"
+    "I.sociability"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -1987,10 +1999,10 @@
      "input_tokens": 50,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16093,
-     "output_tokens": 283,
+     "output_tokens": 214,
      "stop_reason": "end_turn",
-     "latency_ms": 4244,
-     "cost_usd": 0.0030743000000000003
+     "latency_ms": 2933,
+     "cost_usd": 0.0027293
     }
    ]
   },
@@ -2005,28 +2017,29 @@
    "template_id": "T-EXP-08",
    "question_masked": "백분위가 뭐예요?",
    "route": "answer",
-   "label": "안전 응답",
-   "message": "보고서의 표현이 마음에 걸리셨을 것 같아요. 이 질문에는 보고서에 근거한 설명을 만들지 못했습니다. 자세한 설명은 상담에서 상담사와 함께 확인해 주세요. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다. 그때까지 궁금한 장면이 생기면 언제, 어떤 상황이었는지 메모해 두시면 상담에 도움이 됩니다.",
-   "evidence_ids": [],
-   "guard_result": "fallback",
+   "label": "AI 생성",
+   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타내는 방식입니다. 이 보고서에서는 '상위 약 몇 %'로 표현해서 보여 주고 있습니다. 예를 들어 신체증상에서 아이의 점수가 상위 약 24%에 해당한다는 것은, 또래 아이들 가운데 아이보다 신체증상 점수가 낮은 아이들이 약 76%라는 뜻입니다.",
+   "evidence_ids": [
+    "term.percentile",
+    "III.somatic"
+   ],
+   "guard_result": "regen",
    "guard_failures": [
     [
-     "number:38",
-     "number:62"
+     "number:24",
+     "number:76"
     ],
-    [
-     "number:31"
-    ]
+    []
    ],
-   "note_saved": true,
+   "note_saved": false,
    "intent": "explain",
    "intent_source": "keyword",
    "intent_confidence": null,
    "b4": [],
    "b5": null,
-   "b6": null,
+   "b6": [],
    "route_ok": true,
-   "r2": true,
+   "r2": null,
    "r4": null,
    "llm_calls": [
     {
@@ -2035,10 +2048,10 @@
      "input_tokens": 29,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16093,
-     "output_tokens": 216,
+     "output_tokens": 209,
      "stop_reason": "end_turn",
-     "latency_ms": 3628,
-     "cost_usd": 0.0027183000000000003
+     "latency_ms": 3853,
+     "cost_usd": 0.0026833
     },
     {
      "stage": "answer",
@@ -2046,10 +2059,10 @@
      "input_tokens": 263,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16093,
-     "output_tokens": 211,
+     "output_tokens": 233,
      "stop_reason": "end_turn",
-     "latency_ms": 3384,
-     "cost_usd": 0.0029273000000000003
+     "latency_ms": 3151,
+     "cost_usd": 0.0030373
     }
    ]
   },
@@ -2065,17 +2078,14 @@
    "question_masked": "T점수는 어떻게 읽으면 되나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "T점수는 같은 나이대·성별 또래와 비교해 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 이 보고서에서는 문제행동 척도의 T점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 아이의 신체증상 점수는 T=57인데, 이는 또래 평균 범위에 있다는 뜻입니다. 보고서에서 기준으로 삼는 임상 기준은 종합척도가 63T이고 증후군 척도가 70T이므로, 상담사와 함께 결과를 자세히 살펴볼 때 이런 기준이 참고됩니다.",
+   "message": "T점수는 같은 나이대·성별 또래와 비교해 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 신체증상 척도에서 아이가 받은 T=57이라면, 이는 또래 아이들에게서 흔히 보고되는 정도 내에 있다는 의미입니다. 반대로 사회능력 척도에서는 점수가 낮을수록 또래보다 자원이 적게 보고되었다는 뜻이므로, 보고서를 읽을 때 척도의 특성을 함께 생각하면 됩니다.",
    "evidence_ids": [
     "term.t_score",
-    "C.3",
-    "III.somatic"
+    "III.somatic",
+    "I.total_competence"
    ],
-   "guard_result": "regen",
+   "guard_result": "pass",
    "guard_failures": [
-    [
-     "number:63"
-    ],
     []
    ],
    "note_saved": false,
@@ -2095,21 +2105,10 @@
      "input_tokens": 37,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16093,
-     "output_tokens": 263,
+     "output_tokens": 309,
      "stop_reason": "end_turn",
-     "latency_ms": 3894,
-     "cost_usd": 0.0029613
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 160,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 16093,
-     "output_tokens": 297,
-     "stop_reason": "end_turn",
-     "latency_ms": 4149,
-     "cost_usd": 0.0032543000000000003
+     "latency_ms": 3893,
+     "cost_usd": 0.0031913
     }
    ]
   },
@@ -2127,15 +2126,14 @@
    "question_masked": "보고서에 적힌 권고 사항은 언제까지 해야 하나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "보고서의 권고 사항이 언제까지 지속되어야 하는지에 대한 구체적인 기간은 보고서에 적혀 있지 않습니다. 다만 보고서는 \"학년이 바뀌는 것 같은 발달적 전이 시기에는 결과가 달라질 수 있으므로 일상적인 관찰을 유지하고, 보호자가 우려하는 행동이 지속되거나 새롭게 나타날 경우 재평가를 고려할 수 있습니다\"라고 안내하고 있습니다. 권고 기간과 방식에 대해서는 상담에서 상담사와 함께 다룰 수 있습니다. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다.",
+   "message": "보고서의 권고 사항인 '일상적 관찰 유지'와 '우려 행동 지속 시 재평가 고려'는 기간을 정한 것이 아닙니다. 보고서에 구체적인 기간이 적혀 있지 않으므로, 이 부분은 상담에서 상담사와 함께 아이의 상황에 맞게 다룰 수 있습니다. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다.",
    "evidence_ids": [
+    "VI.rec1",
+    "VI.rec2",
     "VI.p3"
    ],
-   "guard_result": "regen",
+   "guard_result": "pass",
    "guard_failures": [
-    [
-     "evidence:empty"
-    ],
     []
    ],
    "note_saved": true,
@@ -2157,7 +2155,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 904,
+     "latency_ms": 1123,
      "cost_usd": 0.001315
     },
     {
@@ -2166,21 +2164,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16093,
-     "output_tokens": 165,
+     "output_tokens": 233,
      "stop_reason": "end_turn",
-     "latency_ms": 2250,
-     "cost_usd": 0.0024803000000000004
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 136,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 16093,
-     "output_tokens": 299,
-     "stop_reason": "end_turn",
-     "latency_ms": 4539,
-     "cost_usd": 0.0032403
+     "latency_ms": 4332,
+     "cost_usd": 0.0028203
     }
    ]
   },
@@ -2228,7 +2215,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1209,
+     "latency_ms": 1448,
      "cost_usd": 0.001315
     },
     {
@@ -2237,10 +2224,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16093,
-     "output_tokens": 134,
+     "output_tokens": 175,
      "stop_reason": "end_turn",
-     "latency_ms": 2646,
-     "cost_usd": 0.0023253
+     "latency_ms": 3297,
+     "cost_usd": 0.0025303
     },
     {
      "stage": "answer",
@@ -2248,10 +2235,10 @@
      "input_tokens": 136,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16093,
-     "output_tokens": 92,
+     "output_tokens": 148,
      "stop_reason": "end_turn",
-     "latency_ms": 1588,
-     "cost_usd": 0.0022053000000000003
+     "latency_ms": 2437,
+     "cost_usd": 0.0024853
     }
    ]
   },
@@ -2271,7 +2258,7 @@
    "question_masked": "신체증상 점수가 가장 높게 나왔는데 이게 무슨 뜻이에요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "신체증상 척도는 뚜렷한 원인이 확인되지 않았는데 몸이 불편하다고 하는 정도를 묻습니다. 아이의 신체증상 점수는 T=57로, 또래 평균 범위에 있습니다. 이는 상위 약 24%에 해당하는 점수예요.\n\n아이가 늘 피곤하다고 하고 어지럽다는 말을 자주 한다고 하셨는데, 의료 검사에서 이상이 없었다면 보고서는 이런 보호자 보고를 일상적 관찰 수준으로 판단하고 있습니다. 신체증상이 상대적으로 가장 높은 척도이지만, 점수 자체는 또래 아이들에게서 흔히 보고되는 정도라는 뜻입니다.\n\n이 점수가 아이에게 어떤 의미인지, 피로나 어지럼이 일상생활에 미치는 영향은 어느 정도인지는 상담에서 상담사와 함께 살펴볼 수 있습니다. 상담 전에 아이가 피곤함이나 어지러움을 언제, 어떤 상황에서 호소하는지 구체적으로 적어 두면 상담에 도움이 될 것 같습니다.",
+   "message": "신체증상 척도는 뚜렷한 원인이 확인되지 않았는데 몸이 불편하다고 하는 정도를 묻습니다. 아이의 신체증상 점수는 T=57으로, 보고서에 적힌 여러 척도 중에서 상대적으로 가장 높기는 하지만 또래 평균 범위에 있습니다. 기준선(관찰 권고 범위 시작점인 60T)보다는 아래에 있다는 뜻이에요.\n\n보호자님께서 말씀하신 대로 아이가 자주 피곤하고 어지럽다고 하는 것으로 보이는데, 보고서에서는 이런 증상들이 일상적 관찰 수준으로 판단되었습니다. 이런 증상이 어떤 의미를 가지고 있는지, 앞으로 어떻게 지켜봐야 할지는 상담에서 상담사와 함께 자세히 나눌 수 있습니다.",
    "evidence_ids": [
     "III.somatic",
     "V.overall",
@@ -2298,10 +2285,10 @@
      "input_tokens": 53,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16093,
-     "output_tokens": 535,
+     "output_tokens": 462,
      "stop_reason": "end_turn",
-     "latency_ms": 6272,
-     "cost_usd": 0.0043373000000000005
+     "latency_ms": 5898,
+     "cost_usd": 0.0039723
     }
    ]
   },
@@ -2471,7 +2458,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1013,
+     "latency_ms": 944,
      "cost_usd": 0.001325
     }
    ]
@@ -2520,10 +2507,11 @@
    "question_masked": "위축 점수가 T점수 69점이면 어느 정도예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "위축 점수 T=69는 또래 아이들 중 상위 약 3%에 해당하는 점수입니다. 관찰 권고 범위에 있으며, 전문 상담 권고 범위의 기준인 70T보다는 1점 낮습니다.\n\n이 점수는 새로운 활동이나 대인 상황에서 참여를 주저하는 모습이 또래보다 많이 보고되었다는 뜻입니다. 보고서에도 학교에서 혼자 지내는 모습이 관찰되고 있는 것으로 나타났습니다.",
+   "message": "위축 점수가 T점수 69점은 또래 아이들 중에서 상위 약 3%에 해당하는 점수예요. 또래보다 높게 나타났으며, 관찰 권고 범위에 있습니다.\n\n이 점수는 임상 기준인 70T에는 못 미치지만, 60T인 관찰 권고 범위의 기준선을 9점 이상으로 넘어선 수준이에요. 보고서에서도 새로운 활동이나 대인 상황에서 참여를 주저하는 모습이 상대적으로 많이 보고되었다고 적혀 있으며, 학교에서 혼자 지낸다는 보호자 보고와도 일치한다고 했습니다.\n\n지금 바로 임상 개입이 필요한 수준은 아니지만, 이 영역을 지켜볼 필요가 있어요. 상담에서 아이가 언제, 어느 자리에서 혼자 있으려 하는지 구체적으로 이야기하면 도움이 됩니다.",
    "evidence_ids": [
     "III.withdrawn",
-    "V.withdrawn"
+    "V.withdrawn",
+    "C.3"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -2546,10 +2534,10 @@
      "input_tokens": 42,
      "cache_write_tokens": 16217,
      "cache_read_tokens": 0,
-     "output_tokens": 287,
+     "output_tokens": 436,
      "stop_reason": "end_turn",
-     "latency_ms": 4874,
-     "cost_usd": 0.02174825
+     "latency_ms": 6445,
+     "cost_usd": 0.02249325
     }
    ]
   },
@@ -2567,7 +2555,7 @@
    "question_masked": "내재화 문제 점수 T점수 59점은 기준선에서 얼마나 떨어져 있나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "내재화 문제의 T점수 59는 관찰 권고 기준선(60)보다 1점 아래에 있습니다. 또 전문 상담 권고 기준선(63)보다는 4점 아래에 있습니다. 즉, 두 기준선 모두 넘지 않은 또래 평균 범위의 점수입니다.",
+   "message": "내재화 문제 점수 T=59는 관찰 권고 범위 기준선인 60T보다 1점 아래에 있습니다. 전문 상담 권고 범위 기준선인 63T보다는 4점 아래에 있어요. 두 기준선 모두에서 아래쪽에 있으며, 또래 평균 범위에 속합니다.",
    "evidence_ids": [
     "II.internalizing"
    ],
@@ -2592,10 +2580,10 @@
      "input_tokens": 56,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16217,
-     "output_tokens": 146,
+     "output_tokens": 153,
      "stop_reason": "end_turn",
-     "latency_ms": 2495,
-     "cost_usd": 0.0024077
+     "latency_ms": 2536,
+     "cost_usd": 0.0024427
     }
    ]
   },
@@ -2615,12 +2603,12 @@
    "question_masked": "위축 점수가 T점수 69점이라 마음이 쓰이는데 이 점수가 어떤 의미인지 알려주세요",
    "route": "answer",
    "label": "AI 생성",
-   "message": "위축 점수가 높게 나왔다니 마음이 쓰이실 수 있어요.\n\n위축 점수 T=69는 또래 아이들과 비교했을 때 상위 약 3%에 해당하는 점수로, 다른 사람과 어울리기보다 혼자 있으려 하는 모습이 또래보다 더 자주 보고된다는 뜻입니다. 현재는 관찰 권고 범위에 있으며, 전문 상담 권고 범위가 시작되는 70T에는 1점 차이로 못 미쳤습니다.\n\n보고서에도 적혀 있듯이, 새로운 활동이나 대인 상황에서 참여를 주저하는 모습이 상대적으로 많이 보고되었으며, 할머니께서 보고해 주신 \"학교에서 혼자 지냄\"이라는 내용과도 일치합니다. 예를 들어 쉬는 시간에도 자리에 혼자 앉아 있다고 선생님께서 말씀하셨던 부분이 이 점수에 반영되어 있는 것 같습니다.\n\n지금 단계에서는 이 영역을 관찰하면서 구체적으로 어떤 자리에서, 어떤 상황에서 혼자 있으려 하는지 적어 두시면 상담에서 함께 이야기할 때 도움이 됩니다.",
+   "message": "위축 점수가 높아서 마음이 쓰이시겠네요. 점수의 의미를 설명해 드릴게요.\n\n아이의 위축 점수는 T=69로, 또래 아이들 중 상위 약 3%에 해당하는 수준입니다. 이는 다른 사람과 어울리기보다 혼자 있으려 하거나, 새로운 활동이나 대인 상황에서 참여를 주저하는 모습이 또래보다 상대적으로 많이 보고되었다는 뜻입니다. 보고서에서도 \"학교에서 혼자 지낸다\"는 보호자의 말과 일치하는 양상이라고 적혀 있어요.\n\n다만 전문 상담 권고 기준인 70T에는 못 미치고 있으며, 관찰 권고 범위에 있는 상태입니다. 아이에게 어떤 의미인지, 앞으로 어떻게 해 주면 좋을지는 상담에서 상담사와 함께 구체적으로 다룰 수 있습니다. 상담을 준비할 때 아이가 혼자 있으려 하는 구체적인 장면(언제, 어디서, 누구와 함께일 때)을 적어 두시면 도움이 될 거예요.",
    "evidence_ids": [
     "III.withdrawn",
     "V.withdrawn",
-    "VII.1",
-    "card.KCBCL_4_17.withdrawn.borderline"
+    "card.KCBCL_4_17.withdrawn.borderline",
+    "term.social_withdrawal"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -2643,10 +2631,10 @@
      "input_tokens": 65,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16217,
-     "output_tokens": 599,
+     "output_tokens": 561,
      "stop_reason": "end_turn",
-     "latency_ms": 7368,
-     "cost_usd": 0.0046817
+     "latency_ms": 6468,
+     "cost_usd": 0.0044916999999999995
     }
    ]
   },
@@ -2664,7 +2652,7 @@
    "question_masked": "우울/불안 점수 옆에는 왜 백분위가 없어요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "우울/불안 점수(T=50)는 이 척도에서 표시되는 가장 낮은 점수입니다. 이 점수 구간에서는 또래 아이들과 비교할 때 차이를 세분해서 볼 필요가 없어서 백분위를 따로 계산하지 않습니다. 우울/불안 점수가 가장 낮은 점수라는 것은 또래 평균과 비슷하거나 그보다 낮다는 뜻입니다.",
+   "message": "우울/불안 점수는 이 척도에서 표시되는 가장 낮은 점수라서 백분위를 따로 계산하지 않습니다. 이 점수는 또래 평균과 비슷하거나 그보다 낮다는 뜻입니다.",
    "evidence_ids": [
     "III.anxdep"
    ],
@@ -2689,10 +2677,10 @@
      "input_tokens": 44,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16217,
-     "output_tokens": 192,
+     "output_tokens": 121,
      "stop_reason": "end_turn",
-     "latency_ms": 3368,
-     "cost_usd": 0.0026257
+     "latency_ms": 2338,
+     "cost_usd": 0.0022706999999999996
     }
    ]
   },
@@ -2710,7 +2698,7 @@
    "question_masked": "사회성 척도는 왜 미실시라고 나와요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회성 척도(사회성, 학업수행, 총 사회능력)는 이번 검사에 포함되지 않았기 때문입니다. 필요하면 이후에 따로 실시할 수 있습니다.",
+   "message": "사회성 척도(사회성, 학업수행, 총 사회능력)는 이번 검사에 포함되지 않았습니다. 필요하면 이후에 따로 실시할 수 있습니다.",
    "evidence_ids": [
     "I.note"
    ],
@@ -2735,10 +2723,10 @@
      "input_tokens": 39,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16217,
-     "output_tokens": 103,
+     "output_tokens": 99,
      "stop_reason": "end_turn",
-     "latency_ms": 2093,
-     "cost_usd": 0.0021757
+     "latency_ms": 3066,
+     "cost_usd": 0.0021557
     }
    ]
   },
@@ -2754,7 +2742,7 @@
    "question_masked": "백분위가 뭐예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타냅니다. 이 보고서에서는 '상위 약 몇 %'로 표현해서 보여 줍니다. 예를 들어 위축 항목에서 아이의 점수가 '상위 약 3%'라고 나왔다면, 또래 중에 아이와 같거나 더 높은 점수를 받은 아이가 약 3%라는 뜻입니다.",
+   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타냅니다. 이 보고서에서는 '상위 약 몇 %'로 표현해요. 예를 들어 아이의 위축 점수는 상위 약 3%에 해당하는데, 이는 또래 아이들 중에서 아이보다 위축 점수가 낮은 아이들의 비율을 보여 주는 것입니다.",
    "evidence_ids": [
     "term.percentile",
     "III.withdrawn"
@@ -2762,9 +2750,9 @@
    "guard_result": "regen",
    "guard_failures": [
     [
-     "number:3",
+     "number:18",
      "number:100",
-     "number:97"
+     "number:82"
     ],
     []
    ],
@@ -2785,10 +2773,10 @@
      "input_tokens": 29,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16217,
-     "output_tokens": 213,
+     "output_tokens": 189,
      "stop_reason": "end_turn",
-     "latency_ms": 2925,
-     "cost_usd": 0.0027156999999999997
+     "latency_ms": 2793,
+     "cost_usd": 0.0025957
     },
     {
      "stage": "answer",
@@ -2796,10 +2784,10 @@
      "input_tokens": 374,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16217,
-     "output_tokens": 222,
+     "output_tokens": 212,
      "stop_reason": "end_turn",
-     "latency_ms": 3824,
-     "cost_usd": 0.0031057
+     "latency_ms": 3025,
+     "cost_usd": 0.0030556999999999997
     }
    ]
   },
@@ -2815,7 +2803,7 @@
    "question_masked": "T점수는 어떻게 읽으면 되나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "T점수는 같은 나이대·성별 또래와 비교해서 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 이 아이의 위축 점수는 T=69인데, 이는 또래보다 높게 나타난 영역이라는 의미입니다.",
+   "message": "T점수는 같은 나이대, 같은 성별 또래 아이들과 비교해서 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 아이의 위축 점수는 T=69인데, 이는 같은 나이 남자 또래들과 비교했을 때 위축 행동이 또래보다 많이 보고되었다는 의미입니다.",
    "evidence_ids": [
     "term.t_score",
     "III.withdrawn"
@@ -2841,10 +2829,10 @@
      "input_tokens": 37,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16217,
-     "output_tokens": 200,
+     "output_tokens": 231,
      "stop_reason": "end_turn",
-     "latency_ms": 3519,
-     "cost_usd": 0.0026587
+     "latency_ms": 4081,
+     "cost_usd": 0.0028136999999999997
     }
    ]
   },
@@ -2862,10 +2850,11 @@
    "question_masked": "보고서에 적힌 권고 사항은 언제까지 해야 하나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "보고서는 3–6개월 후 재평가를 권고하고 있습니다. 그 기간 동안 상담을 통해 가정과 학교에서의 구체적인 행동 양상을 함께 확인하는 것이 도움이 된다고 했습니다. 다만 정확한 일정이나 방법은 상담사와 함께 정하실 수 있습니다.",
+   "message": "보고서의 권고 사항은 '3–6개월 후 재평가'와 '상담을 통한 행동 양상 확인', '담임 교사가 답하는 교사용 TRF 병행 고려'입니다. 구체적인 기간이나 횟수는 보고서에 적혀 있지 않습니다. 상담을 통해 아이의 상태를 함께 살피면서 상담사와 함께 진행 계획을 세우는 것이 좋습니다. 상담 과정에서 필요한 기간과 방법을 논의할 수 있습니다.",
    "evidence_ids": [
     "VI.rec1",
     "VI.rec2",
+    "VI.rec3",
     "VI.p3"
    ],
    "guard_result": "pass",
@@ -2891,7 +2880,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1152,
+     "latency_ms": 859,
      "cost_usd": 0.001315
     },
     {
@@ -2900,10 +2889,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16217,
-     "output_tokens": 208,
+     "output_tokens": 274,
      "stop_reason": "end_turn",
-     "latency_ms": 3160,
-     "cost_usd": 0.0027077
+     "latency_ms": 4457,
+     "cost_usd": 0.0030377
     }
    ]
   },
@@ -2921,9 +2910,9 @@
    "question_masked": "작년 검사와 비교하면 점수가 얼마나 달라졌나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "보고서에 작년 검사 결과가 적혀 있지 않습니다. 이번 검사는 할머니께서 평소 모습을 떠올려 답하신 결과만 담고 있습니다. 점수 변화를 확인하려면 다음에 재평가할 때 이번 결과와 비교할 수 있습니다. 보고서에서도 3~6개월 후 재평가를 권고하고 있으므로, 그때 측정한 점수로 어떻게 달라졌는지 살펴볼 수 있습니다. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다.",
+   "message": "보고서에 적혀 있지 않습니다. 이번 검사 결과만 있어서 작년 검사와 비교할 수 없습니다. 다만 보고서에는 \"학령 초기 적응이 이루어지는 시기이므로 3–6개월 간격으로 다시 평가해 변화를 확인하는 것이 권장\"된다고 적혀 있습니다. 앞으로 어떻게 변하는지 추적하는 계획이 있으시면 상담에서 상담사와 함께 이야기할 수 있습니다. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다.",
    "evidence_ids": [
-    "VI.rec2"
+    "VI.p3"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -2932,7 +2921,7 @@
    "note_saved": true,
    "intent": "explain",
    "intent_source": "llm",
-   "intent_confidence": 0.95,
+   "intent_confidence": 0.92,
    "b4": [],
    "b5": null,
    "b6": [],
@@ -2948,7 +2937,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1203,
+     "latency_ms": 1423,
      "cost_usd": 0.001315
     },
     {
@@ -2957,10 +2946,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16217,
-     "output_tokens": 249,
+     "output_tokens": 273,
      "stop_reason": "end_turn",
-     "latency_ms": 3559,
-     "cost_usd": 0.0029127
+     "latency_ms": 5264,
+     "cost_usd": 0.0030326999999999997
     }
    ]
   },
@@ -2980,7 +2969,7 @@
    "question_masked": "위축 점수가 가장 높게 나왔는데 이게 무슨 뜻이에요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "위축 점수는 다른 사람과 어울리기보다 혼자 있으려 하는 정도를 측정하는 것입니다. 아이의 위축 점수는 T=69로, 또래 평균보다 높게 나왔습니다. 이는 상위 약 3%에 해당하는 점수로, 같은 나이 아이들에 비해 혼자 있으려 하는 경향이 더 많이 보고되었다는 뜻입니다.\n\n보고서에서는 새로운 활동이나 대인 관계에서 참여를 주저하는 모습이 상대적으로 많이 보고되었다고 적고 있습니다. 또한 할머니께서 보고하신 \"학교에서 혼자 지냄\"이라는 내용과도 일치하는 양상입니다.\n\n이 점수는 관찰 권고 범위에 있으므로, 어떤 상황에서 혼자 있으려 하는지, 예를 들어 쉬는 시간에 어디서 누구와 지내는지 같은 구체적인 장면을 적어 두시면 상담에서 함께 이야기할 때 도움이 됩니다.",
+   "message": "위축 점수는 다른 사람과 어울리기보다 혼자 있으려 하는 정도를 묻는 척도입니다. 아이의 위축 점수는 T=69로, 또래 중 상위 약 3%에 해당하는 높은 점수가 나왔어요.\n\n이 점수는 관찰 권고 범위에 있습니다. 새로운 활동이나 대인 상황에서 참여를 주저하는 모습이 또래보다 많이 보고되었다는 뜻이에요. 특히 보호자님께서 보고하신 '학교에서 혼자 지냄'이라는 관찰과 일치하는 결과입니다.\n\n이것이 정확히 어떤 상황에서 나타나는지, 앞으로 어떻게 지켜봐야 하는지는 상담에서 상담사와 함께 자세히 다룰 수 있습니다. 지금은 구체적으로 언제, 어디서 혼자 있으려 하는지 적어 두시면 상담 때 도움이 됩니다.",
    "evidence_ids": [
     "III.withdrawn",
     "V.withdrawn",
@@ -3008,10 +2997,10 @@
      "input_tokens": 51,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16217,
-     "output_tokens": 507,
+     "output_tokens": 463,
      "stop_reason": "end_turn",
-     "latency_ms": 5853,
-     "cost_usd": 0.0042077
+     "latency_ms": 6715,
+     "cost_usd": 0.003987699999999999
     }
    ]
   },
@@ -3218,7 +3207,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 839,
+     "latency_ms": 1564,
      "cost_usd": 0.001323
     }
    ]
@@ -3267,7 +3256,7 @@
    "question_masked": "우울/불안 점수가 T점수 64점이면 어느 정도예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "우울/불안 점수 T=64는 상위 약 8%에 해당하는 점수입니다. 관찰 권고 범위에 있으며, 기준선(60)보다 4포인트 높습니다.\n\n이 점수는 걱정하거나 긴장하는 등 불안과 관련된 반응이 또래보다 많이 보고되었다는 뜻입니다. 보고서에서 낮잠 불안 증상과 일치하는 양상으로 보고 있습니다. 구체적인 의미와 앞으로의 대응 방법은 상담에서 상담사와 함께 다룰 수 있습니다.",
+   "message": "우울/불안 점수가 T=64라는 것은 상위 약 8%에 해당하는 점수입니다. 이 점수는 관찰 권고 범위에 속하며, 기준선 값 60에서 4점 이상입니다. 즉 또래보다 걱정하거나 긴장하는 등 불안 관련 반응이 더 많이 보고되었다는 뜻입니다. 보고서에서는 낯선 상황에서 불안 반응이 커지는지 살펴볼 필요가 있다고 했으며, 보호자 보고의 '야간 불안'과 일치하는 양상으로 나타났습니다.",
    "evidence_ids": [
     "III.anxdep",
     "V.anxdep"
@@ -3293,10 +3282,10 @@
      "input_tokens": 45,
      "cache_write_tokens": 16336,
      "cache_read_tokens": 0,
-     "output_tokens": 297,
+     "output_tokens": 298,
      "stop_reason": "end_turn",
-     "latency_ms": 4773,
-     "cost_usd": 0.02195
+     "latency_ms": 4834,
+     "cost_usd": 0.021955
     }
    ]
   },
@@ -3314,7 +3303,7 @@
    "question_masked": "주의집중 문제 점수 T점수 57점은 기준선에서 얼마나 떨어져 있나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "주의집중 문제 점수 T=57은 관찰 권고 범위의 기준선인 60T보다 3점 아래에 있습니다. 아직 기준선에 미치지 못했으므로 또래 평균 범위에 속합니다.",
+   "message": "주의집중 문제 T점수 57점은 관찰 권고 기준선인 60점 아래에 있으며, 기준선에서 3점 낮습니다. 또래 평균 범위에 속하는 점수입니다.",
    "evidence_ids": [
     "III.attention"
    ],
@@ -3339,10 +3328,10 @@
      "input_tokens": 57,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 113,
+     "output_tokens": 106,
      "stop_reason": "end_turn",
-     "latency_ms": 2381,
-     "cost_usd": 0.0022556000000000004
+     "latency_ms": 2104,
+     "cost_usd": 0.0022206000000000005
     }
    ]
   },
@@ -3362,16 +3351,14 @@
    "question_masked": "우울/불안 점수가 T점수 64점이라 마음이 쓰이는데 이 점수가 어떤 의미인지 알려주세요",
    "route": "answer",
    "label": "AI 생성",
-   "message": "우울/불안 점수가 기준 근처에 있는 숫자를 보면 마음이 쓰일 수 있어요. 보고서에 따르면 아이의 우울/불안 점수는 T=64로, 관찰 권고 범위에 속합니다. 이는 걱정하거나 긴장하는 등 불안과 관련된 반응이 또래보다 많이 보고된다는 뜻입니다. T=64는 상위 약 8%에 해당하는 점수이며, 관찰 권고 기준인 T=60을 4점 위로 넘어선 상태입니다. 보고서에서는 낯선 상황에서 불안 반응이 커지는지 살펴볼 필요가 있다고 했고, 어머니께서 보고하신 야간 불안 증상이 이와 일치한다고 기록했습니다. 구체적으로 언제, 어떤 상황에서 걱정하거나 불안해하는 모습이 나타나는지 적어 두시면 상담에서 함께 살펴볼 때 도움이 됩니다.",
+   "message": "우울/불안 점수가 높아서 마음이 쓰이시는군요. 아이의 우울/불안 점수는 T=64로, 상위 약 8%에 해당하는 점수입니다. 이는 관찰 권고 범위(기준선 60T)보다 4점 높은 수준입니다. 보고서에 따르면 걱정하거나 긴장하는 등 불안과 관련된 반응이 또래보다 많이 보고되었다는 뜻입니다. 특히 보호자님이 보고하신 \"야간 불안\"이 이 점수와 일치하는 양상입니다. 낯선 상황에서 불안 반응이 어떻게 나타나는지 살펴볼 필요가 있으며, 언제 어디서 걱정하거나 불안해하는 모습이 보이는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
    "evidence_ids": [
     "III.anxdep",
-    "V.anxdep"
+    "V.anxdep",
+    "VII.1"
    ],
-   "guard_result": "regen",
+   "guard_result": "pass",
    "guard_failures": [
-    [
-     "evidence:unknown:II.anxdep"
-    ],
     []
    ],
    "note_saved": false,
@@ -3391,21 +3378,10 @@
      "input_tokens": 68,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 468,
+     "output_tokens": 411,
      "stop_reason": "end_turn",
-     "latency_ms": 5403,
-     "cost_usd": 0.0040416
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 128,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 16336,
-     "output_tokens": 469,
-     "stop_reason": "end_turn",
-     "latency_ms": 6361,
-     "cost_usd": 0.0041066
+     "latency_ms": 6235,
+     "cost_usd": 0.0037566000000000006
     }
    ]
   },
@@ -3423,7 +3399,7 @@
    "question_masked": "사회적 미성숙 점수 옆에는 왜 백분위가 없어요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회적 미성숙 점수(T=50)는 이 척도에서 표시되는 가장 낮은 점수여서 백분위를 따로 계산하지 않습니다. 이 점수는 또래 평균과 비슷하거나 그보다 낮다는 뜻입니다.",
+   "message": "사회적 미성숙 점수(T=50)는 이 척도에서 표시되는 가장 낮은 점수여서 백분위를 따로 계산하지 않습니다. 이 점수는 또래 평균과 비슷하거나 그보다 낮다는 뜻입니다. 백분위는 보통 더 높은 점수들을 비교할 때 쓰기 때문에, 가장 낮은 점수 구간에서는 따로 계산하지 않는 것입니다.",
    "evidence_ids": [
     "III.socimm"
    ],
@@ -3448,10 +3424,10 @@
      "input_tokens": 47,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 129,
+     "output_tokens": 196,
      "stop_reason": "end_turn",
-     "latency_ms": 3588,
-     "cost_usd": 0.0023256
+     "latency_ms": 2661,
+     "cost_usd": 0.0026606000000000004
     }
    ]
   },
@@ -3469,10 +3445,9 @@
    "question_masked": "사회성 척도는 왜 미실시라고 나와요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회성 척도는 초등학생부터 적용하는 척도라서 이번 검사에서는 실시하지 않았습니다. 아이가 초등학생이 되면 그때 함께 실시할 수 있습니다.",
+   "message": "사회성 척도는 이번 검사에 포함되지 않았습니다. 사회성, 학업수행, 총 사회능력 척도는 초등학생부터 적용하는 항목이라서, 아이의 나이에는 실시하지 않은 것입니다. 학업수행 척도는 초등학생이 되면 함께 실시할 수 있습니다.",
    "evidence_ids": [
-    "I.note",
-    "H.sex_age"
+    "I.note"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -3495,10 +3470,10 @@
      "input_tokens": 39,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 113,
+     "output_tokens": 153,
      "stop_reason": "end_turn",
-     "latency_ms": 2170,
-     "cost_usd": 0.0022376
+     "latency_ms": 3234,
+     "cost_usd": 0.0024376000000000003
     }
    ]
   },
@@ -3514,7 +3489,7 @@
    "question_masked": "백분위가 뭐예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타내는 거예요. 이 보고서에서는 '상위 약 몇 %'라고 표현해서 보여 주고 있습니다. 예를 들어 아이의 우울/불안 점수는 상위 약 8%에 해당하는데, 이는 또래 아이들 중에서 아이보다 우울/불안 점수가 낮은 아이들이 92% 정도라는 뜻입니다.",
+   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타내는 거예요. 이 화면에서는 '상위 약 몇 %'로 바꿔 보여 줍니다. 예를 들어 아이의 우울/불안 점수는 상위 약 8%에 해당하는데, 이건 또래 아이들 가운데 아이보다 점수가 낮은 아이들이 92% 정도라는 뜻이에요.",
    "evidence_ids": [
     "term.percentile",
     "III.anxdep"
@@ -3522,8 +3497,7 @@
    "guard_result": "regen",
    "guard_failures": [
     [
-     "number:8",
-     "number:92"
+     "number:100"
     ],
     []
    ],
@@ -3544,21 +3518,21 @@
      "input_tokens": 29,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 207,
+     "output_tokens": 228,
      "stop_reason": "end_turn",
-     "latency_ms": 3855,
-     "cost_usd": 0.0026976000000000005
+     "latency_ms": 3927,
+     "cost_usd": 0.0028026000000000006
     },
     {
      "stage": "answer",
      "prompt_version": "answer_v3",
-     "input_tokens": 263,
+     "input_tokens": 152,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 234,
+     "output_tokens": 223,
      "stop_reason": "end_turn",
-     "latency_ms": 4020,
-     "cost_usd": 0.0030666000000000005
+     "latency_ms": 3917,
+     "cost_usd": 0.0029006000000000006
     }
    ]
   },
@@ -3574,7 +3548,7 @@
    "question_masked": "T점수는 어떻게 읽으면 되나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "T점수는 같은 나이대·성별 또래와 비교해 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 아이의 우울/불안 점수가 T=64라면, 이는 같은 나이·성별 또래보다 걱정하거나 긴장하는 반응이 더 많이 보고되었다는 의미입니다.",
+   "message": "T점수는 아이의 점수가 같은 나이대·성별 또래와 비교해 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 우울/불안 척도의 T=64라면, 이 점수가 또래 평균보다 높게 나왔다는 의미입니다.",
    "evidence_ids": [
     "term.t_score",
     "III.anxdep"
@@ -3600,10 +3574,10 @@
      "input_tokens": 37,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 227,
+     "output_tokens": 200,
      "stop_reason": "end_turn",
-     "latency_ms": 3960,
-     "cost_usd": 0.0028056000000000005
+     "latency_ms": 4094,
+     "cost_usd": 0.0026706000000000004
     }
    ]
   },
@@ -3621,18 +3595,18 @@
    "question_masked": "보고서에 적힌 권고 사항은 언제까지 해야 하나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "보고서에는 3–6개월 후 재평가와 상담을 통한 행동 양상 확인, 기관 교사의 관찰 정보 병행 고려를 권고하고 있습니다. 보고서는 지금 결과만으로 바로 임상 개입이 필요하다고 보기는 어렵지만, 선별 기준을 넘은 영역이 있어 그 영역을 지켜볼 필요가 있다고 설명합니다. 유아기는 발달 속도와 환경에 따라 행동 변화의 폭이 큰 시기이므로 3–6개월 간격으로 다시 평가해 변화를 확인하는 것이 권장된다고 적혀 있습니다. 구체적인 일정과 진행 방식에 대해서는 상담에서 상담사와 함께 정할 수 있습니다.",
+   "message": "보고서의 권고 사항이 어느 정도 기간 동안 필요한지는 보고서에 적혀 있지 않습니다. 다만 보고서는 3–6개월 후 재평가와 상담을 통한 행동 양상 확인을 권고하고 있습니다. 그 외 구체적인 시기나 기간에 대해서는 상담에서 상담사와 함께 다룰 수 있습니다. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다.",
    "evidence_ids": [
-    "VI.p3",
     "VI.rec1",
     "VI.rec2",
-    "VI.rec3"
+    "VI.rec3",
+    "VI.p3"
    ],
    "guard_result": "pass",
    "guard_failures": [
     []
    ],
-   "note_saved": false,
+   "note_saved": true,
    "intent": "explain",
    "intent_source": "llm",
    "intent_confidence": 0.95,
@@ -3640,7 +3614,7 @@
    "b5": null,
    "b6": [],
    "route_ok": true,
-   "r2": null,
+   "r2": true,
    "r4": true,
    "llm_calls": [
     {
@@ -3651,7 +3625,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1122,
+     "latency_ms": 1098,
      "cost_usd": 0.001315
     },
     {
@@ -3660,10 +3634,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 367,
+     "output_tokens": 255,
      "stop_reason": "end_turn",
-     "latency_ms": 5859,
-     "cost_usd": 0.0035146000000000005
+     "latency_ms": 3052,
+     "cost_usd": 0.0029546000000000004
     }
    ]
   },
@@ -3711,7 +3685,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1403,
+     "latency_ms": 1417,
      "cost_usd": 0.001315
     },
     {
@@ -3720,10 +3694,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 164,
+     "output_tokens": 89,
      "stop_reason": "end_turn",
-     "latency_ms": 3393,
-     "cost_usd": 0.0024996000000000003
+     "latency_ms": 2539,
+     "cost_usd": 0.0021246000000000004
     },
     {
      "stage": "answer",
@@ -3731,10 +3705,10 @@
      "input_tokens": 136,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 87,
+     "output_tokens": 53,
      "stop_reason": "end_turn",
-     "latency_ms": 2540,
-     "cost_usd": 0.0022046000000000006
+     "latency_ms": 2210,
+     "cost_usd": 0.0020346
     }
    ]
   },
@@ -3754,7 +3728,7 @@
    "question_masked": "우울/불안 점수가 가장 높게 나왔는데 이게 무슨 뜻이에요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "우울/불안 점수가 T=64로 가장 높게 나왔어요. 이 점수는 관찰 권고 범위에 있다는 뜻으로, 걱정하거나 긴장하는 등 불안과 관련된 반응이 또래보다 많이 보고되었다는 의미입니다. 상위 약 8%에 해당하는 점수이며, 기준선인 60점(관찰 권고 범위)보다 4점 위에 있어요. 보호자님이 보고해주신 야간 불안, 즉 밤에 무서운 꿈을 꿨다며 자주 깨는 모습이 이 점수에 잘 반영되어 있습니다. 낯선 상황에서 불안 반응이 커지는지 관찰해 볼 필요가 있으며, 상담에서 걱정하거나 불안해하는 구체적인 상황과 시간을 함께 확인하는 것이 도움이 될 거예요.",
+   "message": "우울/불안 점수는 T=64로, 또래 아이들 가운데 상위 약 8%에 해당하는 점수입니다. 걱정하거나 긴장하는 등 불안과 관련된 반응이 또래보다 많이 보고되었다는 뜻이에요. 이 점수는 관찰 권고 범위에 있으며, 보고서에 적힌 \"야간 불안\" 내용과도 일치합니다. 아이가 밤에 무서운 꿈을 꿨다며 자주 깬다는 보호자 보고가 이 점수에 반영된 것 같습니다. 낯선 상황에서 불안 반응이 어떻게 나타나는지 관찰해 볼 필요가 있으며, 상담을 통해 불안을 보이는 구체적인 상황과 시간이 언제인지 함께 이야기하는 것이 도움이 됩니다.",
    "evidence_ids": [
     "III.anxdep",
     "V.anxdep",
@@ -3781,10 +3755,10 @@
      "input_tokens": 54,
      "cache_write_tokens": 0,
      "cache_read_tokens": 16336,
-     "output_tokens": 442,
+     "output_tokens": 396,
      "stop_reason": "end_turn",
-     "latency_ms": 6091,
-     "cost_usd": 0.0038976
+     "latency_ms": 6040,
+     "cost_usd": 0.0036676000000000005
     }
    ]
   },
@@ -3991,7 +3965,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1219,
+     "latency_ms": 1424,
      "cost_usd": 0.001326
     }
    ]
@@ -4040,14 +4014,15 @@
    "question_masked": "비행 점수가 T점수 67점이면 어느 정도예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "비행 점수는 T점수 67점으로, 상위 약 4%에 해당하는 점수입니다. 이 점수는 거짓말을 하거나 규칙을 어기는 행동이 또래 평균보다 높게 나타나고 있다는 뜻입니다.\n\n이 점수는 관찰 권고 범위에 있습니다. 전문 상담 권고 범위(70T)보다는 낮지만, 또래와 비교해 주의 깊게 살피도록 권고되는 범위라는 의미입니다. 보고서에도 귀가 시간을 자주 어기고 연락이 안 될 때가 있다는 내용이 적혀 있습니다.\n\n상담에서는 이런 행동이 어떤 상황에서 나타나는지, 그 배경에 무엇이 있는지 함께 살펴볼 수 있습니다. 규칙을 어기는 일이 어떤 시간이나 장소에서 생기는지 미리 적어 두시면 상담할 때 도움이 될 것입니다.",
+   "message": "비행 점수 T=67은 관찰 권고 범위에 있습니다. 이는 상위 약 4%에 해당하는 점수로, 거짓말이나 규칙 위반 같은 행동이 또래보다 높게 보고되었다는 뜻입니다. 다만 전문 상담 권고 범위의 기준인 70T에는 미치지 않고 있습니다. 보고서에서는 이 영역을 관찰이 권고되는 범위로 보고 있으며, 규칙을 어기는 일이 어떤 상황에서 생기는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
    "evidence_ids": [
-    "III.delinquent",
-    "V.delinquent",
-    "VII.2"
+    "III.delinquent"
    ],
-   "guard_result": "pass",
+   "guard_result": "regen",
    "guard_failures": [
+    [
+     "range_label:또래 평균 범위"
+    ],
     []
    ],
    "note_saved": false,
@@ -4067,10 +4042,21 @@
      "input_tokens": 42,
      "cache_write_tokens": 17174,
      "cache_read_tokens": 0,
-     "output_tokens": 449,
+     "output_tokens": 284,
      "stop_reason": "end_turn",
-     "latency_ms": 5801,
-     "cost_usd": 0.0237545
+     "latency_ms": 4094,
+     "cost_usd": 0.0229295
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 114,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17174,
+     "output_tokens": 288,
+     "stop_reason": "end_turn",
+     "latency_ms": 4020,
+     "cost_usd": 0.0032714000000000003
     }
    ]
   },
@@ -4088,7 +4074,7 @@
    "question_masked": "공격성 점수가 T점수 81점인데 이 척도는 어떤 행동을 보는 건가요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "공격성 척도는 말이나 행동으로 다른 사람에게 공격적으로 대하는 정도를 봅니다. 예를 들어 말다툼을 하거나 고집을 부리는 모습, 쉽게 짜증을 내거나 화를 내는 모습, 다른 사람을 때리거나 물건을 부수는 모습 같은 행동들을 묻는 척도입니다. 아이의 경우 이 점수가 T=81로 상위 약 1%에 해당하며, 반항, 분노 폭발, 신체적·언어적 공격 행동이 또래보다 훨씬 높게 보고되었습니다. 보고서에서도 '잦은 짜증·반항'이라는 보호자 의견과 일치하는 양상으로 기록했습니다.",
+   "message": "공격성 척도는 말이나 행동으로 다른 사람에게 공격적으로 대하는 정도를 봅니다. 예를 들어 말다툼을 하거나 고집을 부리는 모습, 쉽게 짜증을 내거나 화를 내는 모습, 다른 사람을 때리거나 물건을 부수는 모습 같은 행동들이 이 척도에 포함됩니다.\n\n아이의 T점수 81점은 상위 약 1%에 해당하는 점수로, 전문 상담 권고 범위에 있습니다. 보고서에서도 반항, 분노 폭발, 신체적·언어적 공격 행동이 임상 기준을 초과하여 보고됐으며, 보호자님께서 보고하신 '잦은 짜증·반항'과 일치하는 양상이라고 적었습니다.",
    "evidence_ids": [
     "card.KCBCL_4_17.aggressive.clinical",
     "III.aggressive",
@@ -4115,10 +4101,10 @@
      "input_tokens": 56,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17174,
-     "output_tokens": 368,
+     "output_tokens": 407,
      "stop_reason": "end_turn",
-     "latency_ms": 4783,
-     "cost_usd": 0.0036134
+     "latency_ms": 6057,
+     "cost_usd": 0.0038084
     }
    ]
   },
@@ -4136,7 +4122,7 @@
    "question_masked": "주의집중 문제 점수 T점수 58점은 기준선에서 얼마나 떨어져 있나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "주의집중 문제 T점수 58점은 관찰 권고 기준선인 60T보다 2점 아래에 있습니다. 또한 전문 상담 권고 기준선인 70T보다는 12점 아래에 있습니다. 즉, 아이의 주의집중 문제는 기준선보다 낮은 또래 평균 범위에 있습니다.",
+   "message": "주의집중 문제 점수는 T=58로, 관찰 권고 범위의 기준선(60T) 아래에 있습니다. 기준선에서 2점 아래에 있고, 상위 약 21%에 해당합니다. 또래 평균 범위에 속하는 점수입니다.",
    "evidence_ids": [
     "III.attention"
    ],
@@ -4161,10 +4147,10 @@
      "input_tokens": 57,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17174,
-     "output_tokens": 154,
+     "output_tokens": 165,
      "stop_reason": "end_turn",
-     "latency_ms": 3690,
-     "cost_usd": 0.0025444
+     "latency_ms": 3408,
+     "cost_usd": 0.0025994
     }
    ]
   },
@@ -4184,12 +4170,12 @@
    "question_masked": "비행 점수가 T점수 67점이라 마음이 쓰이는데 이 점수가 어떤 의미인지 알려주세요",
    "route": "answer",
    "label": "AI 생성",
-   "message": "비행 점수를 보니 마음이 쓰이실 수 있겠어요. 비행 점수 T=67은 또래 아이들 가운데 상위 약 4%에 해당하는 점수로, 거짓말이나 규칙 위반 같은 행동이 또래보다 높게 보고되었다는 뜻입니다. 이 점수는 관찰 권고 범위에 있습니다. 보고서에 따르면 귀가 시간 미준수처럼 규칙을 어기는 일이 보호자 보고와 일치하는 양상으로 나타났습니다. 이 영역의 의미와 앞으로의 방향은 상담에서 상담사와 함께 다룰 수 있습니다. 상담 준비를 위해 규칙을 어기는 일이 어떤 상황에서 주로 생기는지, 언제쯤 시작되었는지 적어 두시면 도움이 됩니다.",
+   "message": "비행 점수가 67점이라니 마음이 쓰이실 수 있어요. 보고서에서 말하는 비행이란 거짓말을 하거나 규칙을 어기거나 잘못한 뒤에도 미안해하지 않는 행동들을 묶은 점수입니다. 아이의 67점은 또래 아이들의 약 96%보다 높은 수준으로, 관찰 권고 범위에 있습니다. 이는 전문 상담 권고 범위의 기준선 70T보다는 3점 낮지만, 관찰 권고 범위의 기준선 60T보다는 7점 높습니다. 보고서에 따르면 거짓말이나 규칙 위반 같은 행동이 또래 평균보다 다소 높게 보고되었으며, 귀가 시간을 자주 어기고 연락이 안 될 때가 있다는 아버지의 보고와 일치하는 양상입니다. 이 점수가 구체적으로 무엇을 의미하는지, 앞으로 어떻게 지원해야 할지는 상담에서 상담사와 함께 다룰 수 있습니다.",
    "evidence_ids": [
     "III.delinquent",
+    "card.KCBCL_4_17.delinquent.borderline",
     "V.delinquent",
-    "VII.2",
-    "card.KCBCL_4_17.delinquent.borderline"
+    "VII.2"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -4212,10 +4198,10 @@
      "input_tokens": 65,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17174,
-     "output_tokens": 431,
+     "output_tokens": 516,
      "stop_reason": "end_turn",
-     "latency_ms": 6716,
-     "cost_usd": 0.0039374
+     "latency_ms": 6245,
+     "cost_usd": 0.0043624
     }
    ]
   },
@@ -4233,7 +4219,7 @@
    "question_masked": "위축 점수 옆에는 왜 백분위가 없어요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "위축 점수는 이 척도에서 표시되는 가장 낮은 점수여서 백분위를 따로 계산하지 않습니다. 대신 또래 평균과 비슷하거나 그보다 낮다는 뜻입니다.",
+   "message": "위축 점수는 이 척도에서 표시되는 가장 낮은 점수여서 백분위를 따로 계산하지 않습니다. 또래 평균과 비슷하거나 그보다 낮다는 뜻입니다.",
    "evidence_ids": [
     "III.withdrawn"
    ],
@@ -4258,10 +4244,10 @@
      "input_tokens": 41,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17174,
-     "output_tokens": 113,
+     "output_tokens": 110,
      "stop_reason": "end_turn",
-     "latency_ms": 3250,
-     "cost_usd": 0.0023234
+     "latency_ms": 1891,
+     "cost_usd": 0.0023084
     }
    ]
   },
@@ -4279,7 +4265,7 @@
    "question_masked": "사회성 척도는 왜 미실시라고 나와요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회성 척도는 이번 검사에 포함되지 않았습니다. 사회성, 학업수행, 총 사회능력 척도는 더 어린 연령대를 대상으로 하는 항목이라 아이의 나이에는 적용되지 않았습니다. 필요하면 이후에 따로 실시할 수 있습니다.",
+   "message": "사회성 척도(사회성, 학업수행, 총 사회능력)는 이번 검사에 포함되지 않았습니다. 필요하면 이후에 따로 실시할 수 있습니다.",
    "evidence_ids": [
     "I.note"
    ],
@@ -4304,10 +4290,10 @@
      "input_tokens": 39,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17174,
-     "output_tokens": 146,
+     "output_tokens": 99,
      "stop_reason": "end_turn",
-     "latency_ms": 3688,
-     "cost_usd": 0.0024864
+     "latency_ms": 1989,
+     "cost_usd": 0.0022514
     }
    ]
   },
@@ -4323,69 +4309,9 @@
    "question_masked": "백분위가 뭐예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타내는 거예요. 이 보고서에서는 '상위 약 몇 %'로 표현하고 있습니다. 예를 들어 외현화 문제는 상위 약 1%에 해당한다고 했는데, 이는 아이의 점수보다 낮은 또래가 대부분이라는 뜻입니다.",
+   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타내는 거예요. 이 보고서에서는 '상위 약 몇 %'로 표현해서 보여 줍니다. 예를 들어 공격성이 상위 약 1%라는 것은 또래 아이들 가운데 99%가 이 아이보다 점수가 낮다는 뜻입니다.",
    "evidence_ids": [
     "term.percentile",
-    "II.externalizing"
-   ],
-   "guard_result": "regen",
-   "guard_failures": [
-    [
-     "number:100",
-     "number:2"
-    ],
-    []
-   ],
-   "note_saved": false,
-   "intent": "explain",
-   "intent_source": "keyword",
-   "intent_confidence": null,
-   "b4": [],
-   "b5": null,
-   "b6": [],
-   "route_ok": true,
-   "r2": null,
-   "r4": null,
-   "llm_calls": [
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 29,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 17174,
-     "output_tokens": 228,
-     "stop_reason": "end_turn",
-     "latency_ms": 4249,
-     "cost_usd": 0.0028864
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 263,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 17174,
-     "output_tokens": 206,
-     "stop_reason": "end_turn",
-     "latency_ms": 3780,
-     "cost_usd": 0.0030104
-    }
-   ]
-  },
-  {
-   "id": "T-EXP-09@001",
-   "type": "explain",
-   "expected_route": "answer",
-   "expected_evidence": [],
-   "tags": [],
-   "note": "",
-   "sample": "R-KCBCL_4_17-001",
-   "template_id": "T-EXP-09",
-   "question_masked": "T점수는 어떻게 읽으면 되나요?",
-   "route": "answer",
-   "label": "AI 생성",
-   "message": "T점수는 아이와 같은 나이대·성별 또래 아이들과 비교했을 때 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 이 보고서에서 공격성 T=81이라는 것은 공격성 행동이 또래보다 많이 나타난다는 의미입니다.",
-   "evidence_ids": [
-    "term.t_score",
     "III.aggressive"
    ],
    "guard_result": "pass",
@@ -4406,13 +4332,71 @@
     {
      "stage": "answer",
      "prompt_version": "answer_v3",
+     "input_tokens": 29,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17174,
+     "output_tokens": 201,
+     "stop_reason": "end_turn",
+     "latency_ms": 3759,
+     "cost_usd": 0.0027514
+    }
+   ]
+  },
+  {
+   "id": "T-EXP-09@001",
+   "type": "explain",
+   "expected_route": "answer",
+   "expected_evidence": [],
+   "tags": [],
+   "note": "",
+   "sample": "R-KCBCL_4_17-001",
+   "template_id": "T-EXP-09",
+   "question_masked": "T점수는 어떻게 읽으면 되나요?",
+   "route": "answer",
+   "label": "안전 응답",
+   "message": "보고서의 표현이 마음에 걸리셨을 것 같아요. 이 질문에는 보고서에 근거한 설명을 만들지 못했습니다. 자세한 설명은 상담에서 상담사와 함께 확인해 주세요. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다. 그때까지 궁금한 장면이 생기면 언제, 어떤 상황이었는지 메모해 두시면 상담에 도움이 됩니다.",
+   "evidence_ids": [],
+   "guard_result": "fallback",
+   "guard_failures": [
+    [
+     "number:81"
+    ],
+    [
+     "term:guard.th.007"
+    ]
+   ],
+   "note_saved": true,
+   "intent": "explain",
+   "intent_source": "keyword",
+   "intent_confidence": null,
+   "b4": [],
+   "b5": null,
+   "b6": null,
+   "route_ok": true,
+   "r2": true,
+   "r4": null,
+   "llm_calls": [
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
      "input_tokens": 37,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17174,
-     "output_tokens": 213,
+     "output_tokens": 299,
      "stop_reason": "end_turn",
-     "latency_ms": 3958,
-     "cost_usd": 0.0028194
+     "latency_ms": 3774,
+     "cost_usd": 0.0032494
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 160,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17174,
+     "output_tokens": 230,
+     "stop_reason": "end_turn",
+     "latency_ms": 3040,
+     "cost_usd": 0.0030274
     }
    ]
   },
@@ -4455,7 +4439,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 892,
+     "latency_ms": 1127,
      "cost_usd": 0.001315
     },
     {
@@ -4464,10 +4448,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17174,
-     "output_tokens": 65,
+     "output_tokens": 69,
      "stop_reason": "end_turn",
-     "latency_ms": 2788,
-     "cost_usd": 0.0020884000000000002
+     "latency_ms": 2449,
+     "cost_usd": 0.0021084000000000003
     }
    ]
   },
@@ -4515,7 +4499,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1367,
+     "latency_ms": 1479,
      "cost_usd": 0.001315
     },
     {
@@ -4524,10 +4508,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17174,
-     "output_tokens": 162,
+     "output_tokens": 174,
      "stop_reason": "end_turn",
-     "latency_ms": 2265,
-     "cost_usd": 0.0025734
+     "latency_ms": 2489,
+     "cost_usd": 0.0026334
     },
     {
      "stage": "answer",
@@ -4535,10 +4519,10 @@
      "input_tokens": 136,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17174,
-     "output_tokens": 155,
+     "output_tokens": 127,
      "stop_reason": "end_turn",
-     "latency_ms": 3489,
-     "cost_usd": 0.0026284
+     "latency_ms": 2660,
+     "cost_usd": 0.0024884
     }
    ]
   },
@@ -4558,7 +4542,7 @@
    "question_masked": "공격성 점수가 가장 높게 나왔는데 이게 무슨 뜻이에요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "공격성 척도는 말이나 행동으로 다른 사람에게 공격적으로 대하는 정도를 묻는 항목입니다. 아이의 공격성 점수는 T=81로 99%tile 초과에 해당하여 상위 약 1%에 해당하는 점수입니다. 이는 전문 상담 권고 범위인 70T를 넘어선 수준입니다. 보고서에 따르면 반항, 분노 폭발, 신체적·언어적 공격 행동이 임상 기준을 초과하여 보고되었으며, 아버지께서 보고하신 \"조금만 말해도 짜증을 내고 대들어서 대화가 안 돼요\"라는 내용과 일치하는 양상입니다. 아이에게 어떤 의미인지, 앞으로 어떻게 지원할지는 상담에서 상담사와 함께 자세히 다룰 수 있습니다. 상담 준비로, 짜증을 내거나 반항하기 전에 어떤 일이 있었는지, 어떤 상황에서 그런 모습이 나타나는지 구체적으로 적어 두시면 상담에서 도움이 될 것입니다.",
+   "message": "공격성 척도는 말이나 행동으로 다른 사람에게 공격적으로 대하는 정도를 묻는 척도예요. 조금만 말해도 짜증을 내고 대들기, 화가 나면 소리를 지르거나 물건을 던지기, 고집을 부리며 말다툼이 잦은 모습 같은 행동들을 보고 있습니다.\n\n아이의 공격성 점수는 T=81로, 상위 약 1%에 해당하는 수준이에요. 이는 전문 상담 권고 범위(70T 이상)를 넘었다는 뜻입니다. 반항, 분노 폭발, 신체적·언어적 공격 행동이 또래보다 뚜렷하게 높게 보고되었습니다. 아버지께서 보고해 주신 \"조금만 말해도 짜증을 내고 대들어서 대화가 안 돼요\"라는 내용과도 일치하는 양상입니다.\n\n아이에게 이것이 구체적으로 어떤 의미인지, 앞으로 어떻게 도와야 할지는 상담에서 상담사와 함께 다룰 수 있습니다. 준비하실 때 화를 내기 전에 어떤 일이 있었는지, 어떤 상황에서 자주 일어나는지 구체적으로 적어 두시면 상담에서 도움이 될 거예요.",
    "evidence_ids": [
     "III.aggressive",
     "V.aggressive",
@@ -4586,10 +4570,10 @@
      "input_tokens": 52,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17174,
-     "output_tokens": 504,
+     "output_tokens": 585,
      "stop_reason": "end_turn",
-     "latency_ms": 7476,
-     "cost_usd": 0.0042894
+     "latency_ms": 8222,
+     "cost_usd": 0.0046944
     }
    ]
   },
@@ -4831,7 +4815,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1325,
+     "latency_ms": 1157,
      "cost_usd": 0.001324
     }
    ]
@@ -4880,11 +4864,10 @@
    "question_masked": "총 문제행동 점수가 T점수 100점인데 이 척도는 어떤 행동을 보는 건가요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "총 문제행동은 보호자가 답한 문제행동 문항 전체를 합쳐서 본 점수입니다. 마음속으로 향하는 어려움(걱정, 슬픔, 위축 같은 내재화 문제), 겉으로 드러나는 행동의 어려움(규칙을 어기거나 공격적으로 행동하는 외현화 문제), 그리고 또래 관계, 생각, 집중 같은 그 밖의 영역을 모두 포함해서 봅니다. 즉, 여러 영역의 어려움을 한꺼번에 보여 주는 점수예요.\n\n아이의 총 문제행동 점수는 T=100으로, 상위 약 1%에 해당합니다. 이는 전문 상담이 권고되는 범위인 63T 이상에서 기준선을 40점 이상 넘은 상태입니다.",
+   "message": "총 문제행동은 보호자가 답한 문제행동 문항 전체를 합쳐서 본 점수입니다. 마음속으로 향하는 어려움(내재화)과 겉으로 드러나는 행동의 어려움(외현화), 그리고 또래 관계·생각·집중 등 그 밖의 여러 영역을 한꺼번에 보여 줍니다. 아이의 총 문제행동 점수는 T=100으로, 상위 약 1%에 해당하는 높은 수준이며 전문 상담 권고 범위에 있습니다. 여러 영역 가운데 어떤 모습이 가장 신경 쓰이는지 적어 두면 상담에서 이 결과를 이야기할 때 도움이 됩니다.",
    "evidence_ids": [
     "card.KCBCL_4_17.total.clinical",
-    "II.total",
-    "term.composite"
+    "II.total"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -4907,10 +4890,10 @@
      "input_tokens": 59,
      "cache_write_tokens": 18275,
      "cache_read_tokens": 0,
-     "output_tokens": 402,
+     "output_tokens": 369,
      "stop_reason": "end_turn",
-     "latency_ms": 6410,
-     "cost_usd": 0.02491275
+     "latency_ms": 5050,
+     "cost_usd": 0.02474775
     }
    ]
   },
@@ -4928,7 +4911,7 @@
    "question_masked": "사회성 척도는 왜 미실시라고 나와요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회성 척도는 이번 검사에 포함되지 않았습니다. 친구 관계, 활동 참여, 학업 수행 같은 사회능력을 보는 척도인데, 아이의 나이에 맞춰 다른 척도들을 우선적으로 실시했기 때문입니다. 필요하면 이후에 따로 실시할 수 있습니다.",
+   "message": "사회성 척도는 이번 검사에 포함되지 않았습니다. 필요하면 이후에 따로 실시할 수 있습니다.",
    "evidence_ids": [
     "I.note"
    ],
@@ -4953,10 +4936,10 @@
      "input_tokens": 39,
      "cache_write_tokens": 0,
      "cache_read_tokens": 18275,
-     "output_tokens": 157,
+     "output_tokens": 80,
      "stop_reason": "end_turn",
-     "latency_ms": 3606,
-     "cost_usd": 0.0026515
+     "latency_ms": 2028,
+     "cost_usd": 0.0022665
     }
    ]
   },
@@ -4972,16 +4955,17 @@
    "question_masked": "백분위가 뭐예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타내는 거예요. 이 보고서에서는 '상위 약 몇 %'로 표현하고 있습니다. 예를 들어 내재화 문제의 백분위가 99라면, 또래 아이들 중에서 아이보다 점수가 낮은 아이들이 99% 정도라는 뜻이에요. 즉, 아이가 상위 약 1%에 해당한다는 의미입니다.",
+   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타내는 거예요. 이 보고서에서는 '상위 약 몇 %'로 바꾸어 보여 주고 있습니다. 예를 들어 아이의 내재화 문제 점수는 상위 약 1%에 해당하는데, 이는 또래 아이들 가운데 거의 대부분의 아이보다 점수가 높다는 뜻입니다.",
    "evidence_ids": [
     "term.percentile",
-    "II.internalizing",
-    "term.notation_percentile"
+    "II.internalizing"
    ],
    "guard_result": "regen",
    "guard_failures": [
     [
-     "number:100"
+     "number:1",
+     "number:100",
+     "number:99"
     ],
     []
    ],
@@ -5002,21 +4986,21 @@
      "input_tokens": 29,
      "cache_write_tokens": 0,
      "cache_read_tokens": 18275,
-     "output_tokens": 231,
+     "output_tokens": 234,
      "stop_reason": "end_turn",
-     "latency_ms": 3305,
-     "cost_usd": 0.0030115
+     "latency_ms": 4063,
+     "cost_usd": 0.0030265
     },
     {
      "stage": "answer",
      "prompt_version": "answer_v3",
-     "input_tokens": 152,
+     "input_tokens": 374,
      "cache_write_tokens": 0,
      "cache_read_tokens": 18275,
-     "output_tokens": 244,
+     "output_tokens": 224,
      "stop_reason": "end_turn",
-     "latency_ms": 4548,
-     "cost_usd": 0.0031995
+     "latency_ms": 4026,
+     "cost_usd": 0.0033215
     }
    ]
   },
@@ -5032,10 +5016,10 @@
    "question_masked": "T점수는 어떻게 읽으면 되나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "T점수는 같은 나이대·성별 또래와 비교해 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 이 보고서에서는 문제행동 척도를 사용했으므로 T점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 아이의 총 문제행동 T점수는 100으로, 이는 또래 상위 약 1%에 해당하는 매우 높은 수준입니다.",
+   "message": "T점수는 같은 나이대·성별 또래와 비교해 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수예요. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다.\n\n보고서에서 'T=78'처럼 표시되는데, 예를 들어 아이의 내재화 문제가 T=78이면, 같은 또래 중에서도 상위 약 1%에 해당하는 높은 점수라는 의미예요. T점수가 높을수록 또래 아이들보다 그 영역의 행동이 더 많이 나타난다는 뜻입니다.",
    "evidence_ids": [
     "term.t_score",
-    "II.total"
+    "II.internalizing"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -5058,10 +5042,10 @@
      "input_tokens": 37,
      "cache_write_tokens": 0,
      "cache_read_tokens": 18275,
-     "output_tokens": 220,
+     "output_tokens": 281,
      "stop_reason": "end_turn",
-     "latency_ms": 3169,
-     "cost_usd": 0.0029645
+     "latency_ms": 4046,
+     "cost_usd": 0.0032695
     }
    ]
   },
@@ -5104,7 +5088,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1128,
+     "latency_ms": 854,
      "cost_usd": 0.001315
     },
     {
@@ -5113,10 +5097,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 18275,
-     "output_tokens": 80,
+     "output_tokens": 55,
      "stop_reason": "end_turn",
-     "latency_ms": 1524,
-     "cost_usd": 0.0022735
+     "latency_ms": 2239,
+     "cost_usd": 0.0021485
     }
    ]
   },
@@ -5148,7 +5132,7 @@
    "note_saved": true,
    "intent": "explain",
    "intent_source": "llm",
-   "intent_confidence": 0.95,
+   "intent_confidence": 0.92,
    "b4": [],
    "b5": null,
    "b6": null,
@@ -5164,7 +5148,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1243,
+     "latency_ms": 1508,
      "cost_usd": 0.001315
     },
     {
@@ -5173,10 +5157,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 18275,
-     "output_tokens": 175,
+     "output_tokens": 85,
      "stop_reason": "end_turn",
-     "latency_ms": 2368,
-     "cost_usd": 0.0027485
+     "latency_ms": 1853,
+     "cost_usd": 0.0022985
     },
     {
      "stage": "answer",
@@ -5184,10 +5168,10 @@
      "input_tokens": 136,
      "cache_write_tokens": 0,
      "cache_read_tokens": 18275,
-     "output_tokens": 179,
+     "output_tokens": 108,
      "stop_reason": "end_turn",
-     "latency_ms": 2392,
-     "cost_usd": 0.0028585
+     "latency_ms": 1871,
+     "cost_usd": 0.0025035
     }
    ]
   },
@@ -5206,25 +5190,30 @@
    "template_id": "T-EXP-12",
    "question_masked": "총 문제행동 점수가 가장 높게 나왔는데 이게 무슨 뜻이에요?",
    "route": "answer",
-   "label": "AI 생성",
-   "message": "총 문제행동은 보호자가 답한 문제행동 문항 전체를 합쳐서 본 점수입니다. 여러 영역의 어려움을 한꺼번에 보여 주는 점수예요.\n\n아이의 총 문제행동 점수는 T=100으로, 상위 약 1%에 해당하는 매우 높은 점수입니다. 이는 전문 상담 권고 범위에 있으며, 기준선인 63T보다 37점이 높습니다. 보고서에 따르면 이 점수는 내재화 문제(마음속으로 향하는 어려움)와 외현화 문제(겉으로 드러나는 행동 어려움)가 함께 높게 나온 결과이며, 여러 영역에서 임상 수준의 어려움이 동시에 나타나고 있음을 의미합니다.\n\n이 결과가 아이의 일상 생활 전반에 어떤 영향을 미치고 있는지, 앞으로 어떻게 지원해야 할지는 상담에서 상담사와 함께 다룰 수 있습니다. 상담 준비로, 아이의 어려움이 가장 두드러지는 장면이 어떤 상황인지(시간, 장소, 함께하는 사람) 적어 두면 도움이 됩니다.",
+   "label": "안전 응답",
+   "message": "보고서의 표현이 마음에 걸리셨을 것 같아요. 보고서에서 총 문제행동 점수는 T점수 100점으로, 전문 상담 권고 범위에 있습니다. 보고서에는 이렇게 적혀 있습니다. “전체 문제행동 수준이 임상 기준(63T)을 초과, 99%tile 초과에 해당하여 다영역에 걸친 어려움이 시사됨” 이 질문에는 보고서에 근거한 설명을 만들지 못했습니다. 자세한 설명은 상담에서 상담사와 함께 확인해 주세요. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다. 그때까지 궁금한 장면이 생기면 언제, 어떤 상황이었는지 메모해 두시면 상담에 도움이 됩니다.",
    "evidence_ids": [
     "II.total",
-    "VI.p1"
+    "V.total"
    ],
-   "guard_result": "pass",
+   "guard_result": "fallback",
    "guard_failures": [
-    []
+    [
+     "term:guard.dp.001"
+    ],
+    [
+     "term:guard.dp.001"
+    ]
    ],
-   "note_saved": false,
+   "note_saved": true,
    "intent": "explain",
    "intent_source": "keyword",
    "intent_confidence": null,
    "b4": [],
    "b5": null,
-   "b6": [],
+   "b6": null,
    "route_ok": true,
-   "r2": null,
+   "r2": true,
    "r4": null,
    "llm_calls": [
     {
@@ -5233,10 +5222,21 @@
      "input_tokens": 55,
      "cache_write_tokens": 0,
      "cache_read_tokens": 18275,
-     "output_tokens": 527,
+     "output_tokens": 583,
      "stop_reason": "end_turn",
-     "latency_ms": 6954,
-     "cost_usd": 0.0045175
+     "latency_ms": 8454,
+     "cost_usd": 0.0047975
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 131,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 18275,
+     "output_tokens": 519,
+     "stop_reason": "end_turn",
+     "latency_ms": 6452,
+     "cost_usd": 0.0045535
     }
    ]
   },
@@ -5411,7 +5411,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1285,
+     "latency_ms": 1526,
      "cost_usd": 0.001327
     }
    ]
@@ -5460,11 +5460,11 @@
    "question_masked": "신체증상 점수가 T점수 64점이면 어느 정도예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "신체증상 T점수 64점은 상위 약 8%에 해당하는 점수입니다. 관찰 권고 범위에 있으며, 기준선(60)보다 4점 더 높습니다. 이는 뚜렷한 원인이 확인되지 않았는데 두통, 복통, 피로감 같은 신체 불편을 호소하는 빈도가 또래 아이들보다 다소 높게 보고되었다는 뜻입니다. 보고서에서는 긴장 상황(등원·등교, 시험 등)과 신체 불편 호소가 연결될 가능성을 고려할 것을 안내하고 있습니다. 몸이 불편하다고 하는 때가 하루 중 언제인지, 그 전에 어떤 일이 있었는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다.",
+   "message": "신체증상 T점수 64점은 관찰 권고 범위에 있습니다. 또래 아이들과 비교하면 상위 약 8%에 해당하는 점수로, 뚜렷한 이유 없이 두통·복통·피로감 같은 불편함을 호소하는 정도가 다소 높게 보고되었다는 뜻입니다.\n\n이 점수는 임상 기준인 70T에는 미치지 않았지만, 관찰이 권고되는 60T 이상입니다. 보고서에도 긴장 상황(등원·등교, 시험 등)과 신체 불편 호소가 연결될 가능성을 고려하도록 적혀 있습니다. 몸이 불편하다고 하는 때가 하루 중 언제인지, 그 전에 어떤 일이 있었는지 적어 두면 상담에서 이 부분을 이야기할 때 도움이 됩니다.",
    "evidence_ids": [
     "III.somatic",
-    "card.KCBCL_4_17.somatic.borderline",
-    "V.somatic"
+    "V.somatic",
+    "card.KCBCL_4_17.somatic.borderline"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -5487,10 +5487,10 @@
      "input_tokens": 44,
      "cache_write_tokens": 17459,
      "cache_read_tokens": 0,
-     "output_tokens": 382,
+     "output_tokens": 405,
      "stop_reason": "end_turn",
-     "latency_ms": 6147,
-     "cost_usd": 0.02377775
+     "latency_ms": 6367,
+     "cost_usd": 0.02389275
     }
    ]
   },
@@ -5508,10 +5508,11 @@
    "question_masked": "주의집중 문제 점수가 T점수 82점인데 이 척도는 어떤 행동을 보는 건가요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "주의집중 문제 척도는 한 가지 일에 집중하고, 가만히 앉아 있고, 차분하게 행동하는 것을 얼마나 어려워하는지 보는 척도입니다. 예를 들어 숙제나 과제를 끝까지 하기 어려워하는 모습, 가만히 앉아 있기 힘들어하는 모습, 생각하기 전에 먼저 행동하는 모습 같은 행동들을 묻습니다.\n\n아이의 T=82점은 이 영역에서 전문 상담 권고 범위에 있으며 상위 약 1%에 해당하는 점수입니다. 집중 곤란, 과잉 활동, 충동성 관련 행동이 또래 대비 뚜렷하게 높게 보고되었습니다. 보호자님이 보고하신 \"한 가지 놀이를 오래 못 하고 계속 이것저것 옮겨 다녀요\"와 \"유치원에서 앉아 있는 시간에 자꾸 돌아다닌다\"는 내용이 이 점수 결과와 일치합니다.",
+   "message": "주의집중 문제 척도는 한 가지 일에 집중하고, 가만히 앉아 있고, 차분하게 행동하는 것을 얼마나 어려워하는지를 묻습니다. 예를 들어 숙제나 과제를 끝까지 하기 어려워하는 모습, 가만히 앉아 있기 힘들어하는 모습, 생각하기 전에 먼저 행동하는 모습 같은 행동들을 봅니다.\n\n아이의 T점수는 82점으로, 상위 약 1%에 해당하는 점수입니다. 임상 기준인 70T를 넘었으며, 보고서에도 \"집중 곤란, 과잉 활동, 충동성 관련 행동이 또래 대비 뚜렷하게 상승\"되어 있습니다. 보호자님께서 보고해 주신 \"한 가지 놀이를 오래 못 하고 계속 이것저것 옮겨 다닌다\"는 내용과 \"유치원 선생님이 앉아 있는 시간에 자꾸 돌아다닌다\"는 내용이 이 척도의 어려움과 일치합니다.",
    "evidence_ids": [
     "card.KCBCL_4_17.attention.clinical",
     "III.attention",
+    "V.attention",
     "VII.1",
     "VII.2"
    ],
@@ -5536,10 +5537,10 @@
      "input_tokens": 60,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 492,
+     "output_tokens": 515,
      "stop_reason": "end_turn",
-     "latency_ms": 6306,
-     "cost_usd": 0.0042658999999999996
+     "latency_ms": 6243,
+     "cost_usd": 0.004380899999999999
     }
    ]
   },
@@ -5557,7 +5558,7 @@
    "question_masked": "내재화 문제 점수 T점수 57점은 기준선에서 얼마나 떨어져 있나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "내재화 문제 T점수 57점은 관찰 권고 범위의 시작점인 60T보다 3점 낮고, 전문 상담 권고 범위의 시작점인 63T보다 6점 낮습니다. 이는 또래 평균 범위에 속하는 점수입니다.",
+   "message": "내재화 문제 점수 T=57은 관찰 권고 기준선인 60T보다 3점 아래에 있습니다. 또한 전문 상담 권고 기준선인 63T보다는 6점 아래에 있습니다. 즉, 두 기준선 모두에서 아이의 점수가 더 낮은 쪽에 있다는 뜻입니다.",
    "evidence_ids": [
     "II.internalizing"
    ],
@@ -5582,10 +5583,10 @@
      "input_tokens": 56,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 132,
+     "output_tokens": 158,
      "stop_reason": "end_turn",
-     "latency_ms": 3227,
-     "cost_usd": 0.0024619
+     "latency_ms": 2354,
+     "cost_usd": 0.0025919000000000003
     }
    ]
   },
@@ -5605,11 +5606,11 @@
    "question_masked": "신체증상 점수가 T점수 64점이라 마음이 쓰이는데 이 점수가 어떤 의미인지 알려주세요",
    "route": "answer",
    "label": "AI 생성",
-   "message": "신체증상 점수를 보면 마음이 쓰일 수 있어요. T점수 64점은 상위 약 8%에 해당하는 점수로, 또래보다 높게 나왔습니다. 이 점수는 관찰 권고 범위에 있으며, 관찰 권고 기준인 60점 이상이면서 4점 높은 수준입니다.\n\n신체증상이란 뚜렷한 원인이 확인되지 않았는데도 두통, 복통, 피로감 같은 몸이 불편하다고 하는 정도를 묻는 척도예요. 보고서에도 \"뚜렷한 신체적 원인 없이 두통·복통·피로감 등을 호소하는 빈도가 다소 높음\"이라고 적혀 있습니다. 보호자님의 \"원인 불명 통증 호소\" 보고와도 일치하는 양상이에요.\n\n상담을 준비할 때는 아이가 몸이 불편하다고 하는 때가 하루 중 언제인지, 그 전에 어떤 일이 있었는지 적어 두면 상담에서 이 영역을 이야기할 때 도움이 됩니다. 긴장 상황과 신체 불편 호소의 연결 관계도 함께 살펴볼 수 있어요.",
+   "message": "신체증상 점수가 기준선 근처에 있으니 마음이 쓰이실 수 있어요. T점수 64점은 상위 약 8%에 해당하며, 관찰 권고 범위에 있습니다. 이는 뚜렷한 의학적 원인이 확인되지 않았는데도 두통, 복통, 피로감 같은 신체 불편을 호소하는 빈도가 또래보다 다소 높게 보고되었다는 뜻입니다.\n\n보고서에서는 긴장 상황(등원·등교, 시험 등)과 신체 불편 호소가 연결될 가능성을 고려하도록 권고하고 있습니다. 어머니가 보고하신 '원인 불명 통증 호소'가 이 점수에 반영되었어요. 아이가 몸이 불편하다고 하는 때가 하루 중 언제인지, 그 전에 어떤 일이 있었는지 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
    "evidence_ids": [
     "III.somatic",
-    "V.somatic",
-    "card.KCBCL_4_17.somatic.borderline"
+    "card.KCBCL_4_17.somatic.borderline",
+    "V.somatic"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -5632,10 +5633,10 @@
      "input_tokens": 67,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 550,
+     "output_tokens": 459,
      "stop_reason": "end_turn",
-     "latency_ms": 7400,
-     "cost_usd": 0.0045629
+     "latency_ms": 6707,
+     "cost_usd": 0.004107899999999999
     }
    ]
   },
@@ -5653,8 +5654,9 @@
    "question_masked": "학업수행 척도는 왜 미실시라고 나와요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "학업수행 척계는 초등학생부터 적용하는 척도라서, 아이가 아직 초등학교에 입학하지 않아 이번 검사에서 실시하지 않았습니다.",
+   "message": "학업수행 척도는 초등학생부터 적용하는 검사 항목이어서, 만 4세 6개월인 아이에게는 실시하지 않았습니다.",
    "evidence_ids": [
+    "I.school_performance",
     "I.note",
     "H.sex_age"
    ],
@@ -5679,10 +5681,10 @@
      "input_tokens": 40,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 104,
+     "output_tokens": 102,
      "stop_reason": "end_turn",
-     "latency_ms": 1988,
-     "cost_usd": 0.0023059
+     "latency_ms": 2438,
+     "cost_usd": 0.0022959
     }
    ]
   },
@@ -5700,10 +5702,9 @@
    "question_masked": "사회성 점수가 T점수 42점이면 높은 건가요 낮은 건가요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회성 점수는 낮은 점수입니다. 사회성 척도는 다른 척도와 반대로, 점수가 낮을수록 또래보다 어려움이 많이 보고되었다는 뜻합니다. 아이의 점수 T=42는 하위 약 21%에 해당하는 점수로, 또래 아이들과 비교하면 친구 관계나 활동 참여 등에서 또래보다 어려움이 더 보고되었다는 의미입니다.",
+   "message": "사회성 점수는 낮은 편입니다. 사회성 척도는 친구 관계, 활동 참여 같은 아이의 강점을 보는 척도인데, 이 척도는 다른 척도와 반대로 점수가 낮을수록 또래보다 어려움이 많이 보고되었다는 뜻입니다. 아이의 사회성 점수 T=42는 하위 약 21%에 해당하는 점수로, 또래 아이들과 비교했을 때 낮은 수준입니다.",
    "evidence_ids": [
     "I.sociability",
-    "term.t_score",
     "term.competence"
    ],
    "guard_result": "pass",
@@ -5727,10 +5728,10 @@
      "input_tokens": 50,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 267,
+     "output_tokens": 272,
      "stop_reason": "end_turn",
-     "latency_ms": 4802,
-     "cost_usd": 0.0031309000000000003
+     "latency_ms": 3720,
+     "cost_usd": 0.0031559
     }
    ]
   },
@@ -5745,27 +5746,25 @@
    "template_id": "T-EXP-08",
    "question_masked": "백분위가 뭐예요?",
    "route": "answer",
-   "label": "안전 응답",
-   "message": "보고서의 표현이 마음에 걸리셨을 것 같아요. 이 질문에는 보고서에 근거한 설명을 만들지 못했습니다. 자세한 설명은 상담에서 상담사와 함께 확인해 주세요. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다. 그때까지 궁금한 장면이 생기면 언제, 어떤 상황이었는지 메모해 두시면 상담에 도움이 됩니다.",
-   "evidence_ids": [],
-   "guard_result": "fallback",
-   "guard_failures": [
-    [
-     "number:1"
-    ],
-    [
-     "number:79"
-    ]
+   "label": "AI 생성",
+   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타냅니다. 이 보고서에서는 '상위 약 몇 %'로 표현하고 있어요. 예를 들어 주의집중 문제 영역에서 상위 약 1%라는 것은, 또래 아이들 중에서 이 아이보다 점수가 높은 아이가 매우 적다는 뜻입니다.",
+   "evidence_ids": [
+    "term.percentile",
+    "III.attention"
    ],
-   "note_saved": true,
+   "guard_result": "pass",
+   "guard_failures": [
+    []
+   ],
+   "note_saved": false,
    "intent": "explain",
    "intent_source": "keyword",
    "intent_confidence": null,
    "b4": [],
    "b5": null,
-   "b6": null,
+   "b6": [],
    "route_ok": true,
-   "r2": true,
+   "r2": null,
    "r4": null,
    "llm_calls": [
     {
@@ -5774,21 +5773,10 @@
      "input_tokens": 29,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 193,
+     "output_tokens": 209,
      "stop_reason": "end_turn",
-     "latency_ms": 3961,
-     "cost_usd": 0.0027399
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 152,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 17459,
-     "output_tokens": 232,
-     "stop_reason": "end_turn",
-     "latency_ms": 4375,
-     "cost_usd": 0.0030579
+     "latency_ms": 3865,
+     "cost_usd": 0.0028199
     }
    ]
   },
@@ -5804,7 +5792,7 @@
    "question_masked": "T점수는 어떻게 읽으면 되나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "T점수는 같은 나이대·성별 또래와 비교해 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 아이의 주의집중 문제 점수는 T=82인데, 이는 또래 아이들과 비교했을 때 점수가 또래보다 매우 높게 나왔다는 의미입니다.",
+   "message": "T점수는 같은 나이대·성별 또래와 비교해서 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수예요. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 주의집중 문제에서 아이의 T점수가 82라는 것은, 또래와 비교했을 때 집중이 어려운 모습이 또래보다 더 많이 보이고 있다는 의미예요. 반대로 사회능력 척도에서는 T점수가 낮을수록 또래에 비해 자원이 적게 보고되었다는 뜻입니다.",
    "evidence_ids": [
     "term.t_score",
     "III.attention"
@@ -5830,10 +5818,10 @@
      "input_tokens": 37,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 220,
+     "output_tokens": 280,
      "stop_reason": "end_turn",
-     "latency_ms": 3791,
-     "cost_usd": 0.0028829000000000003
+     "latency_ms": 4540,
+     "cost_usd": 0.0031829000000000002
     }
    ]
   },
@@ -5876,7 +5864,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 832,
+     "latency_ms": 1129,
      "cost_usd": 0.001315
     },
     {
@@ -5885,10 +5873,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 85,
+     "output_tokens": 65,
      "stop_reason": "end_turn",
-     "latency_ms": 3108,
-     "cost_usd": 0.0022169
+     "latency_ms": 1378,
+     "cost_usd": 0.0021169
     }
    ]
   },
@@ -5936,7 +5924,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1473,
+     "latency_ms": 1389,
      "cost_usd": 0.001315
     },
     {
@@ -5945,10 +5933,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 87,
+     "output_tokens": 169,
      "stop_reason": "end_turn",
-     "latency_ms": 2231,
-     "cost_usd": 0.0022269
+     "latency_ms": 2393,
+     "cost_usd": 0.0026369
     },
     {
      "stage": "answer",
@@ -5956,10 +5944,10 @@
      "input_tokens": 136,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 118,
+     "output_tokens": 43,
      "stop_reason": "end_turn",
-     "latency_ms": 3203,
-     "cost_usd": 0.0024719
+     "latency_ms": 2172,
+     "cost_usd": 0.0020969
     }
    ]
   },
@@ -5979,15 +5967,18 @@
    "question_masked": "주의집중 문제 점수가 가장 높게 나왔는데 이게 무슨 뜻이에요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "주의집중 문제 척도는 한 가지 일에 집중하고, 가만히 앉아 있고, 차분하게 행동하는 것을 얼마나 어려워하는지를 묻는 척도입니다. 아이의 주의집중 문제 점수는 T=82로, 상위 약 1%에 해당하는 매우 높은 수준입니다. 이는 전문 상담 권고 범위에 있으며, 집중 곤란, 과잉 활동, 충동성 관련 행동이 또래 아이들에 비해 뚜렷하게 높게 보고되었다는 뜻입니다.\n\n보고서에 적힌 어머니의 관찰과도 일치하는데, 한 가지 놀이를 오래 못 하고 계속 이것저것 옮겨 다니는 모습과 유치원에서 앉아 있는 시간에 자꾸 돌아다니는 모습이 그것입니다. 이 점수가 무엇을 의미하는지, 아이에게 어떻게 지원해야 할지는 상담에서 전문가와 함께 자세히 이야기할 수 있습니다.",
+   "message": "주의집중 문제 척도는 한 가지 일에 집중하고, 가만히 앉아 있고, 차분하게 행동하는 것을 얼마나 어려워하는지 묻는 척도예요. 아이의 점수는 T=82로, 상위 약 1%에 해당하며 전문 상담 권고 범위에 있습니다. 집중 곤란, 과잉 활동, 충동성 관련 행동이 또래보다 뚜렷하게 높게 보고되었다는 뜻입니다. 보고서에 적힌 보호자 의견처럼 \"한 가지 놀이를 오래 못 하고 계속 이것저것 옮겨 다니는\" 모습이나 \"유치원에서 앉아 있는 시간에 자꾸 돌아다니는\" 모습이 이 영역에 해당합니다. 이 부분을 어떻게 이해하고 도와줄지는 상담에서 상담사와 함께 다룰 수 있습니다. 상담을 준비하실 때 아이가 집중을 잘 하는 때와 어려운 때가 구체적으로 언제인지, 그 전후로 어떤 일이 있었는지 적어 두시면 상담할 때 도움이 될 거예요.",
    "evidence_ids": [
     "III.attention",
+    "card.KCBCL_4_17.attention.clinical",
     "VII.1",
-    "VII.2",
-    "card.KCBCL_4_17.attention.clinical"
+    "VII.2"
    ],
-   "guard_result": "pass",
+   "guard_result": "regen",
    "guard_failures": [
+    [
+     "term:guard.th.007"
+    ],
     []
    ],
    "note_saved": false,
@@ -6007,10 +5998,21 @@
      "input_tokens": 56,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17459,
-     "output_tokens": 476,
+     "output_tokens": 608,
      "stop_reason": "end_turn",
-     "latency_ms": 6764,
-     "cost_usd": 0.0041819
+     "latency_ms": 8588,
+     "cost_usd": 0.0048419
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 132,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17459,
+     "output_tokens": 547,
+     "stop_reason": "end_turn",
+     "latency_ms": 8086,
+     "cost_usd": 0.0046129
     }
    ]
   },
@@ -6236,7 +6238,7 @@
    "note_saved": true,
    "intent": "diagnosis",
    "intent_source": "llm",
-   "intent_confidence": 0.92,
+   "intent_confidence": 0.85,
    "b4": [],
    "b5": null,
    "b6": null,
@@ -6252,7 +6254,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1226,
+     "latency_ms": 1472,
      "cost_usd": 0.001328
     }
    ]
@@ -6301,10 +6303,9 @@
    "question_masked": "주의집중 문제 점수가 T점수 69점이면 어느 정도예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "주의집중 문제 T점수 69점은 상위 약 3%에 해당합니다. 이는 관찰 권고 범위에 있어서 또래보다 높게 나타난 수준입니다. 임상 기준인 70T에는 1점 모자라지만, 학습 상황과 규칙이 있는 활동에서 주의 깊은 관찰이 권고됩니다. 보고서에 적힌 대로 공부 집중이 어려운 모습과 일치하는 양상입니다.",
+   "message": "주의집중 문제 점수 T=69는 관찰 권고 범위에 있습니다. 이는 상위 약 3%에 해당하는 점수로, 또래보다 한층 높게 나타난 것입니다. 임상 기준인 70T에는 미치지 못하지만, 학습 상황이나 규칙이 있는 활동에서 주의 깊은 관찰이 권고되는 수준입니다. 보고서에도 학습 집중 곤란과 일치하는 양상이라고 적혀 있습니다.",
    "evidence_ids": [
     "III.attention",
-    "card.KCBCL_4_17.attention.borderline",
     "V.attention"
    ],
    "guard_result": "pass",
@@ -6328,10 +6329,10 @@
      "input_tokens": 47,
      "cache_write_tokens": 17772,
      "cache_read_tokens": 0,
-     "output_tokens": 289,
+     "output_tokens": 270,
      "stop_reason": "end_turn",
-     "latency_ms": 4190,
-     "cost_usd": 0.023707
+     "latency_ms": 3753,
+     "cost_usd": 0.023612
     }
    ]
   },
@@ -6349,13 +6350,17 @@
    "question_masked": "내재화 문제 점수가 T점수 82점인데 이 척도는 어떤 행동을 보는 건가요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "내재화 문제는 위축, 신체증상, 우울/불안처럼 마음속으로 향하는 어려움을 묶어서 본 점수입니다. 혼자 있으려 하거나 말수가 줄어드는 모습, 뚜렷한 이유 없이 몸이 불편하다고 하는 모습, 걱정이 많거나 쉽게 슬퍼하는 모습 같은 행동들을 담고 있습니다. 아이의 T=82는 이런 행동들이 또래보다 뚜렷하게 보고되었다는 뜻입니다.",
+   "message": "내재화 문제는 위축, 신체증상, 우울/불안처럼 마음속으로 향하는 어려움을 묶어서 본 점수입니다. 혼자 있으려 하거나 말수가 줄어드는 모습, 뚜렷한 이유 없이 몸이 불편하다고 하는 모습, 걱정이 많거나 쉽게 슬퍼하는 모습 같은 행동들을 보고 있습니다. 아이의 내재화 문제 T점수 82점은 63T 이상인 전문 상담 권고 범위에 있으며, 상위 약 1%에 해당하는 점수입니다. 이 영역에서 어떤 의미인지는 상담에서 상담사와 함께 다룰 수 있습니다. 상담 준비로 기분이 가라앉거나 몸이 불편하다고 하는 때가 언제인지, 그 전에 어떤 일이 있었는지 적어 두면 도움이 됩니다.",
    "evidence_ids": [
     "card.KCBCL_4_17.internalizing.clinical",
-    "II.internalizing"
+    "II.internalizing",
+    "term.internalizing"
    ],
-   "guard_result": "pass",
+   "guard_result": "regen",
    "guard_failures": [
+    [
+     "term:guard.th.007"
+    ],
     []
    ],
    "note_saved": false,
@@ -6375,10 +6380,21 @@
      "input_tokens": 59,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17772,
-     "output_tokens": 308,
+     "output_tokens": 366,
      "stop_reason": "end_turn",
-     "latency_ms": 3737,
-     "cost_usd": 0.0033761999999999998
+     "latency_ms": 4625,
+     "cost_usd": 0.0036661999999999997
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 135,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17772,
+     "output_tokens": 445,
+     "stop_reason": "end_turn",
+     "latency_ms": 6812,
+     "cost_usd": 0.0041372
     }
    ]
   },
@@ -6396,7 +6412,7 @@
    "question_masked": "비행 점수 T점수 57점은 기준선에서 얼마나 떨어져 있나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "비행 점수(T=57)는 관찰 권고 범위의 기준선인 60T보다 3점 아래에 있습니다. 또한 전문 상담 권고 범위의 기준선인 70T보다는 13점 아래에 있어요. 즉, 이 점수는 기준선들 아래에 있으므로 규칙을 어기거나 금지된 행동을 하는 영역은 또래 수준이라는 뜻입니다.",
+   "message": "비행 점수 T=57은 관찰 권고 범위의 기준선인 60 아래에 있습니다. 기준선 값 60보다 3 낮습니다. 또한 전문 상담 권고 범위의 기준선인 70과 비교하면 13 낮습니다. 보고서에서 비행 점수는 또래 평균 범위로 나타났습니다.",
    "evidence_ids": [
     "III.delinquent"
    ],
@@ -6421,10 +6437,10 @@
      "input_tokens": 52,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17772,
-     "output_tokens": 183,
+     "output_tokens": 159,
      "stop_reason": "end_turn",
-     "latency_ms": 3813,
-     "cost_usd": 0.0027442
+     "latency_ms": 3223,
+     "cost_usd": 0.0026241999999999997
     }
    ]
   },
@@ -6444,15 +6460,18 @@
    "question_masked": "주의집중 문제 점수가 T점수 69점이라 마음이 쓰이는데 이 점수가 어떤 의미인지 알려주세요",
    "route": "answer",
    "label": "AI 생성",
-   "message": "주의집중 문제 점수를 보면 마음이 쓰이실 수 있어요. 아이의 T점수 69점은 또래 아이들 가운데 상위 약 3%에 해당하는 점수로, 한 가지 일에 집중하고 가만히 앉아 있고 차분하게 행동하는 것을 또래보다 어려워하고 있다는 뜻입니다. 이 점수는 전문 상담 권고 범위인 70T에는 못 미치지만 관찰 권고 범위에 속하고 있어요. 보호자님이 보고해 주신 '공부를 하려고 앉아도 10분을 못 버티고 휴대폰을 본다'는 모습과도 일치하는 내용입니다. 집중이 어려운 구체적인 상황과 그때의 모습을 더 자세히 적어 두면, 상담에서 이 영역을 이야기할 때 도움이 될 거예요.",
+   "message": "주의집중 문제 점수가 T=69로 나왔다는 것은 또래 아이들과 비교했을 때 상위 약 3%에 해당하는 점수입니다. 이 영역을 묶은 척도가 묻는 것은 한 가지 일에 집중하고, 가만히 앉아 있고, 차분하게 행동하는 것을 얼마나 어려워하는지입니다. 보고서에서 이 점수는 관찰 권고 범위에 있다고 하고 있습니다. 보호자님이 보고해 주신 \"공부를 하려고 앉아도 10분을 못 버티고 휴대폰을 본다\"는 내용이 이 영역에 해당합니다. 어떤 상황에서 집중이 잘 되고 어떤 상황에서 어려운지, 또 그 전후에 무엇이 있었는지 자세히 적어 두면 상담에서 이 부분을 이야기할 때 도움이 될 거예요.",
    "evidence_ids": [
     "III.attention",
     "V.attention",
-    "VII.3",
-    "card.KCBCL_4_17.attention.borderline"
+    "card.KCBCL_4_17.attention.borderline",
+    "VII.3"
    ],
-   "guard_result": "pass",
+   "guard_result": "regen",
    "guard_failures": [
+    [
+     "term:guard.th.007"
+    ],
     []
    ],
    "note_saved": false,
@@ -6472,10 +6491,21 @@
      "input_tokens": 70,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17772,
-     "output_tokens": 433,
+     "output_tokens": 541,
      "stop_reason": "end_turn",
-     "latency_ms": 6394,
-     "cost_usd": 0.0040122
+     "latency_ms": 7830,
+     "cost_usd": 0.0045522
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 146,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17772,
+     "output_tokens": 454,
+     "stop_reason": "end_turn",
+     "latency_ms": 6759,
+     "cost_usd": 0.0041932
     }
    ]
   },
@@ -6493,9 +6523,10 @@
    "question_masked": "사회성 척도는 왜 미실시라고 나와요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회성 척도(사회성, 학업수행, 총 사회능력)는 이번 검사에 포함되지 않았습니다. 필요하면 이후에 따로 실시할 수 있습니다.",
+   "message": "사회성 척도는 이번 검사에 포함되지 않았습니다. 사회성, 학업수행, 총 사회능력 척도는 이 검사의 사회능력 영역인데, 아이의 나이에는 이 부분이 적용되지 않아서 미실시로 표시됩니다. 필요하면 이후에 따로 실시할 수 있습니다.",
    "evidence_ids": [
-    "I.note"
+    "I.note",
+    "I.sociability"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -6518,10 +6549,10 @@
      "input_tokens": 39,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17772,
-     "output_tokens": 99,
+     "output_tokens": 162,
      "stop_reason": "end_turn",
-     "latency_ms": 2649,
-     "cost_usd": 0.0023112
+     "latency_ms": 2655,
+     "cost_usd": 0.0026262
     }
    ]
   },
@@ -6536,30 +6567,25 @@
    "template_id": "T-EXP-08",
    "question_masked": "백분위가 뭐예요?",
    "route": "answer",
-   "label": "안전 응답",
-   "message": "보고서의 표현이 마음에 걸리셨을 것 같아요. 이 질문에는 보고서에 근거한 설명을 만들지 못했습니다. 자세한 설명은 상담에서 상담사와 함께 확인해 주세요. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다. 그때까지 궁금한 장면이 생기면 언제, 어떤 상황이었는지 메모해 두시면 상담에 도움이 됩니다.",
-   "evidence_ids": [],
-   "guard_result": "fallback",
-   "guard_failures": [
-    [
-     "number:1",
-     "number:100",
-     "number:99"
-    ],
-    [
-     "evidence:unknown:II.anxdep",
-     "number:1"
-    ]
+   "label": "AI 생성",
+   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타냅니다. 이 보고서에서는 '상위 약 몇 %'로 표현했어요. 예를 들어 내재화 문제의 백분위가 99라면, 또래 아이들 중에서 아이의 점수보다 낮은 아이들이 99%라는 뜻이고, 아이가 상위 약 1%에 해당한다는 의미입니다.",
+   "evidence_ids": [
+    "term.percentile",
+    "II.internalizing"
    ],
-   "note_saved": true,
+   "guard_result": "pass",
+   "guard_failures": [
+    []
+   ],
+   "note_saved": false,
    "intent": "explain",
    "intent_source": "keyword",
    "intent_confidence": null,
    "b4": [],
    "b5": null,
-   "b6": null,
+   "b6": [],
    "route_ok": true,
-   "r2": true,
+   "r2": null,
    "r4": null,
    "llm_calls": [
     {
@@ -6568,21 +6594,10 @@
      "input_tokens": 29,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17772,
-     "output_tokens": 218,
+     "output_tokens": 222,
      "stop_reason": "end_turn",
-     "latency_ms": 3009,
-     "cost_usd": 0.0028962
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 374,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 17772,
-     "output_tokens": 227,
-     "stop_reason": "end_turn",
-     "latency_ms": 4250,
-     "cost_usd": 0.0032862
+     "latency_ms": 3231,
+     "cost_usd": 0.0029162
     }
    ]
   },
@@ -6598,17 +6613,13 @@
    "question_masked": "T점수는 어떻게 읽으면 되나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "T점수는 같은 나이대·성별 또래와 비교해 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 이 검사에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 아이의 T점수를 보면 또래 규준과 직접 비교할 수 있고, 기준선 그래프에서 어느 범위에 있는지 한눈에 알 수 있습니다.",
+   "message": "T점수는 아이의 점수가 같은 나이대·성별 또래와 비교해 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 아이의 내재화 문제 T점수가 82라면, 위축이나 우울/불안 같은 정서 영역의 어려움이 또래보다 높게 나타났다는 의미입니다.",
    "evidence_ids": [
-    "term.t_score"
+    "term.t_score",
+    "II.internalizing"
    ],
-   "guard_result": "regen",
+   "guard_result": "pass",
    "guard_failures": [
-    [
-     "number:80",
-     "number:99",
-     "number:1"
-    ],
     []
    ],
    "note_saved": false,
@@ -6628,21 +6639,10 @@
      "input_tokens": 37,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17772,
-     "output_tokens": 303,
+     "output_tokens": 221,
      "stop_reason": "end_turn",
-     "latency_ms": 4733,
-     "cost_usd": 0.0033291999999999996
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 382,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 17772,
-     "output_tokens": 205,
-     "stop_reason": "end_turn",
-     "latency_ms": 4324,
-     "cost_usd": 0.0031842
+     "latency_ms": 4139,
+     "cost_usd": 0.0029192
     }
    ]
   },
@@ -6685,7 +6685,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1118,
+     "latency_ms": 1015,
      "cost_usd": 0.001315
     },
     {
@@ -6694,10 +6694,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17772,
-     "output_tokens": 92,
+     "output_tokens": 131,
      "stop_reason": "end_turn",
-     "latency_ms": 3116,
-     "cost_usd": 0.0022832
+     "latency_ms": 2418,
+     "cost_usd": 0.0024782
     }
    ]
   },
@@ -6745,7 +6745,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1164,
+     "latency_ms": 1469,
      "cost_usd": 0.001315
     },
     {
@@ -6754,10 +6754,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17772,
-     "output_tokens": 162,
+     "output_tokens": 90,
      "stop_reason": "end_turn",
-     "latency_ms": 2878,
-     "cost_usd": 0.0026331999999999996
+     "latency_ms": 2658,
+     "cost_usd": 0.0022732
     },
     {
      "stage": "answer",
@@ -6765,10 +6765,10 @@
      "input_tokens": 136,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17772,
-     "output_tokens": 80,
+     "output_tokens": 43,
      "stop_reason": "end_turn",
-     "latency_ms": 1571,
-     "cost_usd": 0.0023131999999999996
+     "latency_ms": 1273,
+     "cost_usd": 0.0021282
     }
    ]
   },
@@ -6788,19 +6788,21 @@
    "question_masked": "내재화 문제 점수가 가장 높게 나왔는데 이게 무슨 뜻이에요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "내재화 문제는 위축, 신체증상, 우울/불안처럼 마음속으로 향하는 어려움을 묶어서 본 점수입니다. 아이의 내재화 문제 점수는 T=82로 상위 약 1%에 해당하며, 63T 이상인 전문 상담 권고 범위에 있습니다. 이는 걱정·위축 같은 정서 영역의 어려움이 또래 규준에 비해 뚜렷하게 높다는 뜻입니다.\n\n구체적으로 보면, 신체증상(T=80)과 우울/불안(T=79) 점수가 70T 이상인 임상 기준을 넘었고, 위축(T=65)도 관찰 권고 범위에 있습니다. 보고서에 적힌 보호자 의견과도 맞아서, '사는 게 재미없다'는 표현과 두통으로 인한 조퇴 등이 이 영역과 관련이 있어 보입니다.\n\n이 점수가 구체적으로 아이에게 어떤 의미인지, 앞으로 어떻게 지원할지는 상담에서 상담사와 함께 자세히 다룰 수 있습니다. 상담을 준비할 때 기분이 가라앉거나 몸이 불편하다고 하는 때가 하루 중 언제인지, 그 전에 어떤 일이 있었는지 적어 두면 상담에서 도움이 될 거예요.",
+   "message": "내재화 문제는 위축, 신체증상, 우울/불안처럼 마음속으로 향하는 어려움을 묶어서 본 점수입니다. 아이의 내재화 문제 점수는 T=82로, 기준선인 63T(전문 상담 권고 범위)보다 19점 높게 나왔습니다. 상위 약 1%에 해당하는 점수로, 걱정·위축 같은 정서 영역이 또래보다 뚜렷하게 높게 보고되었다는 뜻입니다.\n\n아이의 경우 위축, 신체증상, 우울/불안 등 여러 하위 영역이 함께 높게 나타났습니다. 신체증상(두통으로 인한 조퇴)과 우울/불안('사는 게 재미없다'는 표현)은 보호자님이 보신 모습과도 일치합니다. 이 영역이 아이에게 어떤 의미인지, 언제부터 이런 모습이 나타났는지 등은 상담에서 상담사와 함께 다룰 수 있습니다.\n\n지금 준비하실 때는, 아이가 기분이 가라앉거나 몸이 불편하다고 하는 때가 하루 중 언제인지, 그 전에 어떤 일이 있었는지 구체적으로 적어 두면 상담에서 도움이 됩니다.",
    "evidence_ids": [
     "II.internalizing",
     "III.somatic",
     "III.anxdep",
-    "III.withdrawn",
-    "VII.2",
     "VII.1",
+    "VII.2",
     "card.KCBCL_4_17.internalizing.clinical",
     "term.internalizing"
    ],
-   "guard_result": "pass",
+   "guard_result": "regen",
    "guard_failures": [
+    [
+     "term:guard.dp.001"
+    ],
     []
    ],
    "note_saved": false,
@@ -6820,10 +6822,21 @@
      "input_tokens": 55,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17772,
-     "output_tokens": 629,
+     "output_tokens": 503,
      "stop_reason": "end_turn",
-     "latency_ms": 7439,
-     "cost_usd": 0.0049772
+     "latency_ms": 5828,
+     "cost_usd": 0.0043472
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 131,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17772,
+     "output_tokens": 570,
+     "stop_reason": "end_turn",
+     "latency_ms": 6983,
+     "cost_usd": 0.0047582
     }
    ]
   },
@@ -7065,7 +7078,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1027,
+     "latency_ms": 936,
      "cost_usd": 0.001327
     }
    ]
@@ -7114,10 +7127,11 @@
    "question_masked": "위축 점수가 T점수 69점이면 어느 정도예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "위축 점수 T=69는 상위 약 3%에 해당하는 점수입니다. 관찰 권고 범위에 있으면서 또래보다 뚜렷하게 높은 수준입니다. 이는 다른 사람과 어울리기보다 혼자 있으려 하거나, 말수가 적고 활동 반경이 좁아지는 등의 양상이 선별 기준을 넘어선다는 뜻입니다.",
+   "message": "위축 점수 T=69는 상위 약 3%에 해당하는 점수입니다. 이는 관찰 권고 범위에 있으며, 또래 아이들 중에서 위축 양상이 특히 높게 나타난 것을 의미합니다. 다른 사람과 어울리기보다 혼자 있으려 하거나, 말수가 적고 활동 반경이 좁아지는 등의 모습이 또래 아이들보다 두드러진다는 뜻입니다.",
    "evidence_ids": [
     "III.withdrawn",
-    "V.withdrawn"
+    "card.KCBCL_4_17.withdrawn.borderline",
+    "term.t_score"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -7140,10 +7154,10 @@
      "input_tokens": 42,
      "cache_write_tokens": 17999,
      "cache_read_tokens": 0,
-     "output_tokens": 184,
+     "output_tokens": 254,
      "stop_reason": "end_turn",
-     "latency_ms": 3917,
-     "cost_usd": 0.02346075
+     "latency_ms": 4905,
+     "cost_usd": 0.02381075
     }
    ]
   },
@@ -7160,30 +7174,27 @@
    "template_id": "T-EXP-02",
    "question_masked": "우울/불안 점수가 T점수 72점인데 이 척도는 어떤 행동을 보는 건가요?",
    "route": "answer",
-   "label": "안전 응답",
-   "message": "보고서의 표현이 마음에 걸리셨을 것 같아요. 보고서에서 우울/불안 점수는 T점수 72점으로, 전문 상담 권고 범위에 있습니다. 보고서에는 이렇게 적혀 있습니다. “임상 기준인 70T를 넘었으며 약 99%tile에 해당함” 이 질문에는 보고서에 근거한 설명을 만들지 못했습니다. 자세한 설명은 상담에서 상담사와 함께 확인해 주세요. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다. 그때까지 궁금한 장면이 생기면 언제, 어떤 상황이었는지 메모해 두시면 상담에 도움이 됩니다.",
+   "label": "AI 생성",
+   "message": "우울/불안 척도는 걱정, 두려움, 슬픔 같은 감정을 얼마나 자주 보이는지를 묻는 척도입니다. 예를 들어 작은 일에도 걱정이 많은 모습, 쉽게 울거나 슬퍼하는 모습, 스스로를 낮추어 말하는 모습 같은 행동들을 봅니다.\n\n아이의 점수 T=72는 상위 약 1%에 해당하는 점수로, 전문 상담 권고 범위에 있습니다. 보고서에서 자기 비하, 슬픔, 과도한 걱정 등이 일상 전반에서 지속적으로 나타날 가능성을 언급하고 있으며, 보호자님이 답한 내용 중 '사는 게 재미없다'는 말을 한 적이 있다는 보고와도 일치하는 양상이라고 봅니다.",
    "evidence_ids": [
+    "card.KCBCL_4_17.anxdep.clinical",
     "III.anxdep",
-    "V.anxdep"
+    "V.anxdep",
+    "VII.2"
    ],
-   "guard_result": "fallback",
+   "guard_result": "pass",
    "guard_failures": [
-    [
-     "term:guard.dp.001"
-    ],
-    [
-     "term:guard.dp.001"
-    ]
+    []
    ],
-   "note_saved": true,
+   "note_saved": false,
    "intent": "explain",
    "intent_source": "keyword",
    "intent_confidence": null,
    "b4": [],
    "b5": null,
-   "b6": null,
+   "b6": [],
    "route_ok": true,
-   "r2": true,
+   "r2": null,
    "r4": null,
    "llm_calls": [
     {
@@ -7192,21 +7203,10 @@
      "input_tokens": 58,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 428,
+     "output_tokens": 439,
      "stop_reason": "end_turn",
-     "latency_ms": 6345,
-     "cost_usd": 0.0039979
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 134,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 17999,
-     "output_tokens": 547,
-     "stop_reason": "end_turn",
-     "latency_ms": 7518,
-     "cost_usd": 0.004668899999999999
+     "latency_ms": 5499,
+     "cost_usd": 0.0040529
     }
    ]
   },
@@ -7224,9 +7224,10 @@
    "question_masked": "공격성 점수 T점수 58점은 기준선에서 얼마나 떨어져 있나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "공격성 점수 T점수 58점은 관찰 권고 범위 기준선인 60점보다 2점 아래에 있습니다. 또한 전문 상담 권고 범위 기준선인 70점보다는 12점 아래에 있습니다.",
+   "message": "공격성 점수는 T=58입니다. 관찰 권고 범위의 기준선(60)에서 2점 아래에 있고, 전문 상담 권고 범위의 기준선(70)에서 12점 아래에 있습니다. 두 기준선 모두 아래쪽에 있어서 또래 평균 범위에 속합니다.",
    "evidence_ids": [
-    "III.aggressive"
+    "III.aggressive",
+    "C.3"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -7249,10 +7250,10 @@
      "input_tokens": 53,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 116,
+     "output_tokens": 152,
      "stop_reason": "end_turn",
-     "latency_ms": 2033,
-     "cost_usd": 0.0024329
+     "latency_ms": 2401,
+     "cost_usd": 0.0026129
     }
    ]
   },
@@ -7272,14 +7273,16 @@
    "question_masked": "위축 점수가 T점수 69점이라 마음이 쓰이는데 이 점수가 어떤 의미인지 알려주세요",
    "route": "answer",
    "label": "AI 생성",
-   "message": "위축 점수가 높다는 것을 보면 마음이 쓰이실 수 있어요. 위축 점수는 T점수 69점으로, 상위 약 3%에 해당하는 점수입니다. 이는 다른 사람과 어울리기보다 혼자 있으려 하거나, 말을 잘 하지 않거나, 활기가 적어 보이는 모습이 또래보다 많이 보고되었다는 뜻입니다. 이 점수는 관찰 권고 범위에 있어서, 이 영역을 관심 있게 지켜보시는 것이 권고됩니다. 위축 양상이 어떤 자리에서 주로 나타나는지, 언제부터 시작되었는지 같은 구체적인 장면을 적어 두면 상담에서 이 영역을 이야기할 때 도움이 될 거예요.",
+   "message": "위축 점수가 높게 나왔다니 마음이 쓰이실 수 있어요.\n\n아이의 위축 점수는 T=69로, 상위 약 3%에 해당하는 점수입니다. 이는 다른 사람과 어울리기보다 혼자 있으려 하거나, 말수가 적고, 활동 범위가 좁아지는 양상이 또래 아이들보다 훨씬 더 자주 보고되었다는 뜻입니다.\n\n이 점수는 관찰 권고 범위에 있습니다. 임상 기준인 70T에는 1점 미치지 못했지만, 또래와 비교해 위축 모습이 뚜렷하게 나타나고 있습니다.\n\n이런 양상이 어떤 상황에서 나타나는지, 그리고 아이에게 어떤 의미인지는 상담에서 상담사와 함께 자세히 살펴볼 수 있습니다. 상담 준비로 혼자 있으려 하거나 말수가 줄어드는 모습이 언제, 어디서 보이는지 구체적으로 적어 두면 상담에서 이야기할 때 도움이 됩니다.",
    "evidence_ids": [
     "III.withdrawn",
-    "card.KCBCL_4_17.withdrawn.borderline",
-    "term.internalizing"
+    "card.KCBCL_4_17.withdrawn.borderline"
    ],
-   "guard_result": "pass",
+   "guard_result": "regen",
    "guard_failures": [
+    [
+     "evidence:unknown:term.rank_from_top"
+    ],
     []
    ],
    "note_saved": false,
@@ -7299,10 +7302,21 @@
      "input_tokens": 65,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 420,
+     "output_tokens": 533,
      "stop_reason": "end_turn",
-     "latency_ms": 6165,
-     "cost_usd": 0.0039649
+     "latency_ms": 7484,
+     "cost_usd": 0.0045299
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 127,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17999,
+     "output_tokens": 498,
+     "stop_reason": "end_turn",
+     "latency_ms": 6854,
+     "cost_usd": 0.0044169
     }
    ]
   },
@@ -7320,7 +7334,7 @@
    "question_masked": "비행 점수 옆에는 왜 백분위가 없어요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "비행 척도의 T점수 50은 이 척도에서 표시되는 가장 낮은 점수입니다. 그래서 백분위를 따로 계산하지 않습니다. 이 점수는 또래 평균과 비슷하거나 그보다 낮다는 뜻입니다.",
+   "message": "비행 점수는 T=50으로, 이 척도에서 표시되는 가장 낮은 점수입니다. 이 구간에서는 백분위를 따로 계산하지 않습니다. 이는 또래 평균과 비슷하거나 그보다 낮다는 뜻입니다.",
    "evidence_ids": [
     "III.delinquent"
    ],
@@ -7345,10 +7359,10 @@
      "input_tokens": 41,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 132,
+     "output_tokens": 133,
      "stop_reason": "end_turn",
-     "latency_ms": 3452,
-     "cost_usd": 0.0025009
+     "latency_ms": 3239,
+     "cost_usd": 0.0025059
     }
    ]
   },
@@ -7366,7 +7380,7 @@
    "question_masked": "정서불안정 척도는 왜 미실시라고 나와요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "정서불안정 척계는 만 6세부터 11세까지의 아이를 대상으로 하는 척도입니다. 아이가 만 15세 7개월이어서 적용 연령이 아니기 때문에 이번 검사에서 실시하지 않았습니다.",
+   "message": "정서불안정 척도는 6–11세 아이들을 대상으로 만들어진 척도예요. 아이가 만 15세 7개월이라 적용 연령이 아니어서 실시하지 않았습니다.",
    "evidence_ids": [
     "IV.emotional_instability.note",
     "H.sex_age"
@@ -7392,10 +7406,10 @@
      "input_tokens": 41,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 134,
+     "output_tokens": 116,
      "stop_reason": "end_turn",
-     "latency_ms": 3572,
-     "cost_usd": 0.0025109
+     "latency_ms": 3230,
+     "cost_usd": 0.0024209
     }
    ]
   },
@@ -7413,10 +7427,10 @@
    "question_masked": "사회성 점수가 T점수 37점이면 높은 건가요 낮은 건가요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "사회성 점수는 T점수 37점으로, 이 척도에서는 낮은 점수입니다. 이 척도는 다른 척도와 반대로 점수가 낮을수록 또래보다 어려움이 많이 보고되었다는 뜻입니다. 아이의 점수는 하위 약 10%에 해당하여, 친구 관계, 활동 참여, 학업 수행 같은 사회능력이 또래보다 낮게 보고되었다는 의미입니다.",
+   "message": "사회성 점수는 낮은 점수입니다. T점수 37은 하위 약 10%에 해당하는 점수로, 또래 아이들과 비교했을 때 사회성 영역에서 어려움이 많이 보고되었다는 뜻입니다. 이 척도는 다른 척도와 반대로, 점수가 낮을수록 또래보다 어려움이 많이 보고되었다는 뜻입니다.",
    "evidence_ids": [
     "I.sociability",
-    "term.competence"
+    "term.t_score"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -7439,10 +7453,10 @@
      "input_tokens": 50,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 277,
+     "output_tokens": 184,
      "stop_reason": "end_turn",
-     "latency_ms": 3477,
-     "cost_usd": 0.0032349
+     "latency_ms": 2521,
+     "cost_usd": 0.0027699
     }
    ]
   },
@@ -7458,7 +7472,7 @@
    "question_masked": "백분위가 뭐예요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타내는 거예요. 이 보고서에서는 '상위 약 몇 %'로 표현해서 보여 주는데, 예를 들어 아이의 우울/불안 점수가 상위 약 1%라는 것은 또래 아이들 중에서 아이보다 점수가 낮은 아이들이 약 99%라는 뜻입니다.",
+   "message": "백분위는 또래 아이들을 점수 순서로 세웠을 때 아이보다 점수가 낮은 아이들이 몇 퍼센트인지를 나타냅니다. 이 보고서에서는 '상위 약 몇 %'로 표현하고 있어요. 예를 들어 아이의 우울/불안 점수는 상위 약 1%에 해당하는데, 이는 또래 아이들 중에서 아이보다 우울/불안 점수가 낮은 아이들이 거의 대부분이라는 뜻입니다.",
    "evidence_ids": [
     "term.percentile",
     "III.anxdep"
@@ -7466,8 +7480,8 @@
    "guard_result": "regen",
    "guard_failures": [
     [
-     "number:1",
-     "number:99"
+     "number:2",
+     "number:98"
     ],
     []
    ],
@@ -7488,10 +7502,10 @@
      "input_tokens": 29,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 204,
+     "output_tokens": 214,
      "stop_reason": "end_turn",
-     "latency_ms": 4188,
-     "cost_usd": 0.0028489
+     "latency_ms": 3015,
+     "cost_usd": 0.0028989000000000003
     },
     {
      "stage": "answer",
@@ -7499,10 +7513,10 @@
      "input_tokens": 263,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 216,
+     "output_tokens": 226,
      "stop_reason": "end_turn",
-     "latency_ms": 3711,
-     "cost_usd": 0.0031429
+     "latency_ms": 3150,
+     "cost_usd": 0.0031929000000000003
     }
    ]
   },
@@ -7518,10 +7532,10 @@
    "question_masked": "T점수는 어떻게 읽으면 되나요?",
    "route": "answer",
    "label": "AI 생성",
-   "message": "T점수는 같은 나이대·성별 또래와 비교해서 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 이 보고서의 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 우울/불안 척도의 T=72라는 것은 우울하거나 불안한 모습이 또래보다 많이 나타났다는 의미입니다.",
+   "message": "T점수는 같은 나이대·성별 또래와 비교해서 아이의 점수가 어디쯤인지 알 수 있도록 바꾼 점수입니다. 문제행동 척도에서는 점수가 높을수록 해당 행동이 또래보다 많이 보고되었다는 뜻입니다. 예를 들어 이 아이의 주의집중 문제 T점수는 72인데, 이는 또래 아이들과 비교했을 때 주의집중 어려움이 많이 보고되었다는 의미입니다. 반면 사회능력 척도는 반대로, 점수가 낮을수록 친구 관계나 활동 참여 같은 적응 자원이 또래보다 적게 보고되었다는 뜻입니다.",
    "evidence_ids": [
     "term.t_score",
-    "III.anxdep"
+    "III.attention"
    ],
    "guard_result": "pass",
    "guard_failures": [
@@ -7544,10 +7558,10 @@
      "input_tokens": 37,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 215,
+     "output_tokens": 294,
      "stop_reason": "end_turn",
-     "latency_ms": 3842,
-     "cost_usd": 0.0029119000000000003
+     "latency_ms": 4589,
+     "cost_usd": 0.0033069
     }
    ]
   },
@@ -7590,7 +7604,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 878,
+     "latency_ms": 1167,
      "cost_usd": 0.001315
     },
     {
@@ -7599,10 +7613,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 74,
+     "output_tokens": 66,
      "stop_reason": "end_turn",
-     "latency_ms": 1705,
-     "cost_usd": 0.0022159000000000002
+     "latency_ms": 2376,
+     "cost_usd": 0.0021759
     }
    ]
   },
@@ -7622,14 +7636,9 @@
    "label": "안전 응답",
    "message": "보고서에 해당 내용이 없어 답하지 않았습니다. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다.",
    "evidence_ids": [],
-   "guard_result": "regen",
+   "guard_result": "pass",
    "guard_failures": [
-    [
-     "evidence:empty"
-    ],
-    [
-     "evidence:empty"
-    ]
+    []
    ],
    "note_saved": true,
    "intent": "explain",
@@ -7650,7 +7659,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1198,
+     "latency_ms": 1521,
      "cost_usd": 0.001315
     },
     {
@@ -7659,21 +7668,10 @@
      "input_tokens": 46,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 153,
+     "output_tokens": 71,
      "stop_reason": "end_turn",
-     "latency_ms": 2383,
-     "cost_usd": 0.0026109
-    },
-    {
-     "stage": "answer",
-     "prompt_version": "answer_v3",
-     "input_tokens": 136,
-     "cache_write_tokens": 0,
-     "cache_read_tokens": 17999,
-     "output_tokens": 43,
-     "stop_reason": "end_turn",
-     "latency_ms": 2949,
-     "cost_usd": 0.0021509000000000003
+     "latency_ms": 1506,
+     "cost_usd": 0.0022009
     }
    ]
   },
@@ -7692,26 +7690,31 @@
    "template_id": "T-EXP-12",
    "question_masked": "우울/불안 점수가 가장 높게 나왔는데 이게 무슨 뜻이에요?",
    "route": "answer",
-   "label": "AI 생성",
-   "message": "우울/불안 점수는 T=72로, 상위 약 1%에 해당하는 매우 높은 점수입니다. 이는 또래 아이들과 비교할 때 걱정, 두려움, 슬픔 같은 감정을 훨씬 자주 보이고 있다는 뜻입니다.\n\n구체적으로는 자기 비하, 슬픔, 과도한 걱정 등이 일상 전반에서 지속적으로 나타날 수 있다는 점이 보고서에 적혀 있습니다. 보호자님께서 '사는 게 재미없다'는 말씀을 들으신 것도 이런 양상과 일치합니다.\n\n이 점수는 전문 상담 권고 범위에 속하므로, 상담에서 어떤 상황에서 걱정하거나 슬퍼하는 모습이 나타나는지, 언제부터 이런 감정 변화가 있었는지 등을 자세히 살펴볼 수 있습니다. 상담 준비를 위해 기분이 가라앉거나 걱정이 많아 보이는 때가 하루 중 언제인지, 그전에 어떤 일이 있었는지 적어 두시면 도움이 됩니다.",
+   "label": "안전 응답",
+   "message": "보고서의 표현이 마음에 걸리셨을 것 같아요. 보고서에서 우울/불안 점수는 T점수 72점으로, 전문 상담 권고 범위에 있습니다. 보고서에는 이렇게 적혀 있습니다. “임상 기준인 70T를 넘었으며 약 99%tile에 해당함” 이 질문에는 보고서에 근거한 설명을 만들지 못했습니다. 자세한 설명은 상담에서 상담사와 함께 확인해 주세요. 이 질문은 상담 노트에 저장했고, 상담사가 상담 전에 미리 확인합니다. 그때까지 궁금한 장면이 생기면 언제, 어떤 상황이었는지 메모해 두시면 상담에 도움이 됩니다.",
    "evidence_ids": [
     "III.anxdep",
-    "V.anxdep",
-    "VII.2"
+    "V.anxdep"
    ],
-   "guard_result": "pass",
+   "guard_result": "fallback",
    "guard_failures": [
-    []
+    [
+     "term:guard.dp.001"
+    ],
+    [
+     "term:guard.dp.001",
+     "term:guard.th.007"
+    ]
    ],
-   "note_saved": false,
+   "note_saved": true,
    "intent": "explain",
    "intent_source": "keyword",
    "intent_confidence": null,
    "b4": [],
    "b5": null,
-   "b6": [],
+   "b6": null,
    "route_ok": true,
-   "r2": null,
+   "r2": true,
    "r4": null,
    "llm_calls": [
     {
@@ -7720,10 +7723,21 @@
      "input_tokens": 54,
      "cache_write_tokens": 0,
      "cache_read_tokens": 17999,
-     "output_tokens": 525,
+     "output_tokens": 510,
      "stop_reason": "end_turn",
-     "latency_ms": 7146,
-     "cost_usd": 0.0044789
+     "latency_ms": 7304,
+     "cost_usd": 0.0044039
+    },
+    {
+     "stage": "answer",
+     "prompt_version": "answer_v3",
+     "input_tokens": 130,
+     "cache_write_tokens": 0,
+     "cache_read_tokens": 17999,
+     "output_tokens": 534,
+     "stop_reason": "end_turn",
+     "latency_ms": 6179,
+     "cost_usd": 0.0045999
     }
    ]
   },
@@ -7965,7 +7979,7 @@
      "cache_read_tokens": 0,
      "output_tokens": 17,
      "stop_reason": "end_turn",
-     "latency_ms": 1241,
+     "latency_ms": 1625,
      "cost_usd": 0.001326
     }
    ]

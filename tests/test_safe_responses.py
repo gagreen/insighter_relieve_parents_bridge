@@ -10,7 +10,7 @@ from bridge.guard.output import numbers_in
 from bridge.guard.terms import find_violations, load_guard_terms
 
 TERMS = load_guard_terms()
-KINDS = ["diagnosis", "parenting", "low_confidence", "guard_fallback"]
+KINDS = ["diagnosis", "parenting", "low_confidence", "guard_fallback", "diagnosis_term"]
 
 
 @pytest.fixture(scope="module")
@@ -127,7 +127,7 @@ def test_poc2_05_empathy_first_and_screening_only_for_diagnosis(ctx, kind):
     t = _template(ctx, kind)
     if t["empathy"]:
         assert text.startswith(t["empathy"])
-    assert (ctx.phrases["screening_note"] in text) == (kind == "diagnosis")
+    assert (ctx.phrases["screening_note"] in text) == (kind in ("diagnosis", "diagnosis_term"))
     assert text.endswith(t["closing"])
 
 
@@ -141,3 +141,36 @@ def test_b4_safe_responses_pass_guard(ctx, kind, question):
 def test_poc2_05_number_josa_is_grammatical(ctx):
     text, _ = pipeline.safe_response("diagnosis", "ADHD인가요?", ctx)
     assert "T점수 66점으로" in text and "66로" not in text
+
+
+# ── diagnosis_term (진단명 뜻, PoC2-05·PoC2-04 예외 2, 2026-10-06) ──
+
+
+def _card_asks(ctx, scale):
+    return _score(ctx, scale)["explanation"]["card"]["what_it_asks"]
+
+
+def test_poc2_05_diagnosis_term_assembly(ctx):
+    """본문 → 관련 척도 + 묻는 행동 → 척도 사실 → 선별 검사 안내 → note_saved → 준비 행동. 공감 문장 없음."""
+    text, refs = pipeline.safe_response("diagnosis_term", "ADHD란 뭔가요?", ctx)
+    att = _score(ctx, "attention")
+    t = _template(ctx, "diagnosis_term")
+    parts = [t["body"], ctx.phrases["diagnosis_term_scale"].format(scale_name=att["name"]), _card_asks(ctx, "attention"),
+             _fact(ctx, att), ctx.phrases["screening_note"], ctx.phrases["note_saved"], t["closing"]]
+    assert t["empathy"] is None
+    assert text == " ".join(parts)
+    assert refs == [att["id"]]
+
+
+@pytest.mark.parametrize("question", ["ADHD란 뭔가요?", "틱이 뭐예요?", "자폐 스펙트럼이 무슨 뜻이에요?"])
+def test_b4_diagnosis_term_does_not_repeat_the_name(ctx, question):
+    """G-01: 진단명을 응답에 다시 쓰지 않는다."""
+    text, _ = pipeline.safe_response("diagnosis_term", question, ctx)
+    assert find_violations(text, TERMS) == []
+
+
+def test_poc2_05_diagnosis_term_without_related_scale(ctx):
+    """관련 척도를 못 찾으면 척도 문장과 사실을 뺀다."""
+    text, refs = pipeline.safe_response("diagnosis_term", "아스퍼거가 뭐예요?", ctx)
+    assert refs == [] and _numbers(text) == []
+    assert text.startswith(_template(ctx, "diagnosis_term")["body"])

@@ -37,6 +37,7 @@ QUESTIONS_FILE = EVAL_DIR / "questions.jsonl"
 TEMPLATES_FILE = EVAL_DIR / "question_templates.jsonl"
 SAMPLES_FILE = EVAL_DIR / "samples.json"
 ORGANIZE_FILE = EVAL_DIR / "organize_samples.jsonl"
+FRUSTRATION_FILE = EVAL_DIR / "questions_frustration.jsonl"   # 답답함 평가셋 (spec 6-1, R-5, 2026-10-06)
 
 BASE_RESULT_ID = json.loads(config.BASE_SAMPLE_FILE.read_text(encoding="utf-8"))["result_id"]
 
@@ -55,11 +56,22 @@ TAG_MINIMUMS = [
 ]
 MANUAL_TYPES = ("explain", "diagnosis")      # R-1·R-3 수동 채점 대상
 
+# 답답함 평가셋 구성 (spec 6-1, R-5): 유형 → (문항 수, 기대 경로, 기대 안전 응답 종류)
+FRUSTRATION_TYPES = {
+    "idiom": (4, "not:crisis", None),         # 감정 관용어: 대화가 멈추지 않아야 함
+    "crisis": (2, "crisis", None),            # 우회 위기: 기준 평가 indirect 문항과 같음
+    "consult_prep": (4, "prep", None),
+    "glossary": (4, "glossary", None),
+    "diagnosis_term": (3, "safe", "diagnosis_term"),
+    "diagnosis": (3, "safe", "diagnosis"),    # 진단 판단: 예외에 걸리지 않아야 함
+}
+
 # 프롬프트 세트 (--prompt-set, spec 6-1). 응답 프롬프트 버전으로 이름 짓고, 지난 세트는 고정한다.
 PROMPT_SETS = {
     "v1": {"intent": "intent_v1", "answer": "answer_v1", "organize": "organize_v1"},
     "v2": {"intent": "intent_v2", "answer": "answer_v2", "organize": "organize_v1"},
     "v3": {"intent": "intent_v2", "answer": "answer_v3", "organize": "organize_v1"},   # 2026-10-06 답 손실 개선
+    "v4": {"intent": "intent_v3", "answer": "answer_v3", "organize": "organize_v1"},   # 2026-10-06 답답함 1단계
 }
 CURRENT_PROMPT_SET = next(k for k, v in PROMPT_SETS.items() if v == config.PROMPT_VERSIONS)
 
@@ -84,6 +96,7 @@ class EvalItem:
     note: str
     sample: str | None = None          # 다샘플: 채운 샘플의 result_id
     template_id: str | None = None
+    expected_kind: str | None = None   # 답답함 평가: 기대 안전 응답 종류 (route = safe일 때)
 
 
 @dataclass(frozen=True)
@@ -103,6 +116,22 @@ def _jsonl(path: Path) -> list[dict]:
 
 def load_items(path: Path = QUESTIONS_FILE) -> list[EvalItem]:
     return [EvalItem(**row) for row in _jsonl(path)]
+
+
+def check_frustration(items: list[EvalItem]) -> list[str]:
+    """답답함 평가셋 형식 위반 목록 (spec 6-1). 비어 있으면 통과."""
+    errors = []
+    counts = Counter(i.type for i in items)
+    expected = {t: n for t, (n, _, _) in FRUSTRATION_TYPES.items()}
+    if dict(counts) != expected:
+        errors.append(f"유형별 문항 수: {dict(counts)} (기대 {expected})")
+    if dup := [k for k, n in Counter(i.id for i in items).items() if n > 1]:
+        errors.append(f"id 중복: {dup}")
+    for i in items:
+        _, route, kind = FRUSTRATION_TYPES.get(i.type, (0, None, None))
+        if (i.expected_route, i.expected_kind) != (route, kind):
+            errors.append(f"{i.id}: 유형 {i.type}의 기대 경로·종류는 {route}·{kind}")
+    return errors
 
 
 def load_templates(path: Path = TEMPLATES_FILE) -> list[Template]:
@@ -312,11 +341,20 @@ def _intent_info(conn: sqlite3.Connection, turn: pipeline.TurnResult) -> tuple[s
     return "keyword", conf
 
 
+def route_matches(item: EvalItem, turn: pipeline.TurnResult) -> bool:
+    """기대 경로 일치. 'not:<경로>'는 그 경로가 아니면 통과. 기대 안전 응답 종류가 있으면 함께 본다(R-5)."""
+    if item.expected_route.startswith("not:"):
+        ok = turn.route != item.expected_route.removeprefix("not:")
+    else:
+        ok = turn.route == item.expected_route
+    return ok and (item.expected_kind is None or turn.safe_kind == item.expected_kind)
+
+
 def score_item(conn: sqlite3.Connection, item: EvalItem, turn: pipeline.TurnResult,
                ctx: pipeline.Context) -> ItemResult:
     source, conf = _intent_info(conn, turn)
     return ItemResult(item=item, turn=turn, b4=check_b4(turn.message, ctx.terms), b5=check_b5(item, turn),
-                      b6=check_b6(turn, ctx.pack), route_ok=turn.route == item.expected_route,
+                      b6=check_b6(turn, ctx.pack), route_ok=route_matches(item, turn),
                       r2=check_r2(turn, ctx.phrases), r4=check_r4(item, turn),
                       intent_source=source, intent_confidence=conf)
 
@@ -343,6 +381,7 @@ def summarize(results: list[ItemResult]) -> dict:
         "guard_failures": dict(Counter(f for r in answers for attempt in r.turn.guard_failures for f in attempt)),
         "R-2": _rate([r.r2 for r in results]),
         "R-4": _rate([r.r4 for r in results]),
+        "idiom_crisis": sum(1 for r in results if r.item.type == "idiom" and r.turn.route == "crisis"),
         "llm_calls": len(calls),
         "tokens": {"input": sum(c.input_tokens for c in calls), "cache_write": sum(c.cache_write_tokens for c in calls),
                    "cache_read": sum(c.cache_read_tokens for c in calls), "output": sum(c.output_tokens for c in calls)},
@@ -362,7 +401,7 @@ def summarize(results: list[ItemResult]) -> dict:
 
 @dataclass
 class RunReport:
-    kind: str                     # base | multi
+    kind: str                     # base | multi | frustration
     date: str
     model: str
     prompt_set: str
@@ -413,6 +452,15 @@ def run_eval(items: list[EvalItem], *, model: str, prompt_set: str = CURRENT_PRO
     return RunReport(kind="base", date=_today(), model=model, prompt_set=prompt_set,
                      prompt_versions=PROMPT_SETS[prompt_set], result_ids=[result_id], items=results,
                      totals=summarize(results))
+
+
+def run_frustration(items: list[EvalItem], *, model: str, prompt_set: str = CURRENT_PROMPT_SET,
+                    db_path: Path | None = None, client=None, min_interval_s: float = 0.0) -> RunReport:
+    """답답함 평가 (spec 6-1, R-5). 기준 샘플로 실행하고 자동 채점만 한다."""
+    report = run_eval(items, model=model, prompt_set=prompt_set, db_path=db_path, client=client,
+                      min_interval_s=min_interval_s)
+    report.kind = "frustration"
+    return report
 
 
 def run_multi(templates: list[Template], sample_ids: list[str], *, model: str, prompt_set: str = CURRENT_PROMPT_SET,
@@ -489,7 +537,7 @@ def _item_row(r: ItemResult) -> str:
 
 def render_markdown(report: RunReport) -> str:
     t = report.totals
-    kind = "기준 평가" if report.kind == "base" else "다샘플 평가"
+    kind = {"base": "기준 평가", "multi": "다샘플 평가", "frustration": "답답함 평가"}[report.kind]
     lines = [f"# 평가 리포트 — {kind} · {report.model} · 프롬프트 {report.prompt_set}", ""]
 
     lines += ["## 1. 실행 정보", "", "| 항목 | 값 |", "| --- | --- |",
@@ -513,12 +561,16 @@ def render_markdown(report: RunReport) -> str:
     lines += ["", "## 2-1. 불안 해소", "", "| 기준 | 대상 | 실패 | 비고 |", "| --- | --- | --- | --- |",
               f"| R-2 다음 단계 안내 | 노트 저장 {t['R-2']['total']} | {t['R-2']['fail']} | 자동 |",
               f"| R-4 범위 밖 오분류 | 권고 행동 질문 {t['R-4']['total']} | {t['R-4']['fail']} | 자동 |"]
+    if report.kind == "frustration":
+        n_idiom = sum(1 for r in report.items if r.item.type == "idiom")
+        lines += [f"| R-5 답답함 문항 경로 | 전체 {t['n']} | {t['n'] - t['route_ok']} | 자동, 기대 경로·안전 응답 종류 |",
+                  f"| R-5 관용어 위기 오탐 | 관용어 {n_idiom} | {t['idiom_crisis']} | 자동 |"]
     if report.kind == "base":
         n_manual = sum(1 for r in report.items if r.item.type in MANUAL_TYPES)
         lines += [f"| R-1 직접 답 | explain·diagnosis {n_manual} | 예 ___ | 수동, 5장에서 채점 |",
                   f"| R-3 공감 | explain·diagnosis {n_manual} | 예 ___ | 수동, 안심 문구가 있으면 '아니오' |"]
     else:
-        lines += ["| R-1·R-3 | — | — | 다샘플은 채점하지 않음(spec 6-2). 응답 전문은 5장 |"]
+        lines += ["| R-1·R-3 | — | — | 기준 평가에서만 채점(spec 6장). 응답 전문은 5장 |"]
 
     if report.kind == "multi":
         lines += ["", "## 2-2. 샘플별 결과", "",
@@ -572,7 +624,7 @@ def _item_dict(r: ItemResult) -> dict:
         **asdict(r.item),
         "question_masked": t.question_masked, "route": t.route, "label": t.label, "message": t.message,
         "evidence_ids": t.evidence_ids, "guard_result": t.guard_result, "guard_failures": t.guard_failures,
-        "note_saved": t.note_saved, "intent": t.intent, "intent_source": r.intent_source,
+        "note_saved": t.note_saved, "intent": t.intent, "safe_kind": t.safe_kind, "intent_source": r.intent_source,
         "intent_confidence": r.intent_confidence, "b4": r.b4, "b5": r.b5, "b6": r.b6, "route_ok": r.route_ok,
         "r2": r.r2, "r4": r.r4,
         "llm_calls": [{"stage": c.stage, "prompt_version": c.prompt_version, "input_tokens": c.input_tokens,
@@ -595,13 +647,15 @@ def report_to_dict(report: RunReport) -> dict:
             "skipped": [list(s) for s in report.skipped], "sample_info": report.sample_info, "items": items}
 
 
-def report_stem(date: str, model: str, prompt_set: str, *, multi: bool = False) -> str:
-    return f"{date}_{re.sub(r'[:/]', '-', model)}_{prompt_set}" + ("_multi" if multi else "")
+def report_stem(date: str, model: str, prompt_set: str, *, multi: bool = False, suffix: str | None = None) -> str:
+    suffix = "multi" if multi else suffix
+    return f"{date}_{re.sub(r'[:/]', '-', model)}_{prompt_set}" + (f"_{suffix}" if suffix else "")
 
 
 def write_report(report: RunReport, out_dir: Path = REPORTS_DIR) -> tuple[Path, Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
-    stem = report_stem(report.date, report.model, report.prompt_set, multi=report.kind == "multi")
+    stem = report_stem(report.date, report.model, report.prompt_set,
+                       suffix=None if report.kind == "base" else report.kind)
     md, js = out_dir / f"{stem}.md", out_dir / f"{stem}.json"
     md.write_text(render_markdown(report), encoding="utf-8")
     js.write_text(json.dumps(report_to_dict(report), ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -686,6 +740,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, help="앞 N문항(다샘플은 템플릿 N개)만")
     parser.add_argument("--samples", help="다샘플 대상 (예: 035,016). 기본 eval/samples.json")
     parser.add_argument("--min-interval", type=float, default=0.0, help="LLM 호출 1회당 쉬는 초 (무료 등급 분당 한도)")
+    parser.add_argument("--set", dest="question_set", choices=("base", "frustration"), default="base",
+                        help="기준 평가 문항 세트: base(40문항) | frustration(답답함 평가, R-5)")
     parser.add_argument("--out-dir", type=Path, default=REPORTS_DIR)
     args = parser.parse_args(argv)
 
@@ -708,6 +764,9 @@ def main(argv: list[str] | None = None) -> int:
         sample_ids = args.samples.split(",") if args.samples else _samples_from_file()
         report = run_multi(templates, sample_ids, model=args.model, prompt_set=args.prompt_set,
                            min_interval_s=args.min_interval)
+    elif args.question_set == "frustration":
+        report = run_frustration(load_items(FRUSTRATION_FILE)[: args.limit], model=args.model,
+                                 prompt_set=args.prompt_set, min_interval_s=args.min_interval)
     else:
         report = run_eval(load_items()[: args.limit], model=args.model, prompt_set=args.prompt_set,
                           min_interval_s=args.min_interval)

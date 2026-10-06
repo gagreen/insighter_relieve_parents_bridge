@@ -19,14 +19,17 @@ from bridge.guard.terms import GuardTerm, find_violations, load_guard_terms
 from bridge.llm import LLMError, LLMResult
 from bridge.rules.crisis import detect_crisis
 from bridge.rules.input import check_input
-from bridge.rules.intents import classify_by_keywords
+from bridge.rules.glossary_match import annotate, term_ids
+from bridge.rules.intents import classify_by_keywords, diagnosis_subroute
 from bridge.rules.masking import mask_for_child
 
 LABEL_AI = "AI 생성"        # G-11: AI 생성 응답 (근거 칩과 함께 표시)
 LABEL_SAFE = "안전 응답"    # spec 5장: 미리 만든 문장 (위기·안전 응답·범위 밖·안내 문구)
+LABEL_GLOSSARY = "낱말 풀이 · 초안(검수 전)"   # PoC2-14: 결과 화면 낱말 풀이와 같은 표시 (G-11)
+LABEL_GUIDE = "안내 · 초안(검수 전)"           # PoC2-15: 상담 준비 안내 (G-11)
 alert_log = logging.getLogger("bridge.alert")   # PoC2-03 알림 로그
 
-INTENT_CODES = ("explain", "diagnosis", "parenting", "crisis", "out_of_scope")  # spec 2-5
+INTENT_CODES = ("explain", "diagnosis", "parenting", "crisis", "out_of_scope", "consult_prep")  # spec 2-5
 QUESTION_TAG = "guardian_question"
 
 INTENT_SCHEMA = {
@@ -67,6 +70,7 @@ class IntentDecision:
     route: str
     keyword_hits: dict = field(default_factory=dict)
     llm: LLMResult | None = None
+    safe_kind: str | None = None     # route = safe일 때 정해진 안전 응답 종류 (진단명 뜻, PoC2-04 예외 2)
 
 
 def _parse_intent(text: str | None) -> tuple[str, float] | None:
@@ -91,6 +95,13 @@ def classify_intent(masked: str, *, model: str | None = None, client=None,
     prompts는 단계 → 프롬프트 버전(평가의 --prompt-set, spec 6-1). 없으면 config.PROMPT_VERSIONS.
     """
     kw = classify_by_keywords(masked)
+    if kw.intent == "diagnosis":
+        # 진단 우선의 예외: 낱말 뜻 → glossary, 진단명 뜻 → diagnosis_term (spec PoC2-04, 2026-10-06)
+        sub = diagnosis_subroute(masked)
+        if sub == "glossary":
+            return IntentDecision(kw.intent, None, "keyword", "glossary", kw.hits)
+        if sub == "diagnosis_term":
+            return IntentDecision(kw.intent, None, "keyword", "safe", kw.hits, safe_kind="diagnosis_term")
     if kw.intent is not None:
         return IntentDecision(kw.intent, None, "keyword", config.ROUTE_BY_INTENT[kw.intent], kw.hits)
 
@@ -255,6 +266,8 @@ def safe_response(kind: str, masked: str, ctx: Context) -> tuple[str, list[str]]
     """
     template = next(t for t in ctx.safe_responses if t["kind"] == kind)
     found = find_scales(masked, ctx)
+    if kind == "diagnosis_term":
+        return _diagnosis_term_response(template, found, ctx)
     refs = [i["id"] for i in found]
     stated = [i for i in found if i["t"] is not None and i["range_label"]][:config.SAFE_MAX_SCALES]
 
@@ -271,6 +284,58 @@ def safe_response(kind: str, masked: str, ctx: Context) -> tuple[str, list[str]]
     return " ".join(p for p in parts if p), refs
 
 
+def _diagnosis_term_response(template: dict, found: list[dict], ctx: Context) -> tuple[str, list[str]]:
+    """진단명 뜻 (PoC2-05 diagnosis_term): 본문 → 관련 척도 + 묻는 행동 → 척도 사실 → 선별 검사 → note_saved → 준비 행동.
+
+    진단명은 다시 쓰지 않는다(G-01). 관련 척도는 질문에서 찾은 첫 척도 1개.
+    """
+    parts = [template["body"]]
+    top = found[0] if found else None
+    if top:
+        parts.append(ctx.phrases["diagnosis_term_scale"].format(scale_name=top["name"]))
+        if top["explanation"]["kind"] == "card":
+            parts.append(top["explanation"]["card"]["what_it_asks"])
+        if top["t"] is not None and top["range_label"]:
+            parts.append(ctx.phrases["safe_scale_fact"].format(scale_name=top["name"], t=top["t"],
+                                                               range_label=top["range_label"]))
+    if template["screening_note"]:
+        parts.append(ctx.phrases["screening_note"])
+    parts += [ctx.phrases["note_saved"], template["closing"]]
+    return " ".join(p for p in parts if p), [top["id"]] if top else []
+
+
+# ── 낱말 뜻 (PoC2-14), 상담 준비 안내 (PoC2-15) ──────
+
+
+def glossary_response(masked: str, ctx: Context) -> tuple[str, list[str], bool]:
+    """(문장, 용어 id, 해석 표현 여부). 결과 화면 낱말 풀이와 같은 용어사전 문장으로만 답한다(G-04, LLM 없음).
+
+    표현이 금칙 표현에 걸리면 다시 쓰지 않고 풀이만 쓰며, 이때는 용어 1개만 답한다(B-4).
+    """
+    by_id = {g["id"]: g for g in ctx.glossary}
+    ids = list(dict.fromkeys(term_ids(annotate(masked, ctx.glossary))))[:config.GLOSSARY_QA_MAX_TERMS]
+    entries = [by_id[i] for i in ids]
+    unsafe = {e["id"] for e in entries if find_violations(e["term"], ctx.terms)}
+    if unsafe:
+        entries = entries[:1]
+    parts = [ctx.phrases["glossary_answer_unnamed"].format(plain=e["plain"]) if e["id"] in unsafe
+             else ctx.phrases["glossary_answer"].format(term=e["term"], plain=e["plain"]) for e in entries]
+    interpretive = any(e["kind"] == "interpretive" for e in entries)
+    if interpretive:
+        parts.append(ctx.phrases["interpretive_note"])
+    return " ".join(parts), [e["id"] for e in entries], interpretive
+
+
+def prep_response(ctx: Context, saved: list[dict]) -> str:
+    """상담 준비 안내: 도입 → 한 줄 요약(PoC1-03) → 관찰 메모 → 저장된 질문 목록 → 상담사 확인 안내 (LLM 없음)."""
+    head = " ".join([ctx.phrases["prep_intro"], ctx.view["summary"]["text"], ctx.phrases["prep_memo"]])
+    if saved:
+        listing = "\n".join([ctx.phrases["prep_notes_intro"], *(f"- {n['text']}" for n in saved)])
+    else:
+        listing = ctx.phrases["prep_no_notes"]
+    return "\n\n".join([head, listing, ctx.phrases["prep_closing"]])
+
+
 def crisis_message(crisis: dict) -> str:
     lines = [crisis["message"]] + [f"- {c['name']}: {c['contact']}" for c in crisis["channels"]]
     return "\n".join(lines)
@@ -282,6 +347,7 @@ def crisis_message(crisis: dict) -> str:
 @dataclass(frozen=True)
 class TurnResult:
     route: str                                   # input_error | crisis | safe | redirect | answer | api_error
+                                                 # | glossary | prep (2026-10-06)
     message: str
     label: str | None = None                     # LABEL_AI / LABEL_SAFE (G-11)
     evidence_ids: list[str] = field(default_factory=list)
@@ -294,6 +360,7 @@ class TurnResult:
     question_masked: str | None = None           # 외부로 보낸 문장 (화면에 'AI에게 보낸 문장'으로 표시, G-09)
     turn_id: int | None = None                   # input_error면 저장하지 않아 None
     llm_calls: list[LLMResult] = field(default_factory=list)
+    safe_kind: str | None = None                 # 안전 응답 종류 (PoC2-05), 평가 채점용
 
 
 @dataclass
@@ -307,7 +374,7 @@ class _Turn:
 
 def _save(conn: sqlite3.Connection, ctx: Context, turn: _Turn, *, route: str, message: str, label: str,
           evidence_ids: list[str] = (), guard: str | None = None, crisis: bool = False,
-          note: tuple[str, list[str]] | None = None) -> TurnResult:
+          note: tuple[str, list[str]] | None = None, safe_kind: str | None = None) -> TurnResult:
     """qa_turns 1행 → 이 턴의 llm_calls → note_items (PoC2-13). 노트 문장은 마스킹된 원래 질문."""
     with conn:
         cur = conn.execute(
@@ -323,7 +390,8 @@ def _save(conn: sqlite3.Connection, ctx: Context, turn: _Turn, *, route: str, me
         notes.save_note(conn, ctx.child_id, turn_id, turn.masked, note[0], note[1])
     return TurnResult(route=route, message=message, label=label, evidence_ids=list(evidence_ids), guard_result=guard,
                       guard_failures=turn.failures, crisis=crisis, stopped=crisis, note_saved=note is not None,
-                      intent=turn.intent, question_masked=turn.masked, turn_id=turn_id, llm_calls=list(turn.calls))
+                      intent=turn.intent, question_masked=turn.masked, turn_id=turn_id, llm_calls=list(turn.calls),
+                      safe_kind=safe_kind)
 
 
 def _crisis(conn, ctx: Context, turn: _Turn, stage: str, keyword_ids: list[str]) -> TurnResult:
@@ -337,7 +405,23 @@ def _crisis(conn, ctx: Context, turn: _Turn, stage: str, keyword_ids: list[str])
 
 def _safe(conn, ctx: Context, turn: _Turn, kind: str) -> TurnResult:
     text, refs = safe_response(kind, turn.masked, ctx)
-    return _save(conn, ctx, turn, route="safe", message=text, label=LABEL_SAFE, evidence_ids=refs, note=(kind, refs))
+    return _save(conn, ctx, turn, route="safe", message=text, label=LABEL_SAFE, evidence_ids=refs, note=(kind, refs),
+                 safe_kind=kind)
+
+
+def _glossary(conn, ctx: Context, turn: _Turn) -> TurnResult:
+    """낱말 뜻 (PoC2-14). 해석 표현이면 상담 안내 + 노트 저장(결과 화면의 상담 질문 저장과 같은 유형)."""
+    text, ids, interpretive = glossary_response(turn.masked, ctx)
+    if interpretive:
+        return _save(conn, ctx, turn, route="glossary", message=with_note_saved(text, ctx), label=LABEL_GLOSSARY,
+                     evidence_ids=ids, note=(notes.REPORT_PHRASE_TYPE, ids))
+    return _save(conn, ctx, turn, route="glossary", message=text, label=LABEL_GLOSSARY, evidence_ids=ids)
+
+
+def _prep(conn, ctx: Context, turn: _Turn, since_turn_id: int | None) -> TurnResult:
+    """상담 준비 안내 (PoC2-15). 노트에 저장하지 않는다."""
+    saved = notes.list_notes(conn, ctx.child_id, since_turn_id)
+    return _save(conn, ctx, turn, route="prep", message=prep_response(ctx, saved), label=LABEL_GUIDE)
 
 
 def _api_error(conn, ctx: Context, turn: _Turn) -> TurnResult:
@@ -384,7 +468,7 @@ def _answer(conn, ctx: Context, turn: _Turn, model: str | None, client, prompts)
                      label=LABEL_SAFE, guard=guard, note=("no_evidence", []))
     text, refs = safe_response("guard_fallback", turn.masked, ctx)
     return _save(conn, ctx, turn, route="answer", message=text, label=LABEL_SAFE, evidence_ids=refs,
-                 guard="fallback", note=("guard_fallback", refs))
+                 guard="fallback", note=("guard_fallback", refs), safe_kind="guard_fallback")
 
 
 def _is_low_confidence(decision: IntentDecision) -> bool:
@@ -393,8 +477,12 @@ def _is_low_confidence(decision: IntentDecision) -> bool:
 
 
 def handle_question(conn: sqlite3.Connection, ctx: Context, raw: str, *, model: str | None = None,
-                    client=None, prompts: Mapping[str, str] | None = None) -> TurnResult:
-    """보호자 질문 1건. 입력 검증 실패는 저장하지 않는다. 그 밖에는 qa_turns 1행을 남긴다."""
+                    client=None, prompts: Mapping[str, str] | None = None,
+                    since_turn_id: int | None = None) -> TurnResult:
+    """보호자 질문 1건. 입력 검증 실패는 저장하지 않는다. 그 밖에는 qa_turns 1행을 남긴다.
+
+    since_turn_id: 상담 준비 안내(PoC2-15)에 나열할 노트의 범위(화면 세션, spec 5장). 없으면 전체.
+    """
     check = check_input(raw, ctx.phrases)
     if not check.ok:
         return TurnResult(route="input_error", message=check.message)
@@ -415,7 +503,13 @@ def handle_question(conn: sqlite3.Connection, ctx: Context, raw: str, *, model: 
         return _crisis(conn, ctx, turn, "intent_llm", [])
     if decision.route == "redirect":
         return _save(conn, ctx, turn, route="redirect", message=ctx.phrases["out_of_scope"], label=LABEL_SAFE)
+    if decision.route == "glossary":
+        return _glossary(conn, ctx, turn)
+    if decision.route == "prep":
+        return _prep(conn, ctx, turn, since_turn_id)
     if decision.route == "safe":
+        if decision.safe_kind:
+            return _safe(conn, ctx, turn, decision.safe_kind)
         low = _is_low_confidence(decision) or decision.intent not in ("diagnosis", "parenting")
         return _safe(conn, ctx, turn, "low_confidence" if low else decision.intent)
     return _answer(conn, ctx, turn, model, client, prompts)
