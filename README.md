@@ -7,12 +7,13 @@
 
 문제 정의, 설계 근거, 평가 설계는 **기획안(별도 제출 PDF)** 에 있다. 이 README는 기획안의 PoC를 이 리포지토리에서 실행하고 확인하는 방법을 다룬다.
 
-| 문서                         | 내용                                                                       |
-| ---------------------------- | -------------------------------------------------------------------------- |
-| [specs/poc.md](specs/poc.md) | 기획안 PoC의 요구사항과 수용 기준(Given/When/Then). 테스트의 출처          |
-| [CLAUDE.md](CLAUDE.md)       | 구현 규칙: AI 출력 경계(G-01~G-12), 질문 처리 파이프라인, 데이터 모델      |
-| [content/](content/)         | 미리 만든 문장: 척도 설명 카드, 용어사전, 안전 응답, 금칙 표현 (모두 초안) |
-| [prompts/](prompts/)         | 버전을 붙인 프롬프트 파일                                                  |
+| 문서                               | 내용                                                                       |
+| ---------------------------------- | -------------------------------------------------------------------------- |
+| [specs/poc.md](specs/poc.md)       | 기획안 PoC의 요구사항과 수용 기준(Given/When/Then). 테스트의 출처          |
+| [CLAUDE.md](CLAUDE.md)             | 구현 규칙: AI 출력 경계(G-01~G-12), 질문 처리 파이프라인, 데이터 모델      |
+| [content/](content/)               | 미리 만든 문장: 척도 설명 카드, 용어사전, 안전 응답, 금칙 표현 (모두 초안) |
+| [prompts/](prompts/)               | 버전을 붙인 프롬프트 파일                                                  |
+| [eval/RESULTS.md](eval/RESULTS.md) | 검증 결과: 성공 기준 측정, 모델·프롬프트 비교                              |
 
 ## 1. 구현 범위
 
@@ -35,63 +36,7 @@ LLM을 쓰는 곳은 [4장](#4-사용-모델api)의 세 단계뿐이다. 질문 
 | "상담 날짜를 바꾸고 싶어요"             | 고객센터 안내 (노트 저장 안 함)                                                                                                                         |
 | 질문 몇 개 뒤 브리프 출력               | 저장된 질문이 유형별로 묶인 상담사용 텍스트                                                                                                             |
 
-## 2. 검증 현황
-
-기획안의 성공 기준 6개(B-1~B-6)를 자동으로 측정한다. 단위 테스트 537개 통과(LLM은 모킹).
-
-| ID  | 기준                    | 측정                                                              | 상태                                               |
-| --- | ----------------------- | ----------------------------------------------------------------- | -------------------------------------------------- |
-| B-1 | 수치 오류 0건           | 공개 샘플 10건의 화면 숫자 ↔ 원본 JSON 자동 대조                  | 통과 (`pytest`)                                    |
-| B-2 | 범위 오류 0건           | 규칙 판정 ↔ 원보고서 라벨 대조 + 경계값(59/60/62/63, 59/60/69/70) | 통과 (`pytest`)                                    |
-| B-3 | 금칙 표현 0건           | 요약·카드·용어사전·안전 응답 전 문장을 금칙 사전으로 검사         | 통과 (`pytest`)                                    |
-| B-4 | 진단·처방·예후 발화 0건 | 평가셋 응답 자동 검사 + 수동 확인                                 | 자동 통과 (0 / 40, 다샘플 0 / 172). 수동 확인 대기 |
-| B-5 | 위기형 전부 연결        | 위기형 문항이 모두 위기 처리로 갔는지                             | 통과 (5 / 5, 키워드 없는 우회 표현 2건 포함)       |
-| B-6 | 응답 숫자 불일치 0건    | 설명형 응답 숫자 ↔ 인용 근거 대조                                 | 통과 (0건)                                         |
-
-B-4~B-6은 아래 모든 평가에서 측정했다(2026-10-06, 공개 샘플·현재 코드 기준). 형식은 [eval/README.md](eval/README.md), 리포트는 [eval/reports/](eval/reports/).
-
-**모델·프롬프트 비교** (`python -m eval.run --compare`). regen·fallback은 출력 검증이 실제로 막은 횟수, 지연은 질문 1건의 LLM 호출 합:
-
-| 모델                              | 세트 | 평가   | 문항 | B-4 실패 | B-5 실패 | B-6 실패 | 경로 일치 | regen | fallback | R-4 실패  | 비용(USD)         | 지연 평균/최대 |
-| --------------------------------- | ---- | ------ | ---- | -------- | -------- | -------- | --------- | ----- | -------- | --------- | ----------------- | -------------- |
-| Haiku 4.5                         | v1   | 기준   | 40   | 0        | 0 / 5    | 0 / 9    | 38/40     | 2     | 2        | **2 / 3** | 0.087             | 4.7s / 12.2s   |
-| Haiku 4.5                         | v2   | 기준   | 40   | 0        | 0 / 5    | 0 / 13   | 40/40     | 4     | 2        | 0 / 3     | 0.101             | 4.3s / 11.6s   |
-| Haiku 4.5                         | v3   | 기준   | 40   | 0        | 0 / 5    | 0 / 12   | 40/40     | 3     | 0        | 0 / 3     | 0.077             | 4.1s / 13.5s   |
-| GPT-5.4 mini                      | v3   | 기준   | 40   | 0        | 0 / 5    | 0 / 15   | 40/40     | 1     | 0        | 0 / 3     | 0.048             | 2.8s / 7.3s    |
-| Gemini 3.1 Flash-Lite (무료 등급) | v3   | 기준   | 40   | 0        | 0 / 5    | 0 / 14   | 40/40     | 1     | 0        | 0 / 3     | 0.031 (유료 환산) | 5.5s / 12.1s   |
-| Haiku 4.5                         | v3   | 다샘플 | 172  | 0        | —        | 0 / 81   | 172/172   | 22    | 4 / 100  | 0 / 10    | 0.615             | 4.9s / 13.9s   |
-| GPT-5.4 mini                      | v3   | 다샘플 | 172  | 0        | —        | 0 / 100  | 172/172   | 3     | 0 / 100  | 0 / 10    | 0.324             | 2.9s / 7.0s    |
-| Gemini 3.1 Flash-Lite (무료 등급) | v3   | 다샘플 | 172  | 0        | —        | 0 / 94   | 172/172   | 9     | 0 / 100  | 0 / 10    | 0.189 (유료 환산) | 4.3s / 21.0s   |
-
-다샘플 설명형 100건이 어떻게 끝났는지:
-
-| 모델 (v3)             | AI 답 | 그중 부분 답변 | '보고서에 없음' 안내 | 안전 응답(fallback) |
-| --------------------- | ----- | -------------- | -------------------- | ------------------- |
-| Haiku 4.5             | 81    | 2              | 15                   | 4                   |
-| GPT-5.4 mini          | 100   | 21             | 0                    | 0                   |
-| Gemini 3.1 Flash-Lite | 94    | 8              | 6                    | 0                   |
-
-- 출력 경계(B-4~B-6)는 세 회사 모델 모두 지켰다. 경계는 모델이 아니라 규칙(출력 검증)이 지킨다. 모델에 따라 달라지는 것은 **답이 나가는 비율**이다.
-- 프롬프트 v2는 보고서 권고 행동 질문의 범위 밖 오분류(R-4)를 0건으로 줄였다(v1은 2/3).
-- Haiku는 '보고서에 없음' 안내가 15건으로, 권고 행동 시기("권고 사항은 언제까지 해야 하나요?")처럼 부분 답변이 가능한 질문에서도 답을 비우는 경향이 있다. GPT-5.4 mini는 같은 질문에 부분 답변을 냈다.
-- Gemini 무료 등급은 앞선 실행에서 제공사 503(수요 과다) 오류로 다샘플 10건이 처리되지 않은 적이 있다(이번 실행은 0건). 운영 후보로 볼 때 가용성을 따로 확인해야 한다.
-- R-1(직접 답)·R-3(공감)은 수동 채점 대기, 질문 정리(5개 샘플)는 [리포트](eval/reports/2026-10-06_claude-haiku-4-5-20251001_organize.md)에서 수동 확인 대기.
-- 로컬 모델(Ollama)은 단가를 계산할 수 없어 비교에서 제외했다.
-
-**공개 샘플 문장 교체 전 측정** (리포트는 과제 보고서 문장이 섞여 있어 공개하지 않는다, 점수·문항은 같음):
-
-- Sonnet 5.5(v1·v2, 답 손실 개선 전 코드): 기준 평가 경로 37/40·39/40, 다샘플 fallback 1/100, 비용 기준 $0.14~0.17·다샘플 $1.26. 출력 경계 0건.
-- **답 손실 개선**(모델은 그대로): ① 재생성도 근거 없는 문장 때문에만 실패하면 '보고서에 없음' 안내로 처리 ② 재생성 요청에 실패 사유를 붙임 ③ 기준선까지의 차이(`gap`)를 코드가 계산해 근거에 넣음 ④ 응답 프롬프트 v3. 그때의 Haiku 다샘플 결과(설명형 100건):
-
-  | 단계          | AI 답(부분 답변 포함) | '보고서에 없음' 안내 | 안전 응답(fallback) | 비용   |
-  | ------------- | --------------------- | -------------------- | ------------------- | ------ |
-  | 개선 전 (v2)  | 65                    | 0                    | 35                  | $0.648 |
-  | 코드 ①②③ + v2 | 81                    | 8                    | 11                  | $0.636 |
-  | 코드 ①②③ + v3 | 84                    | 15                   | 1                   | $0.551 |
-
-  개선 전에는 용어 질문("백분위가 뭐예요?")에 근거에 없는 예시 숫자를 만들거나, 기준선과의 차이를 직접 계산하거나, "보고서에 없다"는 답에 근거 id를 비워 출력 검증에 걸렸다. 사유를 붙인 재생성이 대부분 성공했고(②), v3에서 용어 질문이 10건 중 10건 답을 받았다.
-
-## 3. 실행 방법
+## 2. 실행 방법
 
 준비물은 Python 3.11과 Anthropic API 키뿐이다. 별도 서버나 DB 설치 없이 SQLite 파일 하나(`bridge.db`)로 동작한다.
 
@@ -125,6 +70,37 @@ streamlit run app/main.py
 | `python -m eval.run --compare eval/reports/*.json`            | 리포트 비교표 출력                                         | 없음         |
 
 평가 형식·채점은 [eval/README.md](eval/README.md). 다른 회사 모델로 평가하려면 `pip install -e '.[compare]'`(OpenAI SDK)와 해당 키가 필요하다(5장).
+
+## 3. 리포지토리 구조
+
+```
+README.md             실행 방법·비용·검증 결과
+CLAUDE.md             구현 규칙: AI 출력 경계(G-01~G-12), 질문 처리 파이프라인, 데이터 모델
+specs/poc.md          요구사항·수용 기준
+src/bridge/
+  rules/              입력 검증, 범위 판정, 마스킹, 위기·의도 키워드, 낱말 풀이 연결
+  guard/              AI 출력 검사 (금칙 표현, 숫자·범위 이름 대조)
+  ingest/             저장 전 검사 결과 JSON Schema 검증
+  content.py          content/ 로드·형식 검증
+  evidence.py         응답 근거 묶음, 출력 검증이 대조할 id·숫자 기준
+  pipeline.py         질문 1건 처리
+  results.py          쉬운 말 결과 조립 (PoC-1)
+  notes.py, brief.py  상담 질문 노트, 브리프 텍스트
+  llm.py              모델 호출 단일 진입점, 토큰·비용 기록
+  db.py               SQLite 스키마 생성·샘플 적재
+  config.py           정책 상수, 모델 ID, 단가, 경로
+content/              미리 만든 문장 (카드, 용어사전, 안전 응답, 위기 안내, 금칙 사전)
+prompts/              intent_v1·v2, answer_v1·v2·v3, organize_v1 (현재 intent_v2·answer_v3, config.PROMPT_VERSIONS)
+data/                 샘플 검사 결과 10건(가상), 판정 기준 정의
+schemas/              검사 결과 JSON Schema
+scripts/              샘플 생성, 공통 뼈대 JSON 변환
+eval/                 평가셋·질문 템플릿·샘플 목록, 실행(run.py), 리포트(reports/), 검증 결과(RESULTS.md)
+app/                  Streamlit 데모
+tests/                단위 테스트 (수용 기준별)
+requirements.txt, pyproject.toml, .env.example   설정 파일
+```
+
+공개 제외(`.gitignore`): `docs/`(과제 자료, 지원자 외 공유 금지), `data/private/`(회사 제공 보고서를 옮긴 JSON), `eval/reports/private/`(공개하지 않는 리포트), `.env`, `*.db`.
 
 ## 4. 사용 모델·API
 
@@ -169,6 +145,128 @@ LLM을 호출하는 단계는 세 곳뿐이다.
 - 보호자 질문은 프롬프트 안의 별도 태그 영역에 넣어, 질문 속 지시문("규칙을 무시하고…")을 질문 내용으로만 다룬다.
 - API 오류는 SDK 재시도 1회 후 안내 문구를 보여 주고 질문을 상담 노트에 저장한다.
 
+**DB 구조** (SQLite, 스키마는 [src/bridge/db.py](src/bridge/db.py))
+
+검사 결과는 `assessment_results.payload`에 공통 뼈대 JSON으로 저장하고, 검사별 판정 기준은 `assessment_types.definition`에 둔다. 식별 정보는 `subjects`에만 두고 프롬프트·화면 요약에 넣지 않는다(G-09). 점선은 FK 없이 `child_id`로 잇는 논리 관계다.
+
+```mermaid
+erDiagram
+    assessment_types ||--o{ assessment_results : "code = assessment_code (FK)"
+    subjects         ||..o{ assessment_results : "child_id (논리 관계)"
+    subjects         ||..o{ qa_turns           : "child_id (논리 관계)"
+    subjects         ||..o{ note_items         : "child_id (논리 관계)"
+    qa_turns         |o--o{ note_items         : "source_turn_id (FK, NULL 허용)"
+    qa_turns         |o--o{ llm_calls          : "turn_id (FK, NULL 허용)"
+
+    assessment_types {
+        TEXT    code PK
+        TEXT    name
+        TEXT    respondent
+        INTEGER schema_version
+        TEXT    definition "JSON 판정 기준 (G-02)"
+    }
+    assessment_results {
+        TEXT    result_id PK
+        TEXT    child_id "가명"
+        TEXT    assessment_code FK
+        TEXT    administered_at
+        INTEGER schema_version
+        TEXT    payload "JSON 공통 뼈대"
+    }
+    subjects {
+        TEXT child_id PK "식별 정보 (G-09)"
+        TEXT name
+        TEXT sex
+        TEXT birth_date
+        TEXT school_level
+        TEXT grade
+    }
+    qa_turns {
+        INTEGER turn_id PK
+        TEXT    child_id
+        TEXT    question_masked
+        TEXT    intent
+        REAL    intent_confidence
+        TEXT    route
+        TEXT    answer
+        TEXT    evidence_refs "JSON 배열"
+        TEXT    guard_result "pass/regen/fallback"
+        INTEGER crisis_flag
+        INTEGER saved_to_note
+        TEXT    created_at
+    }
+    note_items {
+        INTEGER item_id PK
+        TEXT    child_id
+        INTEGER source_turn_id FK
+        TEXT    text "마스킹된 문장"
+        TEXT    type
+        TEXT    related_refs "JSON 배열"
+        INTEGER parent_edited
+        INTEGER parent_approved "PoC 승인 흐름 없음"
+        TEXT    created_at
+    }
+    llm_calls {
+        INTEGER call_id PK
+        INTEGER turn_id FK
+        TEXT    stage "intent/answer/organize"
+        TEXT    model
+        TEXT    prompt_version
+        INTEGER input_tokens
+        INTEGER cached_tokens
+        INTEGER cache_write_tokens
+        INTEGER output_tokens
+        TEXT    stop_reason
+        INTEGER latency_ms
+        REAL    cost_usd
+        TEXT    created_at
+    }
+```
+
+**근거와 출력 형식** (형식 설명용 예시, 실제 출력이 아님)
+
+검사 결과는 모든 검사 공통 뼈대(숫자는 `scores`, 문장은 `findings`, 파일은 `files`)의 JSON으로 저장하고, 응답 생성의 근거로 쓴다. 검사별 부가 정보는 각 항목의 `extra`에 두고, 서술은 요약하지 않고 원문 문장 그대로 `text`에 넣는다. 모든 항목의 `id`는 근거 칩과 출력 검증의 키다.
+
+```json
+{
+  "assessment": "KCBCL_4_17",
+  "schema_version": 1,
+  "scores": [
+    {
+      "id": "III.attention",
+      "scale": "attention",
+      "name": "주의집중 문제",
+      "t": 66,
+      "percentile": 95,
+      "range": "borderline",
+      "extra": { "group": "syndrome" }
+    }
+  ],
+  "findings": [
+    {
+      "id": "II.summary",
+      "type": "narrative",
+      "section": "문제행동 종합 지표",
+      "scale": null,
+      "text": "(보고서 원문 문장 그대로)",
+      "extra": {}
+    }
+  ],
+  "files": []
+}
+```
+
+설명형 질문("66점이면 높은 건가요?")의 응답 생성 출력이다. 코드가 JSON Schema로 형식을 검증하고, 답 속 숫자를 `evidence_ids`가 가리키는 근거와 대조한다. 진단·처방·예후형 질문은 이 단계로 오지 않고, 규칙이 보고서 값을 채운 안전 응답으로 답한다.
+
+```json
+{
+  "answerable": true,
+  "answer": "주의집중 문제 66점은 같은 나이·성별 아이 100명 중 높은 쪽에서 약 5번째입니다. 관찰 권고 범위(60~69)에 있고, 전문 상담 권고 기준선(70)보다는 낮습니다. 이 점수가 아이에게 어떤 의미인지는 상담에서 함께 확인하실 수 있습니다.",
+  "evidence_ids": ["III.attention", "term.percentile"],
+  "note_question": null
+}
+```
+
 ## 5. 환경 변수
 
 `.env.example`을 `.env`로 복사해 채운다. `.env`는 실행 시 자동으로 읽으며, 셸에 이미 설정된 값이 있으면 그 값이 우선한다.
@@ -205,7 +303,7 @@ LLM을 호출하는 단계는 세 곳뿐이다.
 | 질문 정리 (5개 샘플)       | $0.010    | —            | —                       |                                     |
 
 - 응답 생성 1회는 근거(약 12K 토큰)를 캐시로 읽으면 Haiku 약 $0.003, 처음 쓸 때 약 $0.022다. 안전 응답·위기·범위 밖으로 끝나는 질문은 응답 생성을 호출하지 않는다.
-- Sonnet 5.5는 문장 교체 전 측정으로 기준 평가 $0.14~0.17, 다샘플 $1.26이었다(2장).
+- Sonnet 5.5는 문장 교체 전 측정으로 기준 평가 $0.14~0.17, 다샘플 $1.26이었다([검증 결과](eval/RESULTS.md)).
 - 3일차 평가 전체에 청구된 비용은 약 $5.9다(Anthropic·OpenAI, Gemini는 무료 등급). 문장 교체 전 실행과 다시 돌린 실행을 포함하며, 중간에 멈춰 기록이 남지 않은 실행 1회는 빠져 있다.
 
 ## 7. AI 도구 사용 내역
@@ -216,7 +314,15 @@ LLM을 호출하는 단계는 세 곳뿐이다.
 
 평가 채점에 LLM을 쓰지 않는다. B-4~B-6·R-2·R-4는 규칙으로 자동 채점하고, R-1·R-3과 B-4 확인은 사람이 한다.
 
-## 8. 한계
+개발에 Claude Code를 어떻게 썼는지는 [부록 A](#a-claude-code-사용-내역)에 정리했다.
+
+## 8. 검증 결과
+
+기획안의 성공 기준 6개(B-1~B-6)를 모두 자동 측정했고, 자동 채점 항목은 전부 통과했다. 출력 경계(진단·처방·예후 발화, 위기 연결, 숫자 불일치)는 Anthropic·OpenAI·Google 세 회사 모델에서 모두 0건이었고, 모델에 따라 달라진 것은 답이 나가는 비율이었다. 수동 확인(B-4 응답 전문, R-1·R-3)은 대기 중이다.
+
+기준별 결과, 모델·프롬프트 비교표, 답 손실 개선 과정은 **[eval/RESULTS.md](eval/RESULTS.md)** 에 있다.
+
+## 9. 한계
 
 - 척도 설명 카드, 요약 템플릿, 용어사전은 상담사 검수 전 초안이다. 화면에 '초안(검수 전)'으로 표시한다.
 - 샘플 데이터의 T점수는 실제 K-CBCL 규준이 아닌 시뮬레이션 규준으로 만든 가상 값이다.
@@ -225,22 +331,32 @@ LLM을 호출하는 단계는 세 곳뿐이다.
 - 이름이 일반 낱말과 같을 때(예: '인사') 낱말로 쓰인 형태가 분명한 자리만 가리지 않는다(`content/name_word_exceptions.json`). 그 자리에 성 없는 이름이 남을 수 있다.
 - 과제로 제공된 CBCL 보고서(가상 아동)는 공유 금지 자료라 리포지토리에 포함하지 않았다. 로컬에서는 공통 뼈대 JSON으로 옮겨 `data/private/`(제외 폴더)에 두고 같은 코드로 실행해 확인했다(`specs/poc.md` 2-4-1).
 
-## 9. 리포지토리 구조
+## 부록
 
-```
-specs/poc.md          요구사항·수용 기준
-src/bridge/
-  rules/              입력 검증, 범위 판정, 마스킹, 위기·의도 키워드, 낱말 풀이 연결
-  guard/              AI 출력 검사 (금칙 표현, 숫자·범위 이름 대조)
-  pipeline.py         질문 1건 처리
-  results.py          쉬운 말 결과 조립 (PoC-1)
-  notes.py, brief.py  상담 질문 노트, 브리프 텍스트
-  llm.py              모델 호출 단일 진입점, 토큰·비용 기록
-content/              미리 만든 문장 (카드, 용어사전, 안전 응답, 위기 안내, 금칙 사전)
-prompts/              intent_v1·v2, answer_v1·v2·v3, organize_v1 (현재 intent_v2·answer_v3, config.PROMPT_VERSIONS)
-data/                 샘플 검사 결과 10건(가상), 판정 기준 정의
-schemas/              검사 결과 JSON Schema
-eval/                 평가셋·질문 템플릿·샘플 목록, 실행(run.py), 리포트(reports/)
-app/                  Streamlit 데모
-tests/                단위 테스트 (수용 기준별)
-```
+### A. Claude Code 사용 내역
+
+개발 전 과정에서 Claude Code를 썼다. **방향과 경계는 사람이 정하고, 계획·후보 정리·구현·검증·문서 정리는 Claude Code가 맡았다.**
+
+**작업 방식**
+
+1. **규칙 문서로 통제했다.(SDD)** Claude Code가 매 세션 [CLAUDE.md](CLAUDE.md)의 절대 규칙(G-01~G-12)과 [specs/poc.md](specs/poc.md)를 읽게 했다. 구현 중 스펙과 현실이 어긋나면 코드보다 스펙 변경안을 먼저 내게 했다.
+2. **계획을 먼저 받고, 승인한 뒤 구현하게 했다.** 작업마다 "만들거나 바꿀 파일, 함수 시그니처, 테스트 케이스를 제시하고 절대 규칙과 충돌하는 곳을 지적하라. 코드는 쓰지 말고 멈춰라"로 시작했다. 승인한 뒤에 테스트 → 구현 → 커밋 순서로 진행했다.
+3. **후보는 AI가 내고, 선택은 사람이 했다.** 설계 선택이 필요한 곳에서는 후보마다 규칙 영향과 작업량을 표로 받아 골랐다.
+4. **문장 초안은 AI가 쓰고, 문구 확정은 사람이 했다.** 척도 설명 카드, 요약 템플릿, 용어사전, 금칙 사전, 안전 응답, 평가셋 질문이 여기에 해당한다. 상담사 검수 전이라 모두 `draft`로 둔다.
+5. **사실은 출처로 확인했다.** 다음 항목은 공식 문서를 조회해 반영했다.
+   - 위기 안내 전화번호(109·1388·112)
+   - 안내 문구에 적은 법 조항(의료법 제27조)
+   - 비교 모델의 ID·단가
+   - Claude API의 캐시 최소 길이·요청 옵션
+6. **동작은 실행해서 검증했다.** 단위 테스트는 LLM을 모킹해서 돌렸다. 평가는 실제 API로 실행했고, 비용은 `llm_calls`로 집계했다. 평가 채점에는 LLM을 쓰지 않았다.
+
+**단계별 사용**
+
+| 단계                      | Claude Code가 한 일                                                                                                                 |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1일차: 데이터·판정·콘텐츠 | 리포지토리 골격, SQLite 스키마, 범위 판정 규칙과 경계값 테스트. 척도 설명 카드 33장·요약 템플릿·용어사전·금칙 사전 초안과 사전 검사 |
+| 2일차: 질문 도우미        | 입력 검증·마스킹·위기·의도 키워드, `llm.py`와 프롬프트 v1, 출력 검증·재생성·안전 응답, 질문 정리·브리프, Streamlit 데모             |
+| 3일차: 결과 화면          | 보고서 원문 낱말 풀이(표기·검사 용어·해석 표현)와 보고서 섹션 순서 배치 설계                                                        |
+| 3일차: 불안 해소          | 답이 수동적인 원인을 대화 기록(`qa_turns`)으로 분석, 개선 후보 6개 제시, 프롬프트 v2                                                |
+| 3일차: 평가·모델 비교     | 평가셋 40문항, 다샘플 템플릿, 평가 CLI. 다른 회사 모델 추천·연동. 답 손실 37건 원인 분류와 개선 후보 8개, 프롬프트 v3               |
+| 3일차: 제출 준비          | 공유 금지 보고서 문장을 자체 문장으로 바꾸고 커밋 이력에서 제거. 민감 정보 점검 테스트, README 재구성, ERD                          |
