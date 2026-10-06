@@ -98,7 +98,8 @@ MAX_INPUT_CHARS = 1000
 AUTO_REGEN_LIMIT = 1
 # P-05 API 오류 재시도 횟수 (PoC 축소). 가정: 기획안 2-5
 API_RETRY_LIMIT = 1
-# 의도 분류 신뢰도 임계값. 가정: 평가셋 1차 실행 전 임시값 (specs/poc.md PoC2-04, 2026-10-04)
+# 의도 분류 신뢰도 임계값. 2026-10-06 확정 (specs/poc.md PoC2-04): intent_v2에서 Haiku·GPT·Gemini 최소 0.84, 오분류 0건.
+# 미달은 안전 쪽(safe)으로 가므로 보수적으로 둔다.
 INTENT_CONFIDENCE_THRESHOLD = 0.7
 # 안전 응답에 사실 문장으로 넣는 척도 수 상한. 설계값: 응답이 길어져 읽히지 않는 것을 막음 (specs/poc.md PoC2-05, 2026-10-05)
 SAFE_MAX_SCALES = 3
