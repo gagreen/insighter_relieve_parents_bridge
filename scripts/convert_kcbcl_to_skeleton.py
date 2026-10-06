@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-data/kcbcl_samples_100.json (원본, 수정하지 않음) -> 공통 뼈대 형식 변환
+data/kcbcl_samples.json (원본, 손으로 고치지 않음) -> 공통 뼈대 형식 변환
 
 공통 뼈대: CLAUDE.md 8-1 (docs/claude-md-draft.md "JSON 공통 뼈대" + extra 필드, range 영문 enum)
 - 숫자는 scores, 문장은 findings, 파일은 files. 검사별 부가 정보는 항목의 extra.
@@ -10,7 +10,7 @@ data/kcbcl_samples_100.json (원본, 수정하지 않음) -> 공통 뼈대 형�
 - 식별 정보(이름·생년월일·학년)는 payload 밖 subject 블록에 둔다(G-09: 외부 API로 보내지 않음).
 
 출력 (실제 데이터처럼 검사 결과 1건 = 파일 1개):
-  data/kcbcl_results/001.json ~ 100.json   검사 결과 1건 (subject + payload + sample_meta)
+  data/kcbcl_results/<번호>.json           검사 결과 1건 (subject + payload + sample_meta)
   data/assessment_types/KCBCL_4_17.json    검사 정의 (척도 목록·범위 판정 기준)
 
 사용법: python scripts/convert_kcbcl_to_skeleton.py [입력] [결과 폴더] [검사 정의 폴더]
@@ -20,7 +20,7 @@ import math
 import os
 import sys
 
-SRC = sys.argv[1] if len(sys.argv) > 1 else "data/kcbcl_samples_100.json"
+SRC = sys.argv[1] if len(sys.argv) > 1 else "data/kcbcl_samples.json"
 OUT_DIR = sys.argv[2] if len(sys.argv) > 2 else "data/kcbcl_results"
 TYPE_DIR = sys.argv[3] if len(sys.argv) > 3 else "data/assessment_types"
 

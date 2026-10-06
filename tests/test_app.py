@@ -20,6 +20,7 @@ PAYLOAD = json.loads(config.BASE_SAMPLE_FILE.read_text(encoding="utf-8"))["paylo
 @pytest.fixture
 def app(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "DB_PATH", tmp_path / "app.db")
+    monkeypatch.delenv("BRIDGE_RESULT_ID", raising=False)   # 로컬 .env의 데모 결과 선택과 무관하게 기준 샘플로 연다
     monkeypatch.setattr(llm, "get_client", lambda *a, **k: FakeClient())   # LLM 호출이 생기면 실패
     at = AppTest.from_file(APP, default_timeout=30)
     at.run()

@@ -104,6 +104,8 @@
 3. 숫자는 근거의 값을 그대로 인용한다.
 4. 답 순서: (공감) → 질문에 직접 답하는 보고서 사실 → 기준선 대비 위치 → 상담으로 연결 → 지금 할 수 있는 일(2026-10-05 공감·직접 답 추가, `answer_v2`). 근거로 일부만 답할 수 있으면 답할 수 있는 부분을 쓰고 없는 부분을 밝힌다(부분 답변, 노트 저장). '지금 할 수 있는 일'은 상담 준비 행동(평소 관찰 기록, 상담 질문 메모)만 쓴다. 양육 방법은 6장에 따라 제외한다(2026-10-04).
 5. 출력은 JSON `{answerable, answer, evidence_ids, note_question}`이며 코드가 형식을 검증한다.
+6. 기준선까지의 차이는 모델이 계산하지 않는다. 근거의 점수 항목에 코드가 계산한 `gap`·`side`를 넣고 그 값을 인용하게 한다(G-03, 2026-10-06).
+7. 출력 검증에 실패하면 재생성 요청에 실패 사유를 `<retry_feedback>`으로 붙인다(보호자 질문 태그 밖, 코드가 쓴 문장, G-08). 재생성 횟수는 1회 그대로다(G-06). 재생성도 근거 없이 쓴 문장 때문에만 실패하면 fallback 대신 '보고서에 없음' 안내로 처리한다(G-07, 2026-10-06).
 
 - 프롬프트는 `prompts/`에 버전 번호를 붙인 파일로 관리한다(예: `answer_v1.md`). 기존 버전 파일은 고치지 않고 새 버전을 만든다.
 - 모든 LLM 호출에 `prompt_version`을 `llm_calls`에 기록한다.
@@ -179,16 +181,17 @@
 
 | 경로                                       | 내용                                                    | 생성                                                |
 | ------------------------------------------ | ------------------------------------------------------- | --------------------------------------------------- |
-| `data/kcbcl_samples_100.json`              | 원천 데이터 100건(공통 뼈대 아님). **수정하지 않는다.** | `scripts/generate_kcbcl_samples.py` (seed 20261002) |
-| `data/kcbcl_results/001.json` ~ `100.json` | 검사 결과 1건 = 파일 1개. 8-1 공통 뼈대                 | `scripts/convert_kcbcl_to_skeleton.py`              |
+| `data/kcbcl_samples.json`                  | 원천 데이터 10건(공통 뼈대 아님, 100건 생성 중 평가 샘플만 공개, 2026-10-06). **손으로 고치지 않는다.** | `scripts/generate_kcbcl_samples.py` (seed 20261002) |
+| `data/kcbcl_results/<번호>.json`           | 검사 결과 1건 = 파일 1개(10건). 8-1 공통 뼈대           | `scripts/convert_kcbcl_to_skeleton.py`              |
 | `data/assessment_types/KCBCL_4_17.json`    | `assessment_types` 시드 1행(`specs/poc.md` 2-2 형식)    | 위 변환 스크립트                                    |
 | `schemas/kcbcl_4_17.schema.json`           | payload JSON Schema(저장 전 검증)                       | 수작업                                              |
 
 - 결과 파일 1건 = `assessment_results` 컬럼(`result_id`, `child_id`, `assessment_code`, `administered_at`, `schema_version`) + `subject` + `payload` + `sample_meta`.
   - `subject`(이름·생년월일·학년)는 가상이지만 식별 정보로 취급한다. payload 밖에 있으며 `subjects` 테이블에만 적재한다. 마스킹(이름 대조)에만 쓰고 프롬프트·화면 요약에 넣지 않는다(G-09).
   - `sample_meta`는 테스트용 기대값(심각도, 프로파일 유형 등)이다. DB 적재·AI 근거에 쓰지 않는다.
-- **데모·평가 기준 샘플: `data/kcbcl_results/035.json`** (선정 근거: `specs/poc.md` 2-3). 평가셋 질문은 이 샘플의 점수를 전제로 쓴다.
+- **데모·평가 기준 샘플: `data/kcbcl_results/035.json`** (선정 근거: `specs/poc.md` 2-3). 기준 평가셋 질문은 이 샘플의 점수를 전제로 쓴다. 다샘플 평가는 질문 템플릿을 샘플 10건마다 코드가 채운다(`specs/poc.md` 6-2, 2026-10-06).
 - **T점수는 실제 규준이 아닌 시뮬레이션 규준**이다(README 한계에 적는다).
+- 서술 문형은 자체 문장이다. 회사 제공 보고서(공유 금지) 문장과 15자 이상 같은 구간을 공개 파일에 두지 않는다(`specs/poc.md` 2-3-1, 2026-10-06).
 - 원천 데이터를 다시 만들면 변환 스크립트를 다시 실행한다. 결과 파일을 손으로 고치지 않는다.
 
 ## 9. 기술 스택과 모델
@@ -196,13 +199,14 @@
 - Python 3.11, Anthropic Python SDK, Streamlit(데모 화면), CLI(평가 실행), pytest.
 - 모델 호출은 `llm.py` 한 곳으로 모은다. 다른 모듈은 SDK를 직접 import하지 않는다. 프롬프트 캐싱을 쓴다.
 - 기본 모델 `claude-haiku-4-5-20251001`, 비교용 `claude-sonnet-5-5`.
+- 다른 회사 비교 모델(2026-10-06, `specs/poc.md` 6-3): `openai:gpt-5.4-mini`, `gemini:gemini-3.1-flash-lite`(무료 등급, 합성 샘플만). `llm.py`가 모델 ID 접두어로 제공사를 고르고 OpenAI SDK(OpenAI 호환 API)로 호출한다. 구조화 출력은 `response_format: json_schema`(strict). GPT-5.4 mini는 `reasoning_effort: low`(Sonnet과 맞춤), Gemini는 기본값.
 - 요청 옵션(2026-10-04 결정): 응답은 구조화 출력(`output_config.format`, JSON Schema)으로 받고 코드 검증도 따로 한다. Haiku 4.5는 thinking·effort 없이(effort를 보내면 400), Sonnet 5.5는 기본 adaptive thinking + `effort: low`. `temperature`는 보내지 않는다. 거절 시 다른 모델로 대신 응답하는 `fallbacks`는 모델 비교를 오염시키므로 쓰지 않고, 거절은 `stop_reason`으로 기록한다.
 - 캐시 최소 프리픽스: Haiku 4.5 4,096토큰, Sonnet 5.5 512토큰. 짧으면 오류 없이 캐시되지 않는다. 의도 분류 프롬프트는 짧아 캐시되지 않는다.
 - API 오류 재시도(P-05)는 SDK `max_retries`로 한다(직접 구현하지 않음).
-- 단가(기획안 6장, Anthropic 가격표 2026-10-02 조회 기준): Haiku 4.5 입력 $1 / 출력 $5, Sonnet 5.5 입력 $2 / 출력 $10 (100만 토큰당). 캐시 쓰기 1.25배, 캐시 읽기 0.1배. 단가는 `config`에 두고 `cost_usd` 계산에 쓴다.
-- 환경 변수: `ANTHROPIC_API_KEY`(필수), `LLM_MODEL`(선택, 기본 Haiku 4.5), `ANTHROPIC_CUSTOM_HEADERS`(선택, 워크스페이스에 묶이지 않은 키일 때 `anthropic-workspace-id: <ID>`). `.env.example`만 커밋한다.
+- 단가(기획안 6장, Anthropic 가격표 2026-10-02 조회 기준): Haiku 4.5 입력 $1 / 출력 $5, Sonnet 5.5 입력 $2 / 출력 $10 (100만 토큰당). 캐시 쓰기 1.25배, 캐시 읽기 0.1배. 다른 회사(2026-10-06 공식 문서 조회): GPT-5.4 mini $0.75 / 캐시 입력 $0.075 / $4.5, Gemini 3.1 Flash-Lite 유료 $0.25 / 캐시 $0.025 / $1.50(무료 등급 실행도 이 단가로 환산 기록). 단가는 `config`에 두고 `cost_usd` 계산에 쓴다.
+- 환경 변수: `ANTHROPIC_API_KEY`(필수), `LLM_MODEL`(선택, 기본 Haiku 4.5), `ANTHROPIC_CUSTOM_HEADERS`(선택, 워크스페이스에 묶이지 않은 키일 때 `anthropic-workspace-id: <ID>`), 모델 비교용 `OPENAI_API_KEY`·`GEMINI_API_KEY`(선택, 2026-10-06). `.env.example`만 커밋한다.
 - `.env`는 `bridge.config`를 import할 때 표준 라이브러리로 읽는다. 셸에 이미 있는 환경 변수가 우선한다(2026-10-04 결정).
-- 의존성: anthropic(>=1.11, 구조화 출력), streamlit, jsonschema(payload 스키마 검증, 2026-10-03 승인), pytest. 추가는 사용자에게 먼저 묻는다. 표준 라이브러리로 되는 일에 패키지를 추가하지 않는다.
+- 의존성: anthropic(>=1.11, 구조화 출력), streamlit, jsonschema(payload 스키마 검증, 2026-10-03 승인), pytest, openai(선택 설치 `[compare]`, 다른 회사 모델 비교·SDK 재시도, 2026-10-06 승인). 추가는 사용자에게 먼저 묻는다. 표준 라이브러리로 되는 일에 패키지를 추가하지 않는다.
 
 ## 10. 리포지토리 구조 (2026-10-03 확정)
 
@@ -232,8 +236,8 @@ eval/             # 평가셋, 실행 스크립트, reports/ (형식: eval/READM
 app/              # Streamlit 데모 (main.py, components.py: 기준선 그래프 SVG)
 tests/
 data/             # 샘플 데이터 (8-4, data/README.md)
-  kcbcl_samples_100.json      # 원천 (수정 금지)
-  kcbcl_results/001~100.json  # 공통 뼈대, 결과 1건 = 파일 1개
+  kcbcl_samples.json          # 원천 10건 (손으로 고치지 않음)
+  kcbcl_results/<번호>.json   # 공통 뼈대, 결과 1건 = 파일 1개 (평가 샘플 10건)
   assessment_types/KCBCL_4_17.json  # 판정 기준 정의 시드
 scripts/          # generate_kcbcl_samples.py, convert_kcbcl_to_skeleton.py
 docs/             # 과제 자료(공개 커밋 제외 — 11장)
@@ -255,7 +259,7 @@ docs/             # 과제 자료(공개 커밋 제외 — 11장)
 
 - 규칙 모듈(범위 판정·마스킹·위기 키워드·출력 검증)은 단위 테스트 필수. 경계값(59/60/62/63, 59/60/69/70), 하한 50T, 미실시(null), 사회능력 역방향을 포함한다.
 - 단위 테스트에서 LLM은 모킹한다. 실제 API 호출은 평가 스크립트에서만 한다(비용).
-- 평가셋 약 40문항: 설명형 15, 진단·처방·예후형 15, 위기형 5, 범위 밖 5. 질문 정리는 별도 대화 샘플로 누락·왜곡을 확인한다.
+- 기준 평가셋 40문항: 설명형 15, 진단·처방·예후형 15(양육 조언형 3 포함), 위기형 5, 범위 밖 5. 다샘플 평가는 템플릿 × 샘플 10건, 자동 채점만(`specs/poc.md` 6장). 질문 정리는 별도 대화 샘플로 누락·왜곡을 확인한다.
 
 | 측정 항목           | 채점                                                                           | 통과 기준                                 |
 | ------------------- | ------------------------------------------------------------------------------ | ----------------------------------------- |
@@ -265,7 +269,8 @@ docs/             # 과제 자료(공개 커밋 제외 — 11장)
 | 설명형 정확성       | 수동(사용자)                                                                   | 첫 측정값 대비 하락 없음                  |
 | 불안 해소 (R-1~R-4) | 직접 답·공감은 수동, 다음 단계 안내·범위 밖 오분류는 자동 (`specs/poc.md` 1-1) | 프롬프트 v1 대비 상승, 범위 밖 오분류 0건 |
 
-- 같은 평가셋을 Haiku 4.5와 Sonnet 5.5로 돌려 `eval/reports/`에 비교 리포트를 남긴다.
+- 같은 평가셋을 Haiku 4.5와 Sonnet 5.5(+ 다른 회사 모델, 9장)로 돌려 `eval/reports/`에 비교 리포트를 남긴다.
+- 민감 정보 점검은 `tests/test_repo_hygiene.py`로 한다(`specs/poc.md` 6-4).
 - 예상 비용(기획안 4-6 추정 상한): 평가셋 1회 Haiku 약 $0.15, Sonnet 약 $0.30 이하. 실제 비용은 `llm_calls`로 확인해 리포트에 적는다.
 
 ## 13. 명령어
@@ -280,8 +285,11 @@ python -m bridge.db init            # 스키마 생성 + 샘플 적재 (기본 .
 streamlit run app/main.py           # 데모 (DB가 없으면 만들고 샘플 적재)
 BRIDGE_RESULT_ID=<result_id> streamlit run app/main.py   # 다른 결과로 데모 (예: data/private/의 회사 원본 보고서)
 python -m bridge.brief R-KCBCL_4_17-035 --no-llm   # 브리프 텍스트 (--no-llm: 질문 정리 LLM 생략)
-# 아래는 구현 후 사용 (예정)
-python -m eval.run --model claude-haiku-4-5-20251001
+python -m eval.run --model claude-haiku-4-5-20251001 [--prompt-set v1|v2|v3]   # 기준 평가 → eval/reports/
+python -m eval.run --model claude-haiku-4-5-20251001 --multi     # 다샘플 평가
+python -m eval.run --model claude-haiku-4-5-20251001 --organize  # 질문 정리 확인
+python -m eval.run --compare eval/reports/*.json                 # 비교표
+pip install -e '.[compare]'                                      # 다른 회사 모델 비교 시 (openai SDK)
 ```
 
 ## 14. 일정 (마감: 과제 발송일 기준 3일, 자정)

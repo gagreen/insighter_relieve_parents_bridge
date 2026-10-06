@@ -8,6 +8,7 @@ import json
 import logging
 import re
 import sqlite3
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Literal
 
@@ -81,17 +82,19 @@ def _parse_intent(text: str | None) -> tuple[str, float] | None:
     return intent, float(conf)
 
 
-def classify_intent(masked: str, *, model: str | None = None, client=None) -> IntentDecision:
+def classify_intent(masked: str, *, model: str | None = None, client=None,
+                    prompts: Mapping[str, str] | None = None) -> IntentDecision:
     """키워드로 정해지면 LLM을 부르지 않는다. LLM 결과가 깨졌거나 신뢰도 미달이면 safe.
 
     LLM이 crisis로 분류하면 신뢰도와 무관하게 crisis (spec PoC2-04, 안전 쪽 해석).
     입력은 마스킹된 질문만 보낸다(G-09). LLMError는 호출자가 처리한다(P-05).
+    prompts는 단계 → 프롬프트 버전(평가의 --prompt-set, spec 6-1). 없으면 config.PROMPT_VERSIONS.
     """
     kw = classify_by_keywords(masked)
     if kw.intent is not None:
         return IntentDecision(kw.intent, None, "keyword", config.ROUTE_BY_INTENT[kw.intent], kw.hits)
 
-    version = config.PROMPT_VERSIONS["intent"]
+    version = (prompts or config.PROMPT_VERSIONS)["intent"]
     result = llm.call("intent", version, [llm.load_prompt(version)], wrap_question(masked), INTENT_SCHEMA,
                       model=model, client=client)
     parsed = _parse_intent(result.text)
@@ -113,13 +116,59 @@ class AnswerDraft:
     llm: LLMResult
 
 
-def generate_answer(masked: str, evidence: EvidencePack, *, model: str | None = None, client=None) -> AnswerDraft:
-    """system = [정책, 근거 묶음(캐시 지점)], user = 태그로 감싼 마스킹 질문."""
-    version = config.PROMPT_VERSIONS["answer"]
+RETRY_TAG = "retry_feedback"
+_TRUSTED_ID = re.compile(r"[A-Za-z0-9._-]{1,40}")     # 모델이 만든 id는 이 형식일 때만 사유에 옮긴다 (G-08)
+
+
+def _retry_line(code: str) -> str:
+    kind, _, arg = code.partition(":")
+    if kind == "number":
+        return (f"숫자 {arg}은(는) 인용한 근거 항목에 없습니다. 근거에 있는 숫자만 쓰고, 그 숫자가 있는 항목의 id를 "
+                "evidence_ids에 넣습니다. 예시를 위한 숫자나 직접 계산한 숫자는 쓰지 않습니다.")
+    if code == "evidence:empty":
+        return ("답을 썼으면 evidence_ids에 사용한 근거 항목의 id를 하나 이상 넣습니다. "
+                "근거로 답할 사실이 전혀 없으면 answer를 빈 문자열로 둡니다.")
+    if kind == "evidence":
+        bad_id = arg.removeprefix("unknown:")
+        named = f"id '{bad_id}'" if _TRUSTED_ID.fullmatch(bad_id) else "근거에 없는 id"
+        return f"{named}는 근거에 없습니다. id는 근거 줄의 id를 글자 그대로 복사합니다."
+    if kind == "term":
+        return "진단 가능성·예후·안심 판단처럼 쓰지 않기로 한 표현이 들어 있습니다. 그 표현을 빼고 다시 씁니다."
+    if kind == "range_label":
+        return f"범위 이름 '{arg}'은(는) 인용한 점수 항목의 범위가 아닙니다. 근거의 range_label만 씁니다."
+    if kind == "format":
+        return "출력 형식이 맞지 않습니다. 지정한 JSON 필드를 모두 채웁니다."
+    return "출력 검증에 실패했습니다. 규칙을 다시 확인해 씁니다."
+
+
+def retry_feedback(failures: list[str]) -> list[str]:
+    """출력 검증 실패 사유 코드 → 재생성 요청에 붙일 문장 (spec PoC2-08, 2026-10-06). 같은 문장은 한 번만.
+
+    금칙 사전 id는 알리지 않는다. 모델이 만든 id는 형식에 맞을 때만 옮긴다(G-08).
+    """
+    return list(dict.fromkeys(_retry_line(code) for code in failures))
+
+
+def generate_answer(masked: str, evidence: EvidencePack, *, model: str | None = None, client=None,
+                    prompts: Mapping[str, str] | None = None, feedback: list[str] | None = None) -> AnswerDraft:
+    """system = [정책, 근거 묶음(캐시 지점)], user = 태그로 감싼 마스킹 질문 (+ 재생성이면 질문 태그 밖에 실패 사유)."""
+    version = (prompts or config.PROMPT_VERSIONS)["answer"]
     system_parts = [llm.load_prompt(version), f"<evidence>\n{evidence.text}\n</evidence>"]
-    result = llm.call("answer", version, system_parts, wrap_question(masked), ANSWER_SCHEMA,
-                      model=model, client=client)
+    user_text = wrap_question(masked)
+    if feedback:
+        user_text += "\n\n" + llm.tagged(RETRY_TAG, "\n".join(f"- {line}" for line in feedback))
+    result = llm.call("answer", version, system_parts, user_text, ANSWER_SCHEMA, model=model, client=client)
     return AnswerDraft(llm.parse_json_object(result.text), result)
+
+
+def drop_unsupported_text(parsed: dict | None) -> dict | None:
+    """answerable=false인데 근거가 비어 있으면 답 문장을 버린다 → '보고서에 없음' 안내 경로 (spec PoC2-07, G-07).
+
+    마지막 시도에만 쓴다. 버린 문장은 화면에 나가지 않는다(2026-10-06).
+    """
+    if isinstance(parsed, dict) and parsed.get("answerable") is False and parsed.get("evidence_ids") == []:
+        return {**parsed, "answer": ""}
+    return parsed
 
 
 # ── 맥락 (아동 1명당 한 번) ──────────────────────────
@@ -297,21 +346,34 @@ def _api_error(conn, ctx: Context, turn: _Turn) -> TurnResult:
                  label=LABEL_SAFE, note=("api_error", []))
 
 
-def _answer(conn, ctx: Context, turn: _Turn, model: str | None, client) -> TurnResult:
-    """생성 → 검증. 실패하면 AUTO_REGEN_LIMIT회 재생성, 그래도 실패하면 guard_fallback 안전 응답(G-06)."""
+def _validate(parsed: dict | None, ctx: Context):
+    return validate_answer(parsed, ctx.pack, ctx.terms, ctx.definition["range_labels"])
+
+
+def _answer(conn, ctx: Context, turn: _Turn, model: str | None, client, prompts) -> TurnResult:
+    """생성 → 검증. 실패하면 사유를 붙여 AUTO_REGEN_LIMIT회 재생성, 그래도 실패하면 guard_fallback 안전 응답(G-06)."""
+    feedback = None
     for attempt in range(1 + config.AUTO_REGEN_LIMIT):
         try:
-            draft = generate_answer(turn.masked, ctx.pack, model=model, client=client)
+            draft = generate_answer(turn.masked, ctx.pack, model=model, client=client, prompts=prompts,
+                                    feedback=feedback)
         except LLMError:
             return _api_error(conn, ctx, turn)
         turn.calls.append(draft.llm)
-        report = validate_answer(draft.parsed, ctx.pack, ctx.terms, ctx.definition["range_labels"])
+        parsed = draft.parsed
+        report = _validate(parsed, ctx)
         turn.failures.append(report.failures)
+        if not report.ok and attempt == config.AUTO_REGEN_LIMIT:
+            # 마지막 시도가 근거 없이 쓴 문장 때문에만 실패했으면 fallback 대신 '보고서에 없음' (spec PoC2-07)
+            dropped = drop_unsupported_text(parsed)
+            if dropped is not parsed and (dropped_report := _validate(dropped, ctx)).ok:
+                parsed, report = dropped, dropped_report
         if not report.ok:
+            feedback = retry_feedback(report.failures)
             continue
         guard = "pass" if attempt == 0 else "regen"
-        answer, ids = draft.parsed["answer"], draft.parsed["evidence_ids"]
-        if draft.parsed["answerable"]:
+        answer, ids = parsed["answer"], parsed["evidence_ids"]
+        if parsed["answerable"]:
             return _save(conn, ctx, turn, route="answer", message=answer, label=LABEL_AI, evidence_ids=ids, guard=guard)
         if answer.strip():
             # 부분 답변: 근거에 있는 부분만 답하고 질문은 노트로 (PoC2-07, G-07)
@@ -331,7 +393,7 @@ def _is_low_confidence(decision: IntentDecision) -> bool:
 
 
 def handle_question(conn: sqlite3.Connection, ctx: Context, raw: str, *, model: str | None = None,
-                    client=None) -> TurnResult:
+                    client=None, prompts: Mapping[str, str] | None = None) -> TurnResult:
     """보호자 질문 1건. 입력 검증 실패는 저장하지 않는다. 그 밖에는 qa_turns 1행을 남긴다."""
     check = check_input(raw, ctx.phrases)
     if not check.ok:
@@ -342,7 +404,7 @@ def handle_question(conn: sqlite3.Connection, ctx: Context, raw: str, *, model: 
         return _crisis(conn, ctx, turn, "keyword", [h.keyword_id for h in hits])
 
     try:
-        decision = classify_intent(turn.masked, model=model, client=client)
+        decision = classify_intent(turn.masked, model=model, client=client, prompts=prompts)
     except LLMError:
         return _api_error(conn, ctx, turn)
     turn.intent, turn.confidence = decision.intent, decision.confidence
@@ -356,4 +418,4 @@ def handle_question(conn: sqlite3.Connection, ctx: Context, raw: str, *, model: 
     if decision.route == "safe":
         low = _is_low_confidence(decision) or decision.intent not in ("diagnosis", "parenting")
         return _safe(conn, ctx, turn, "low_confidence" if low else decision.intent)
-    return _answer(conn, ctx, turn, model, client)
+    return _answer(conn, ctx, turn, model, client, prompts)

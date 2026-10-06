@@ -58,7 +58,7 @@ def test_poc1_10_segments_rebuild_original_all_samples():
 
 def test_poc1_10_longest_match_first():
     """'준임상 수준' 안의 '임상 수준'을 전문 상담 권고 범위로 잘못 잇지 않는다 (회귀)."""
-    segs = annotate("4개 영역에서 준임상 수준(60–69T)의 상승", GLOSSARY)
+    segs = annotate("2개 영역이 60–69T 구간인 준임상 수준으로 높게", GLOSSARY)
     assert ("준임상 수준", "term.range_borderline") in {(s["text"], s["term_id"]) for s in segs}
     assert "term.range_clinical" not in term_ids(segs)
     assert ("60–69T", "term.notation_t") in {(s["text"], s["term_id"]) for s in segs}
@@ -71,8 +71,8 @@ def test_poc1_10_same_term_only_first_occurrence():
 
 
 def test_poc1_10_no_match_single_segment():
-    assert annotate("친구들과 잘 어울리지 못하는 것 같아요.", GLOSSARY) == \
-        [{"text": "친구들과 잘 어울리지 못하는 것 같아요.", "term_id": None}]
+    assert annotate("친구들 사이에 잘 끼지 못하는 것 같아요.", GLOSSARY) == \
+        [{"text": "친구들 사이에 잘 끼지 못하는 것 같아요.", "term_id": None}]
 
 
 def test_poc1_10_base_sample_targets_linked():

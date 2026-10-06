@@ -65,3 +65,38 @@ def test_g02_thresholds_come_from_definition():
 def test_poc2_07_pack_text_is_deterministic():
     """캐시 프리픽스는 바이트 단위로 같아야 한다."""
     assert _pack().text == _pack().text
+
+
+# ── 기준선까지의 차이 (PoC2-07, 2026-10-06) ──────────
+
+
+def test_g03_threshold_gaps_are_computed_by_code():
+    """모델이 차이를 계산하지 않도록 |T − 기준선|과 위치를 코드가 넣는다 (기준 샘플: 주의집중 66)."""
+    attention = next(s for s in PAYLOAD["scores"] if s["scale"] == "attention")
+    th = _pack().items[attention["id"]]["thresholds"]
+    assert [(t["value"], t["gap"], t["side"]) for t in th] == [(60, 6, "at_or_above"), (70, 4, "below")]
+
+
+def test_g03_threshold_gap_zero_is_at_or_above():
+    view = json.loads(json.dumps(VIEW))
+    item = next(i for i in view["items"] if i["thresholds"])
+    item["t"] = item["thresholds"][0]["value"]
+    th = evidence.build_evidence(view, PAYLOAD, GLOSSARY).items[item["id"]]["thresholds"]
+    assert (th[0]["gap"], th[0]["side"]) == (0, "at_or_above")
+
+
+def test_g03_no_gap_without_t_score():
+    """미실시(T점수 없음) 항목에는 차이를 넣지 않는다."""
+    for item in _pack().items.values():
+        if item["kind"] == "score" and item["t"] is None and item["thresholds"]:
+            assert all("gap" not in t for t in item["thresholds"])
+
+
+def test_poc2_08_gap_numbers_pass_number_check():
+    """인용한 점수 항목의 gap은 숫자 대조(PoC2-08 4)를 통과한다."""
+    from bridge.guard.output import validate_answer
+    from bridge.guard.terms import load_guard_terms
+    answer = {"answerable": True, "answer": "주의집중 문제 T점수 66은 전문 상담 권고 범위가 시작되는 70보다 4점 낮습니다.",
+              "evidence_ids": ["III.attention"], "note_question": None}
+    report = validate_answer(answer, _pack(), load_guard_terms(), DEF["range_labels"])
+    assert report.ok, report.failures

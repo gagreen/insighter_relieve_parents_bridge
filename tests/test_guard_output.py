@@ -77,7 +77,7 @@ def test_poc2_09_diagnosis_name_in_answer_fails():
 
 def test_poc2_08_report_quote_with_guard_term_still_fails():
     """2026-10-04 결정: 원문 그대로 인용해도 금칙 표현에 걸리면 실패 (기준 샘플 VI.p2)."""
-    r = _check(_with(answer="보고서에는 또래 관계에서의 어려움이 누적될 가능성이 있습니다라고 적혀 있습니다.",
+    r = _check(_with(answer="보고서에는 친구 관계의 어려움이 더 커질 가능성이 있습니다라고 적혀 있습니다.",
                      evidence_ids=["VI.p2"]))
     assert "term:guard.dp.001" in r.failures
 
@@ -99,7 +99,7 @@ def test_b6_number_from_uncited_item_fails():
 
 
 def test_b6_numbers_in_cited_report_text_pass():
-    r = _check(_with(answer="보고서에는 준임상 수준(60–69T)이라고 적혀 있습니다.", evidence_ids=["VI.p2"]))
+    r = _check(_with(answer="보고서에는 60–69T 구간인 준임상 수준이라고 적혀 있습니다.", evidence_ids=["VI.p2"]))
     assert not [f for f in r.failures if f.startswith("number:")]
 
 

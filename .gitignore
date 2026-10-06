@@ -7,6 +7,8 @@
 docs/
 # 회사 제공 보고서를 옮긴 JSON: 공개 여부 미정 (CLAUDE.md 11장, specs/poc.md 2-4-1)
 data/private/
+# 원천 문장 교체 전 평가 리포트 등 공개하지 않는 리포트 (specs/poc.md 2-3-1)
+eval/reports/private/
 
 # Python
 __pycache__/

@@ -15,10 +15,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+# 다른 회사 모델 비교 (specs/poc.md 6-3, 2026-10-06 승인). OpenAI 호환 API(OpenAI, Gemini)
+compare = ["openai>=3,<4"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]

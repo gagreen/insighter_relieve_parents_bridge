@@ -1,7 +1,7 @@
 """PoC1-01 범위 판정 [G-02] → B-2."""
 import pytest
 
-from bridge import db
+from bridge import config, db
 from bridge.rules.ranges import direction, judge
 
 DEF = {
@@ -77,7 +77,7 @@ def test_poc1_01_b2_all_loaded_samples_match_report(loaded_db):
             got = judge(score["scale"], score["t"], definition)
             if got != score["range"]:
                 mismatches.append((row["result_id"], score["id"], score["t"], score["range"], got))
-    assert checked == 100 * 11
+    assert checked == len(list(config.RESULTS_DIR.glob("*.json"))) * 11   # 공개 샘플 × 판정 기준 있는 척도 11개
     assert mismatches == []
 
 

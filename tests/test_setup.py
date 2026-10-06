@@ -19,6 +19,6 @@ def test_default_model_is_priced():
 
 @pytest.mark.parametrize("result_file", sorted(config.RESULTS_DIR.glob("*.json")), ids=lambda p: p.name)
 def test_sample_payload_matches_schema(result_file):
-    """8-1: 저장 전 검사별 JSON Schema 검증 — 샘플 100건 모두 통과해야 한다."""
+    """8-1: 저장 전 검사별 JSON Schema 검증 — 공개 샘플 전체(10건)가 통과해야 한다."""
     result = json.loads(result_file.read_text(encoding="utf-8"))
     assert validate_payload(result["payload"], result["assessment_code"]) == []

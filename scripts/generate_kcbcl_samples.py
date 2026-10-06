@@ -6,6 +6,8 @@ K-CBCL 가상 검사 결과 샘플 생성기 (PoC 테스트용)
 - 원점수 -> T점수 변환은 실제 K-CBCL 규준표가 아닌 '시뮬레이션 규준'을 사용함
   (지역사회 표본을 잠재요인 모델로 모의 생성 후 백분위 기반 정규화 T점수로 변환)
 - 모든 인적 정보는 가상
+- 서술 문형은 자체 문장이다. 회사 제공 보고서(공유 금지)와 겹치던 문형은 2026-10-06에 다시 썼다 (specs/poc.md 2-3-1)
+- 100건을 생성하되 평가 샘플 10건(PUBLISHED)만 kcbcl_samples.json으로 내보낸다. data/ 에서 실행한다
 """
 import json
 import math
@@ -14,6 +16,8 @@ from datetime import date, timedelta
 from statistics import NormalDist
 
 SEED = 20261002
+# 공개하는 샘플 번호 = 평가 샘플(eval/samples.json). 생성은 100건 그대로 해 번호·점수가 바뀌지 않게 한다 (specs/poc.md 2-3-1)
+PUBLISHED = {"001", "003", "005", "006", "008", "011", "016", "023", "035", "065"}
 N_SAMPLES = 100
 NORM_POP = 40000
 ND = NormalDist()
@@ -287,7 +291,7 @@ def profile_weights(sex, band, tier):
 # --------------------------------------------------------------------------------------
 FINDING_BANK = {
     "withdrawn": {
-        "준임상": ["혼자 있기 선호·소극적 태도 등 사회적 위축 경향이 또래 평균보다 높게 보고됨",
+        "준임상": ["혼자 지내려 하거나 소극적인 모습처럼 사회적 위축과 관련된 행동이 또래보다 많이 보고됨",
                  "새로운 활동이나 대인 상황에서 참여를 주저하는 모습이 상대적으로 많이 보고됨",
                  "말수가 적고 활동 반경이 좁아지는 등 위축 양상이 선별 기준을 넘어섬"],
         "임상": ["사회적 상호작용 회피, 무표정·무관심 등 위축 관련 행동이 또래 대비 뚜렷하게 상승",
@@ -300,15 +304,15 @@ FINDING_BANK = {
                "신체증상으로 인한 결석·활동 회피 등 일상 기능 저하 가능성"],
     },
     "anxdep": {
-        "준임상": ["걱정·긴장·불안 관련 정서 반응이 또래 평균 이상으로 보고됨",
-                 "새로운 상황에 대한 불안 반응 증가 가능성 고려",
+        "준임상": ["걱정하거나 긴장하는 등 불안과 관련된 반응이 또래보다 많이 보고됨",
+                 "낯선 상황에서 불안 반응이 커지는지 살펴볼 필요가 있음",
                  "기분이 쉽게 가라앉거나 자신감이 낮은 모습이 상대적으로 많이 보고됨"],
         "임상": ["불안·우울 관련 정서 반응이 임상 기준을 초과하여 정서적 고통 수준이 높은 것으로 판단됨",
                "자기 비하, 슬픔, 과도한 걱정 등이 일상 전반에서 지속적으로 나타날 가능성"],
     },
     "socimm": {
-        "준임상": ["연령에 비해 미성숙한 행동, 의존적 양상 등이 상대적으로 상승",
-                 "또래 관계 형성·유지에서의 어려움 가능성"],
+        "준임상": ["미성숙한 행동이나 의존적 양상이 나이에 비해 많이 보고됨",
+                 "친구 관계를 만들고 이어 가는 데 어려움이 있는지 살펴볼 필요가 있음"],
         "임상": ["또래보다 어린 아이들과 어울리거나 놀림을 받는 등 사회적 미성숙 양상이 뚜렷함",
                "또래 집단 내 수용 경험 저하로 인한 2차적 정서 문제 가능성"],
     },
@@ -331,7 +335,7 @@ FINDING_BANK = {
                "또래 영향과 생활 환경 요인을 포함한 다각적 평가가 필요한 영역"],
     },
     "aggressive": {
-        "준임상": ["고집, 짜증, 말다툼 등 공격적 행동이 또래 평균 이상으로 보고됨",
+        "준임상": ["고집을 부리거나 짜증을 내고 말다툼을 하는 등 공격적 행동이 또래보다 많이 보고됨",
                  "좌절 상황에서의 감정 조절 어려움 가능성"],
         "임상": ["반항, 분노 폭발, 신체적·언어적 공격 행동이 임상 기준을 초과하여 보고됨",
                "가정 내 갈등 및 또래 관계 문제로 이어질 가능성이 높아 개입 방안 검토 필요"],
@@ -384,7 +388,7 @@ COMMENT_BANK = {
     "socimm": {
         "preschool": [("동생 같은 행동을 많이 해요. 아직 혼자 하려는 게 별로 없어요.", "의존적·어린 행동", 0),
                       ("또래보다 말이나 행동이 어리다는 얘기를 들어요.", "연령 대비 미성숙", 0)],
-        "elementary": [("친구들과 잘 어울리지 못하는 것 같아요.", "또래 관계 어려움", 0),
+        "elementary": [("친구들 사이에 잘 끼지 못하는 것 같아요.", "또래 관계 어려움", 0),
                        ("자기보다 어린 동생들하고만 놀려고 해요.", "어린 아이들과 어울림", 0),
                        ("반 친구들이 놀린다고 울면서 온 적이 몇 번 있어요.", "또래 놀림 경험", 0)],
         "teen": [("친구들 사이에서 눈치가 없다는 말을 듣는 것 같아요.", "또래 관계 미숙", 0),
@@ -401,7 +405,7 @@ COMMENT_BANK = {
     "attention": {
         "preschool": [("한 가지 놀이를 오래 못 하고 계속 이것저것 옮겨 다녀요.", "놀이 지속 어려움", 0),
                       ("유치원 선생님이 앉아 있는 시간에 자꾸 돌아다닌다고 하세요.", "기관 내 착석 어려움", 0)],
-        "elementary": [("집에서는 큰 문제는 없는데, 학교에서는 산만하다는 이야기를 자주 듣습니다.", "학교에서 산만함", 0),
+        "elementary": [("집에서는 별일 없는데 학교에서는 수업 시간에 산만하다는 말을 자주 들어요.", "학교에서 산만함", 0),
                        ("숙제 하나 하는 데 몇 시간씩 걸리고 계속 딴짓을 해요.", "과제 수행 지연", 0),
                        ("준비물이나 알림장을 매일 잃어버려요.", "잦은 분실·건망", 0)],
         "teen": [("공부를 하려고 앉아도 10분을 못 버티고 휴대폰을 봐요.", "학습 집중 곤란", 0),
@@ -462,9 +466,9 @@ def josa(word, kind):
 
 COMP_NAMES = {"internalizing": "내재화 문제", "externalizing": "외현화 문제", "total": "총 문제행동"}
 COMP_DOMAIN = {
-    "internalizing": "위축·신체증상·우울/불안 등 정서적 어려움",
-    "externalizing": "비행·공격성 등 외현화된 행동 문제",
-    "total": "전반적인 문제행동",
+    "internalizing": "위축·신체증상·우울/불안 같은 정서 영역",
+    "externalizing": "비행·공격성 같은 행동 영역",
+    "total": "문제행동 전반",
 }
 
 
@@ -641,15 +645,15 @@ def make_record(rng, norms, idx, tier, used_names):
             "school_performance": ({"t": sch_t, "range": competence_range(sch_t, False)}
                                    if sch_t is not None else None),
             "total_competence": {"t": tot_t, "range": competence_range(tot_t, True)},
-            "note": ("학업수행 척도는 초등학생 이상에 적용 가능하여 본 아동은 미적용입니다."
+            "note": ("학업수행 척도는 초등학생부터 적용하므로 이번 결과에는 없습니다."
                      if sch_t is None else None),
         }
     else:
         social = {
             "administered": False, "sociability": None, "school_performance": None, "total_competence": None,
-            "note": ("미실시 · 본 보고서에는 사회성 척도, 학업수행 척도, 총 사회능력 점수가 포함되지 않았습니다. "
-                     + ("학업수행 척도는 초등학생 이상에 적용 가능하므로, 추후 보완 실시를 권장합니다."
-                        if not school_eligible else "필요 시 추후 보완 실시를 권장합니다.")),
+            "note": ("미실시 · 사회능력 척도(사회성, 학업수행, 총 사회능력)는 이번 검사에 포함되지 않았습니다. "
+                     + ("초등학생부터 적용하는 학업수행 척도는 그때 함께 실시할 수 있습니다."
+                        if not school_eligible else "필요하면 이후에 따로 실시할 수 있습니다.")),
         }
 
     special = {
@@ -658,7 +662,7 @@ def make_record(rng, norms, idx, tier, used_names):
             "raw": raws["emoinst"] if emo_admin else None,
             "t": emo_t if emo_admin else None,
             "range": syndrome_range(emo_t) if emo_admin else None,
-            "note": ("정서불안정 척도(6–11세, 한국판 고유): 잘 운다·분노발작·감정 급변 등 10문항. "
+            "note": ("정서불안정 척도(한국판에만 있는 특수척도, 6–11세 대상): 잘 울기, 분노발작, 감정이 갑자기 바뀌는 모습 등 10문항. "
                      + ("실시." if emo_admin else ("해당 연령군에 해당하나 미실시. 추후 실시를 권장합니다."
                                                 if emo_eligible else "적용 연령(6–11세)이 아니어서 미적용.")))
         },
@@ -668,7 +672,7 @@ def make_record(rng, norms, idx, tier, used_names):
             "t": sex_t if sex_admin else None,
             "range": syndrome_range(sex_t) if sex_admin else None,
             "note": ("성문제 척도(4–11세): " + ("실시." if sex_admin else (
-                "해당 연령군에 해당하나 임상적 필요에 따라 선택적으로 적용하며 본 검사에서는 미실시."
+                "적용 연령이지만 필요할 때만 골라 실시하는 척도로, 이번 검사에서는 실시하지 않음."
                 if sex_eligible else "적용 연령(4–11세)이 아니어서 미적용.")))
         },
     }
@@ -720,12 +724,12 @@ def make_record(rng, norms, idx, tier, used_names):
             continue
         pts = []
         if k == "internalizing":
-            pts.append("정서적 어려움에 대한 선별 기준(60T, 85%tile)을 초과, 내재화 특성의 관찰이 요망됨" if r == "준임상"
-                       else f"임상 기준(63T, 90%tile)을 초과({ptile(t)})하여 정서·내면 영역의 어려움이 유의미한 수준")
+            pts.append("내재화 문제가 선별 기준인 60T(85%tile)를 넘어, 걱정·위축 같은 정서 영역을 살펴볼 필요가 있음" if r == "준임상"
+                       else f"내재화 문제가 임상 기준인 63T(90%tile)를 넘어({ptile(t)}) 걱정·위축 같은 정서 영역의 어려움이 또래보다 뚜렷하게 보고됨")
             subs = [SYN[s][1] for s in INT_KEYS if syn_t[s] >= 60]
         elif k == "externalizing":
-            pts.append("행동 문제에 대한 선별 기준(60T, 85%tile)을 초과, 규칙 준수·감정 표현 방식에 대한 관찰이 요망됨" if r == "준임상"
-                       else f"임상 기준(63T, 90%tile)을 초과({ptile(t)})하여 외현화된 행동 문제가 일상 기능에 영향을 줄 수 있는 수준")
+            pts.append("외현화 문제가 선별 기준인 60T(85%tile)를 넘어, 규칙을 지키는 모습과 감정을 드러내는 방식을 살펴볼 필요가 있음" if r == "준임상"
+                       else f"외현화 문제가 임상 기준인 63T(90%tile)를 넘어({ptile(t)}) 규칙 위반·공격 행동처럼 겉으로 드러나는 어려움이 또래보다 뚜렷하게 보고됨")
             subs = [SYN[s][1] for s in EXT_KEYS if syn_t[s] >= 60]
         else:
             pts.append("전체 문제행동 수준이 선별 기준(60T)을 넘어 여러 영역의 경미한 어려움이 누적된 양상" if r == "준임상"
@@ -733,7 +737,7 @@ def make_record(rng, norms, idx, tier, used_names):
             subs = None
         if subs is not None:
             if subs:
-                pts.append(f"{'·'.join(subs)} 하위 척도의 상승이 누적되어 나타남")
+                pts.append(f"{'·'.join(subs)} 등 하위 척도가 함께 높게 나온 것이 종합지표에 더해짐")
             else:
                 pts.append("개별 하위 척도는 모두 60T 미만이나 경미한 상승이 누적되어 종합지표가 상승함")
         findings.append({"title": f"{COMP_NAMES[k]} 종합 · T = {t}", "scale": k, "t": t,
@@ -744,9 +748,9 @@ def make_record(rng, norms, idx, tier, used_names):
         bank = FINDING_BANK[k][r]
         pts = []
         if r == "준임상" and t >= 65:
-            pts.append(f"K-CBCL 임상 기준(70T) 이하이나 {ptile(t, True)}에 해당, 또래 대비 상당히 상승된 양상")
+            pts.append(f"임상 기준인 70T에는 못 미치지만 {ptile(t, True)}에 해당하여 또래보다 높게 나타남")
         elif r == "임상":
-            pts.append(f"K-CBCL 임상 기준(70T)을 초과, {ptile(t, True)}에 해당")
+            pts.append(f"임상 기준인 70T를 넘었으며 {ptile(t, True)}에 해당함")
         pts += pick(rng, bank, 1 if pts else 2)
         if k in comment_by_scale:
             pts.append(f"보호자 보고({comment_by_scale[k]})와 일치하는 양상")
@@ -801,11 +805,11 @@ def make_record(rng, norms, idx, tier, used_names):
         for k in elev_c:
             t = comp_t[k]
             if composite_range(t) == "준임상":
-                sents.append(f"{josa(COMP_NAMES[k], '이/가')} T={t}{ro(t)} 준임상 범위(60–62T)에 해당하여 "
-                             f"{COMP_DOMAIN[k]}에 대한 선별·관찰이 요망됩니다.")
+                sents.append(f"{josa(COMP_NAMES[k], '은/는')} T={t}{ro(t)} 60–62T 구간인 준임상 범위에 속하므로, "
+                             f"{josa(COMP_DOMAIN[k], '을/를')} 관찰해 볼 필요가 있습니다.")
             else:
-                sents.append(f"{josa(COMP_NAMES[k], '이/가')} T={t}{ro(t)} 임상 범위(≥63T)에 해당하여 "
-                             f"{COMP_DOMAIN[k]}에 대한 전문적 평가가 권장됩니다.")
+                sents.append(f"{josa(COMP_NAMES[k], '은/는')} T={t}{ro(t)} 63T 이상인 임상 범위에 속하므로, "
+                             f"{COMP_DOMAIN[k]}에 대해 전문가 평가를 받아 보기를 권합니다.")
         for i in range(1, len(sents)):
             sents[i] = ("또한 " if i == 1 else "아울러 ") + sents[i]
         if normal_c:
@@ -824,32 +828,32 @@ def make_record(rng, norms, idx, tier, used_names):
     cc = [k for k in order if composite_range(comp_t[k]) == "임상"]
     p1 = []
     if len(nn) == 3:
-        p1.append(f"{subj}은 K-CBCL 규준상 총 문제행동(T={comp_t['total']}), 내재화 문제(T={comp_t['internalizing']}) 및 "
-                  f"외현화 문제(T={comp_t['externalizing']})가 모두 정상 범위에 속하여 전반적인 행동·정서 상태는 또래 평균 범위에 있습니다.")
+        p1.append(f"K-CBCL 규준으로 볼 때 {subj}의 총 문제행동(T={comp_t['total']}), 내재화 문제(T={comp_t['internalizing']}), "
+                  f"외현화 문제(T={comp_t['externalizing']})는 모두 정상 범위로, 행동·정서 전반이 또래 평균 범위에 있습니다.")
     elif nn:
         names = [f"{COMP_NAMES[k]}(T={comp_t[k]})" for k in nn]
         joined = " 및 ".join(names)
         last = COMP_NAMES[nn[-1]]
         particle = josa(last, "이/가")[len(last):]
         if "externalizing" in nn and "internalizing" not in nn:
-            tail = "비행·공격성 등 외현화된 문제 행동은 유의미한 수준이 아닙니다."
+            tail = "비행·공격성 같은 행동 영역의 어려움은 또래와 비교해 두드러지지 않습니다."
         elif "internalizing" in nn and "externalizing" not in nn:
-            tail = "위축·우울/불안 등 정서적 어려움은 유의미한 수준이 아닙니다."
+            tail = "위축·우울/불안 같은 정서 영역의 어려움은 또래와 비교해 두드러지지 않습니다."
         else:
             tail = "전반적인 문제행동의 양은 평균 범위에 있습니다."
-        p1.append(f"{subj}은 K-CBCL 규준상 {joined}{particle} 정상 범위에 속하여 {tail}")
+        p1.append(f"K-CBCL 규준으로 볼 때 {subj}의 {joined}{particle} 정상 범위여서 {tail}")
     else:
-        p1.append(f"{subj}은 K-CBCL 규준상 내재화·외현화·총 문제행동 종합지표가 모두 선별 기준(60T)을 넘어섰습니다.")
+        p1.append(f"K-CBCL 규준으로 볼 때 {subj}의 내재화·외현화·총 문제행동 종합지표는 모두 선별 기준인 60T를 넘었습니다.")
     for k in bb:
-        p1.append(f"{nt(k, '은/는')} 준임상 범위(60–62T)에 해당하여 {COMP_DOMAIN[k]}에 대한 관찰이 요구됩니다.")
+        p1.append(f"{nt(k, '은/는')} 60–62T 구간인 준임상 범위에 속하므로 {josa(COMP_DOMAIN[k], '을/를')} 관찰해 볼 필요가 있습니다.")
     endings = ["또래 대비 유의미하게 높은 수준입니다.", "또래 규준에 비해 뚜렷하게 상승되어 있습니다.",
                "임상적 주의가 필요한 수준으로 보고되었습니다."]
     for i, k in enumerate(cc):
         dom = COMP_DOMAIN[k]
         p1.append(f"{COMP_NAMES[k]}(T={comp_t[k]}, {ptile(comp_t[k])}){josa(COMP_NAMES[k], '은/는')[len(COMP_NAMES[k]):]} "
-                  f"임상 범위(≥63T)에 해당하여 {josa(dom, '이/가')} {endings[i % 3]}")
+                  f"63T 이상인 임상 범위에 속해 {josa(dom, '이/가')} {endings[i % 3]}")
     if nn and (bb or cc):
-        p1[1] = "그러나 " + p1[1]
+        p1[1] = "한편 " + p1[1]
     para1 = " ".join(p1)
 
     p2 = []
@@ -860,9 +864,9 @@ def make_record(rng, norms, idx, tier, used_names):
         out = []
         for t, k in items:
             if t >= 65:
-                out.append(f"{SYN[k][1]}(T={t}, {ptile(t, True)})")
+                out.append(f"{SYN[k][1]} T={t}({ptile(t, True)})")
             else:
-                out.append(f"{SYN[k][1]}(T={t})")
+                out.append(f"{SYN[k][1]} T={t}")
         return ", ".join(out)
 
     if not elevated:
@@ -876,14 +880,14 @@ def make_record(rng, norms, idx, tier, used_names):
         if clin:
             lastname = SYN[clin[-1][1]][1]
             particle = josa(lastname, "이/가")[len(lastname):]
-            s = f"개별 증후군 척도에서는 {lst(clin)}{particle} 임상 기준(70T)을 초과하였고"
+            s = f"증후군 척도 가운데 {lst(clin)}{particle} 임상 기준인 70T를 넘었고"
             if bord:
-                s += f", {lst(bord)} {'등 ' + str(len(bord)) + '개 영역' if len(bord) > 1 else '영역'}에서도 준임상 수준(60–69T)의 상승이 함께 관찰됩니다."
+                s += f", {lst(bord)} {'등 ' + str(len(bord)) + '개 영역' if len(bord) > 1 else '영역'}도 60–69T 구간인 준임상 수준으로 함께 높게 나타났습니다."
             else:
                 s += ", 그 밖의 증후군 척도는 정상 범위입니다."
         else:
-            s = (f"개별 증후군 척도에서는 K-CBCL 임상 기준인 70T를 초과한 척도는 없으나, {lst(bord)} "
-                 f"{'등 ' + str(len(bord)) + '개 영역' if len(bord) > 1 else '영역'}에서 준임상 수준(60–69T)의 상승이 관찰됩니다.")
+            s = (f"증후군 척도 가운데 임상 기준인 70T를 넘은 척도는 없지만, {lst(bord)} "
+                 f"{'등 ' + str(len(bord)) + '개 영역' if len(bord) > 1 else '영역'}이 60–69T 구간인 준임상 수준으로 높게 나타났습니다.")
         p2.append(s)
         ek = {k for _, k in elevated}
         combos = []
@@ -897,9 +901,9 @@ def make_record(rng, norms, idx, tier, used_names):
             combos.append("비행과 공격성이 동반 상승하여 규칙 위반 행동이 가정 밖 환경으로 확대될 가능성에 대한 관찰이 필요합니다.")
         if "socimm" in ek and ({"withdrawn", "attention"} & ek):
             other = "위축" if "withdrawn" in ek else "주의집중 문제"
-            combos.append(f"사회적 미성숙이 {josa(other, '과/와')} 함께 나타나 또래 관계에서의 어려움이 누적될 가능성이 있습니다.")
+            combos.append(f"사회적 미성숙이 {josa(other, '과/와')} 함께 높게 나와, 친구 관계의 어려움이 더 커질 가능성이 있습니다.")
         if "attention" in ek and comp_t["internalizing"] >= 60 and not combos:
-            combos.append("내재화 영역의 상승과 주의집중 문제가 함께 나타나는 점은 학습 상황 및 또래 관계에서의 기능 저하로 이어질 수 있는 취약 요인으로 판단됩니다.")
+            combos.append("주의집중 문제와 내재화 영역이 함께 높게 나와, 공부나 친구 관계에서 기능 저하가 생길 수 있는 취약 요인으로 볼 수 있습니다.")
         if comp_t["internalizing"] >= 60 and comp_t["externalizing"] >= 60:
             combos.append("내재화와 외현화 문제가 동시에 상승한 혼합 양상으로, 겉으로 드러나는 행동 문제 이면의 정서적 어려움을 함께 고려할 필요가 있습니다.")
         p2 += combos[:2]
@@ -924,7 +928,7 @@ def make_record(rng, norms, idx, tier, used_names):
         others = "기관 교사의 관찰 정보"
     elif level == "elementary" and grade in ("초등학교 1학년", "초등학교 2학년"):
         timing = "학령 초기 적응이 이루어지는 시기이므로"
-        others = "교사용 TRF(Teacher Report Form)"
+        others = "담임 교사가 답하는 교사용 TRF"
     elif grade == "초등학교 6학년" or grade == "중학교 1학년":
         timing = "중학교 진학 전후의 전환 시점이므로"
         others = "교사용 TRF 및 자기보고형 YSR"
@@ -932,7 +936,7 @@ def make_record(rng, norms, idx, tier, used_names):
         timing = "학업 부담과 진로 관련 스트레스가 커지는 시기이므로"
         others = "자기보고형 YSR 및 교사 보고"
     else:
-        timing = "환경적 요구 변화나 발달적 전이 시점에서 상태가 달라질 수 있으므로"
+        timing = "학년이 바뀌는 것 같은 발달적 전이 시기에는 결과가 달라질 수 있으므로"
         others = "교사용 TRF" + (" 및 자기보고형 YSR" if y >= 11 else "")
 
     if tier == "정상":
@@ -940,8 +944,8 @@ def make_record(rng, norms, idx, tier, used_names):
                  f"{timing} 일상적인 관찰을 유지하고, 보호자가 우려하는 행동이 지속되거나 새롭게 나타날 경우 재평가를 고려할 수 있습니다.")
         follow = ["일상적 관찰 유지", "우려 행동 지속 시 재평가 고려"]
     elif tier == "준임상":
-        para3 = (f"현재 수준은 즉각적 임상 개입의 절대적 필요성을 시사하지는 않으나, 선별 기준을 넘는 영역이 확인되어 "
-                 f"해당 영역에 대한 관찰이 필요합니다. {timing} 상태 변화를 확인하기 위한 주기적 재평가(3–6개월)가 권장되며, "
+        para3 = (f"지금 결과만으로 바로 임상 개입이 필요하다고 보기는 어렵지만, 선별 기준을 넘은 영역이 있어 "
+                 f"그 영역을 지켜볼 필요가 있습니다. {timing} 3–6개월 간격으로 다시 평가해 변화를 확인하는 것이 권장되며, "
                  f"상담을 통해 가정·기관에서의 구체적 행동 양상을 함께 확인하는 것이 도움이 됩니다.")
         follow = ["상담을 통한 행동 양상 확인", "3–6개월 후 재평가", f"{others} 병행 고려"]
     elif tier == "임상":
@@ -1033,7 +1037,7 @@ def main():
             "syndrome_scales": {"정상": "T < 60", "준임상": "T 60–69", "임상": "T ≥ 70",
                                 "note": "증후군 척도 T점수 하한은 50 (백분위 50 이하는 50T로 표기)"},
             "special_scales": "증후군 척도와 동일 기준 적용 (가정)",
-            "social_competence": {"임상": "총점 ≤ 33T, 하위척도 ≤ 30T (참고 보고서)",
+            "social_competence": {"임상": "총 사회능력 33T 이하, 하위 척도 30T 이하 (가정 기준)",
                                   "준임상": "총점 34–40T, 하위척도 31–35T (ASEBA 관례를 참고한 가정)",
                                   "note": "사회능력 척도는 점수가 낮을수록 적응 자원이 부족함을 의미"},
             "percentile": "정규분포 기준 T점수 환산 백분위 (60T≈84, 63T≈90, 70T≈98)",
@@ -1060,10 +1064,10 @@ def main():
             "심각": "총 문제행동 ≥ 70T 이면서 임상 범위 증후군 2개 이상 (데이터셋 구분용 라벨, K-CBCL 공식 용어 아님)",
         },
         "report_cautions": [
-            "K-CBCL은 주 양육자 보고에 기반한 선별 도구로, 단일 검사 결과만으로 진단을 확정할 수 없습니다.",
-            "보고자의 관찰 맥락·주관이 반영될 수 있으며, 상황별 차이가 클 수 있습니다. 교사용 TRF 또는 자기보고형 YSR의 병행 실시가 권장됩니다.",
-            "K-CBCL 표준 임상 기준은 종합척도 63T, 개별 증후군 척도 70T입니다. 60T 이상 준임상 범위는 추가 검사 및 관찰의 근거가 됩니다.",
-            "임상 장면에서는 70T(98%tile) 기준이 권장되며, 선별 목적에서는 60T(85%tile)까지 확장하여 해석할 수 있습니다.",
+            "K-CBCL은 양육자 보고로 만든 선별 도구입니다. 이 결과 하나만으로 진단을 정하지 않습니다.",
+            "답하는 사람이 아이를 어떤 상황에서 보는지에 따라 결과가 달라지기도 합니다. 그래서 교사용 TRF나 자기보고형 YSR을 함께 실시해 다면적 정보를 얻는 것을 권합니다.",
+            "이 보고서의 임상 기준은 종합척도가 63T, 증후군 척도가 70T입니다. 60T부터는 준임상 범위로 보고 추가 검사나 관찰을 고려합니다.",
+            "전문가가 진단을 위해 볼 때는 70T(98%tile)를, 살펴볼 아이를 넓게 찾을 때는 60T(85%tile)를 기준으로 삼기도 합니다.",
         ],
         "field_guide": {
             "composite_summary": "보고서 Ⅱ(문제행동 종합 지표) 하단 요약 문장",
@@ -1073,8 +1077,12 @@ def main():
             "sample_meta": "데이터셋 설계용 정보(목표 심각도, 생성 프로파일). 실제 보고서에는 표시되지 않음",
         },
     }
+    # 공개 범위: 100건을 만들되(점수 재현성) 평가 샘플 10건만 내보낸다 (specs/poc.md 2-3-1, 2026-10-06)
+    samples = [r for r in samples if r["id"].rsplit("-", 1)[1] in PUBLISHED]
+    meta["count"] = len(samples)
+    meta["generated_count"] = 100
     out = {"metadata": meta, "samples": samples}
-    with open("kcbcl_samples_100.json", "w", encoding="utf-8") as fp:
+    with open("kcbcl_samples.json", "w", encoding="utf-8") as fp:
         json.dump(out, fp, ensure_ascii=False, indent=2)
     print("written", len(samples))
 
